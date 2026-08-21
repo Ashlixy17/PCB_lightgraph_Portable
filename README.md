@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/support.gif" alt="标题" width="180">
+  <img src="assets/title.gif" alt="标题" width="180">
 </p>
 
 <h1 align="center">PCB_Lightgraph_Portable</h1>
