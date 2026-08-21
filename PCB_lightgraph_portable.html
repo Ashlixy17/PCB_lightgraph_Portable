@@ -146,10 +146,39 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
 .flex-fill{flex:1;}
 .note{margin:9px 0 0;color:var(--text-dim);font-size:12px;line-height:1.5;}
 /* 分层算法切换：仅展示当前算法所需的参数，避免误以为隐藏控件仍会生效。 */
-.mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:4px;margin-bottom:10px;}
-.mode-switch button{flex:1;background:transparent;border:0;border-radius:5px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:12.5px;}
-.mode-switch button:hover{color:var(--text);background:var(--panel2);}
-.mode-switch button.active{background:var(--accent);color:#06283a;font-weight:600;}
+.mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;margin-bottom:10px;}
+.mode-switch button{position:relative;flex:1;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
+/* 同一条描边先以细亮线出现，再向外扩为较暗的宽边；伪元素不会改变模式按钮布局。 */
+.mode-switch button::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
+/* 扫光限制在按钮表面，避免裁切负责外扩描边的 ::before。 */
+.mode-switch button::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
+@media (hover:hover){
+  .mode-switch button:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}
+  .mode-switch button:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
+  .mode-switch button:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
+  .mode-switch button.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
+}
+/* 进入与退出均让宽度、颜色和透明度同步变化，避免边框突然亮起或出现阶段分界。 */
+@keyframes mode-switch-shine{
+  0%{background-position:-130% -130%;opacity:0;}
+  10%{opacity:1;}
+  88%{opacity:.9;}
+  100%{background-position:130% 130%;opacity:0;}
+}
+@keyframes mode-switch-rim-enter{
+  0%{inset:-1px;border-width:2px;border-color:#f8fcff;box-shadow:0 0 3px rgb(237 248 255 / 88%);opacity:0;transform:scale(.98);}
+  100%{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
+}
+@keyframes mode-switch-rim-leave{
+  0%{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
+  100%{inset:-1px;border-width:2px;border-color:#f8fcff;box-shadow:0 0 3px rgb(237 248 255 / 88%);opacity:0;transform:scale(.98);}
+}
+.mode-switch button:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
+.mode-switch button:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
+/* 当前算法的 active 状态由 setProcessingMode 统一维护，优先于悬停描边。 */
+.mode-switch button.active{background:#b9c5e8;color:#091331;font-weight:600;}
+.mode-switch button.active::before{opacity:0;}
+@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before{transition-duration:0ms;transition-delay:0ms;}}
 .mode-specific[hidden]{display:none;}
 .gray-color{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;font-size:13px;}
 .gray-color .lab{color:var(--text-dim);font-size:12.5px;}
@@ -2320,6 +2349,19 @@ function init(){
   el('#btnAutoLights').addEventListener('click', autoSuggestLights);
   el('#grayPreviewMask').addEventListener('change', function(){ state.gray.previewMaskId = this.value; updateProcess(); });
   document.querySelectorAll('[data-processing-mode]').forEach(btn => {
+    let leaveTimer;
+    btn.addEventListener('pointerenter', function(){
+      clearTimeout(leaveTimer);
+      this.classList.remove('is-leaving');
+      if(!this.classList.contains('active')) this.classList.add('is-hovered');
+    });
+    btn.addEventListener('pointerleave', function(){
+      this.classList.remove('is-hovered');
+      if(this.classList.contains('active')) return;
+      this.classList.add('is-leaving');
+      // 退出动画独立于 hover，指针越过描边边缘时也能完整播放。
+      leaveTimer = setTimeout(() => this.classList.remove('is-leaving'), 150);
+    });
     btn.addEventListener('click', function(){ setProcessingMode(this.dataset.processingMode, true); });
   });
   document.querySelectorAll('[data-view-mode]').forEach(btn => {
