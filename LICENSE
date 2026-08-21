@@ -1,0 +1,63 @@
+MIT License
+
+Copyright (c) 2026 PCB_lightgraph Portable contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Supplemental Project Notice / 项目补充声明
+
+This notice accompanies the MIT License and explains the intended use and
+responsibility boundaries of this project. It does not limit the permissions
+granted under the MIT License above.
+
+本补充声明与上述 MIT License 一并提供，用于说明本项目的使用范围和责任边界；
+不限制上述 MIT License 所授予的复制、修改、分发和使用权限。
+
+1. Intended use / 使用范围
+   This software converts 2D illustrations into PCB layer drawings and is
+   intended primarily for learning, research, and personal creative work.
+   本软件是一款将 2D 插画转换为 PCB 分层图纸的开源工具，主要面向学习、研究与个人创作。
+
+2. Source material rights / 素材版权
+   The software does not review or clear rights in input images. Users are
+   responsible for obtaining all necessary authorizations for illustrations,
+   characters, photographs, and other source material. Any dispute or
+   liability arising from infringing material is the user's responsibility.
+   本工具不会为输入图像做版权审查；使用他人原创作品时，使用者应自行取得授权，并自行承担由此产生的纠纷与责任。
+
+3. Portraits and privacy / 肖像与隐私
+   Do not use the software to process images involving another person's
+   portrait, privacy, or sensitive content without appropriate authorization.
+   请勿在未获适当授权的情况下，使用本工具处理涉及他人肖像、隐私或敏感内容的图像。
+
+4. Commercial use and production / 商用与生产
+   Users who manufacture or sell PCB-related products using output from this
+   software are responsible for product quality, production feasibility,
+   business decisions, intellectual-property compliance, and all related
+   consequences. The authors and copyright holders do not assume such liability.
+   使用本工具进行 PCB 周边产品生产或销售的使用者，应自行承担产品质量、生产可行性、商业模式、版权合规及相关后果。
+
+5. No warranty / 按现状提供
+   The software is provided "AS IS" as described in the MIT License, without
+   any express or implied warranty of fitness, reliability, or suitability for
+   a particular purpose. Use of this software indicates that the user has read
+   and understood this supplemental notice.
+   本工具按现状提供，不对适用性、可靠性或特定用途作出明示或暗示担保；使用本工具即表示使用者已阅读并理解本补充声明。

@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCB_lightgraph_portable</title>
+<style>
+:root{
+  --bg:#1b1b1b;
+  --panel:#252525;
+  --panel2:#2d2d2d;
+  --border:#3a3a3a;
+  --text:#e8e8e8;
+  --text-dim:#9d9d9d;
+  --accent:#4cc2ff;
+  --accent-hover:#6fd0ff;
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:"Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  font-size:14px;overflow:hidden;display:flex;flex-direction:column;
+  user-select:none;
+}
+/* ---- top bar ---- */
+.topbar{
+  display:flex;align-items:center;gap:8px;padding:6px 12px;
+  background:var(--panel);border-bottom:1px solid var(--border);flex:0 0 auto;
+}
+.brand{font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap;}
+.brand .dot{color:var(--accent);}
+.brand .edition{color:var(--text-dim);font-weight:400;font-size:12.5px;}
+.menubar{display:flex;gap:2px;}
+.menu{position:relative;}
+.menu>button{
+  background:transparent;border:none;color:var(--text);padding:6px 12px;border-radius:6px;
+  cursor:pointer;font-size:14px;font-family:inherit;
+}
+.menu>button:hover,.menu:focus-within>button{background:var(--panel2);}
+.dropdown{
+  display:none;position:absolute;top:100%;left:0;min-width:200px;z-index:100;
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:4px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.menu:hover > .dropdown,.menu:focus-within > .dropdown{display:block;}
+.dropdown button{
+  display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--text);
+  padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13.5px;font-family:inherit;
+}
+.dropdown button:hover{background:rgba(76,194,255,.15);}
+.dropdown button.active::after{content:'✓';float:right;color:var(--accent);}
+.dropdown button.disabled{color:#666;cursor:not-allowed;}
+.dropdown .sep{height:1px;background:var(--border);margin:4px 6px;}
+.submenu{position:relative;}
+.submenu>.dropdown{left:100%;top:0;}
+.submenu:hover>.dropdown,.submenu:focus-within>.dropdown{display:block;}
+/* ---- main ---- */
+.main{flex:1 1 auto;display:flex;min-height:0;}
+.col-preview{flex:4 4 0;display:flex;flex-direction:column;padding:10px;min-width:0;gap:6px;}
+.hint{color:var(--text-dim);font-size:12.5px;flex:0 0 auto;}
+.preview-wrap{
+  flex:1 1 auto;min-height:0;position:relative;background:#232323;
+  border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;
+}
+.preview-wrap canvas{display:block;width:100%;height:100%;}
+.preview-wrap .placeholder{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--text-dim);pointer-events:none;font-size:14px;
+}
+.preview-stage{flex:1 1 auto;min-height:0;display:flex;}
+.preview-stage>.preview-wrap{width:100%;}
+.quad-grid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px;}
+/* display:grid 会覆盖浏览器的 hidden 默认样式，必须显式隐藏非四分视图。 */
+.quad-grid[hidden]{display:none;}
+.quad-cell{display:flex;flex-direction:column;min-width:0;min-height:0;}
+.quad-cell .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
+.quad-cell .w{flex:1 1 auto;min-height:0;position:relative;background:#232323;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.quad-cell canvas{display:block;width:100%;height:100%;}
+.quad-cell .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);pointer-events:none;font-size:13px;}
+.col-controls{flex:1.1 1 0;min-width:280px;max-width:420px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;padding:10px;border-left:1px solid var(--border);border-right:1px solid var(--border);}
+/* 隐藏滚动条但保留滚轮滚动，避免过长设置被裁切。 */
+.col-controls::-webkit-scrollbar{width:0;height:0;}
+.col-layers{flex:3 3 0;overflow:hidden;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0;}
+/* groups */
+.group{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:10px;overflow:hidden;
+}
+.group>.group-header{
+  padding:9px 12px;cursor:pointer;font-weight:600;font-size:13.5px;
+  display:flex;align-items:center;gap:8px;background:transparent;border:none;width:100%;text-align:left;
+  color:var(--text);font-family:inherit;
+}
+.group>.group-header:hover{background:var(--panel2);}
+.group>.group-header .chev{transition:transform .18s cubic-bezier(.33,1,.68,1);font-size:11px;color:var(--text-dim);}
+.group.open>.group-header .chev{transform:rotate(90deg);}
+.group .content{max-height:0;overflow:hidden;transition:max-height .18s cubic-bezier(.33,1,.68,1);}
+.group.open .content{max-height:1200px;}
+.group .inner{padding:4px 12px 12px;}
+/* controls */
+label.ctl{display:block;margin:9px 0;font-size:13px;}
+label.ctl .lab{display:block;color:var(--text-dim);font-size:12.5px;margin-bottom:4px;}
+select{
+  width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
+  border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;
+}
+select:focus{border-color:var(--accent);}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;
+  background:var(--panel2);outline:none;border:1px solid var(--border);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--accent);cursor:pointer;border:none;
+}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:none;}
+input[type=range]:disabled{opacity:.4;}
+.check,.radio{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;cursor:pointer;}
+.check input,.radio input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;}
+button.btn{
+  background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;
+  padding:8px 12px;cursor:pointer;font-size:13px;font-family:inherit;margin:3px 2px;
+}
+button.btn:hover{border-color:var(--accent);}
+button.btn.accent{background:var(--accent);color:#06283a;border-color:var(--accent);font-weight:600;}
+button.btn.accent:hover{background:var(--accent-hover);}
+button.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-row{display:flex;gap:6px;}
+.btn-row.centered{justify-content:center;}
+.flex-fill{flex:1;}
+.note{margin:9px 0 0;color:var(--text-dim);font-size:12px;line-height:1.5;}
+/* 分层算法切换：仅展示当前算法所需的参数，避免误以为隐藏控件仍会生效。 */
+.mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:4px;margin-bottom:10px;}
+.mode-switch button{flex:1;background:transparent;border:0;border-radius:5px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:12.5px;}
+.mode-switch button:hover{color:var(--text);background:var(--panel2);}
+.mode-switch button.active{background:var(--accent);color:#06283a;font-weight:600;}
+.mode-specific[hidden]{display:none;}
+.gray-color{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;font-size:13px;}
+.gray-color .lab{color:var(--text-dim);font-size:12.5px;}
+.gray-color input{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
+/* layer previews grid */
+.layers-grid{
+  flex:1 1 auto;display:grid;grid-template-columns:repeat(3, 1fr);grid-template-rows:1fr;gap:8px;min-height:0;
+}
+.layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
+.layers-grid .lp .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
+.layers-grid .lp .w{
+  flex:1 1 auto;min-height:0;background:#1e1e1e;border:1px dashed #3a3a3a;border-radius:8px;
+  overflow:hidden;position:relative;
+}
+.layers-grid .lp canvas{display:block;width:100%;height:100%;}
+/* modal */
+.modal-back{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;
+}
+.modal-back.show{display:flex;}
+.modal{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;
+  min-width:320px;max-width:520px;box-shadow:0 12px 40px rgba(0,0,0,.6);max-height:86vh;overflow:auto;
+}
+.modal h3{margin:0 0 12px;font-size:16px;}
+.modal .mrow{margin:10px 0;display:flex;align-items:center;gap:10px;}
+.modal .mrow label{flex:0 0 180px;font-size:13px;color:var(--text-dim);}
+.modal input[type=number]{width:90px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;}
+.modal input[type=color]{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
+.modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+/* 裁剪画布按图片实际比例绘制，坐标直接映射回原图，避免预览缩放带来裁切偏差。 */
+.crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;}
+.crop-hint{margin:0 0 12px;color:var(--text-dim);font-size:12.5px;line-height:1.5;}
+.crop-stage{display:flex;align-items:center;justify-content:center;max-height:60vh;overflow:auto;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
+.crop-stage canvas{display:block;max-width:100%;touch-action:none;cursor:default;}
+/* toast */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--border);border-radius:8px;padding:10px 18px;z-index:300;
+  display:none;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.5);
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">PCB_lightgraph_portable</div>
+  <div class="menubar" id="menubar">
+    <div class="menu" id="menuFile">
+      <button type="button" data-i18n="menuFile">File</button>
+      <div class="dropdown">
+        <button type="button" id="mImport" data-i18n="importImage">导入图片</button>
+        <button type="button" id="mExport" class="disabled" data-i18n="exportDrawing">导出全部图纸</button>
+        <button type="button" id="mSave" data-i18n="saveProject">保存工程…</button>
+        <button type="button" id="mLoad" data-i18n="loadProject">导入工程…</button>
+      </div>
+    </div>
+    <div class="menu" id="menuOption">
+      <button type="button" data-i18n="menuOption">Option</button>
+      <div class="dropdown">
+        <div class="submenu" id="subEdge">
+          <button type="button" data-i18n="edgeMenu">边缘处理 ▸</button>
+          <div class="dropdown">
+            <div class="submenu" id="subExp">
+              <button type="button" data-i18n="experimentalMenu">实验性功能 ▸</button>
+              <div class="dropdown">
+                <button type="button" id="mFilter" data-i18n="filterPreprocess">滤波预处理…</button>
+                <button type="button" id="mDP" data-i18n="dpSimplify">道格拉斯-普克抽稀…</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="submenu" id="subScale">
+          <button type="button" data-i18n="uiScaleMenu">界面缩放 ▸</button>
+          <div class="dropdown" id="scaleMenu"></div>
+        </div>
+        <div class="submenu" id="subLanguage">
+          <button type="button" data-i18n="languageMenu">语言 ▸</button>
+          <div class="dropdown" id="languageMenu">
+            <button type="button" data-language="zh-CN">简体中文</button>
+            <button type="button" data-language="zh-TW">繁體中文</button>
+            <button type="button" data-language="en">English</button>
+            <button type="button" data-language="ja">日本語</button>
+          </div>
+        </div>
+        <button type="button" id="mColor" data-i18n="colorSettings">颜色设置…</button>
+        <button type="button" id="mReset" data-i18n="resetAll">重置所有设置…</button>
+      </div>
+    </div>
+    <div class="menu" id="menuView">
+      <button type="button" data-i18n="menuView">视图</button>
+      <div class="dropdown">
+        <button type="button" data-view-mode="overlay" data-i18n="viewOverlay">叠加视图</button>
+        <button type="button" data-view-mode="split" data-i18n="viewSplit">分隔视图</button>
+        <button type="button" data-view-mode="quad" data-i18n="viewQuad">四分视图</button>
+      </div>
+    </div>
+    <div class="menu" id="menuHelp">
+      <button type="button" data-i18n="menuHelp">关于</button>
+      <div class="dropdown">
+        <button type="button" id="mCheckUpdates" data-i18n="checkUpdates">检查更新</button>
+        <button type="button" id="mGitHub" data-i18n="githubLink">跳转至 GitHub</button>
+        <button type="button" id="mIssueFeedback" data-i18n="issueFeedback">问题反馈</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="col-preview">
+    <div class="hint" data-i18n="previewHint">【预览区】滚轮缩放，中键/右键拖动平移</div>
+    <div class="preview-stage">
+      <div class="preview-wrap" id="compositeWrap">
+        <canvas id="canvasComposite"></canvas>
+        <div class="placeholder" id="compositePlaceholder" data-i18n="importPlaceholder">请导入图片…</div>
+      </div>
+      <div class="quad-grid" id="quadGrid" hidden>
+        <div class="quad-cell"><div class="t" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadComposite"></canvas><div class="placeholder" data-quad-placeholder="composite" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" data-i18n="layerSilk">Top Silk（丝印）</div><div class="w"><canvas id="canvasQuadSilk"></canvas><div class="placeholder" data-quad-placeholder="silk" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" data-i18n="layerMask">Top Mask（阻焊）</div><div class="w"><canvas id="canvasQuadMask"></canvas><div class="placeholder" data-quad-placeholder="mask" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" data-i18n="layerCopper">Top Copper（线路）</div><div class="w"><canvas id="canvasQuadCopper"></canvas><div class="placeholder" data-quad-placeholder="copper" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-controls" id="controls">
+    <div class="mode-switch" role="group" aria-label="分层模式" data-i18n-aria="processingMode">
+      <button type="button" class="active" data-processing-mode="gray" data-i18n="grayMode">纯灰度三分分层</button>
+      <button type="button" data-processing-mode="color" data-i18n="colorMode">彩色识别分层</button>
+    </div>
+
+    <div class="mode-specific" id="colorControls" hidden>
+    <div class="group open" id="groupBasic">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="basicParameters">基础参数</span></button>
+      <div class="content"><div class="inner">
+        <label class="ctl"><span class="lab" data-i18n="surfaceFinish">表面处理工艺</span>
+          <select id="selectFinish">
+            <option value="enig" data-i18n="finishEnig">沉金 (金黄色)</option>
+            <option value="hasl" data-i18n="finishHasl">喷锡 (银色)</option>
+            <option value="osp" data-i18n="finishOsp">OSP (玫瑰金)</option>
+          </select>
+        </label>
+        <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
+          <select id="selectMask">
+            <option value="blue" data-i18n="maskBlue">蓝色</option>
+            <option value="black" data-i18n="maskBlack">黑色</option>
+            <option value="red" data-i18n="maskRed">红色</option>
+            <option value="green" data-i18n="maskGreen">绿色</option>
+            <option value="white" data-i18n="maskWhite">白色</option>
+          </select>
+        </label>
+        <div id="sliderGold"></div>
+        <div id="sliderSilk"></div>
+        <div id="sliderCopper"></div>
+      </div></div>
+    </div>
+
+    <div class="group" id="groupLight" data-master="light">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="lightingSettings">灯光 / 显示 / 布灯</span></button>
+      <div class="content"><div class="inner">
+        <label class="check"><input type="checkbox" id="chkLightOverlay"><span data-i18n="showLightOverlay">在预览中叠加显示灯光与范围</span></label>
+        <div id="sliderLightSense"></div>
+        <button type="button" class="btn flex-fill" id="btnAutoLights" data-i18n="autoSuggestLights">自动重心布灯</button>
+        <div id="sliderLightRadius"></div>
+        <div id="sliderLightIntensity"></div>
+        <p class="note" data-i18n="lightPlacementHint">在合成预览中连续左键两次，可手动放置一条灯光。</p>
+      </div></div>
+    </div>
+
+    <div class="group" id="groupBare" data-master="bare">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="bareBinding">裸露基材绑定</span></button>
+      <div class="content"><div class="inner">
+        <label class="radio"><input type="radio" name="bareMode" id="radioBareGray" checked><span data-i18n="bareGrayMode">1. 绑定层次（用灰度判断）</span></label>
+        <div id="sliderBareA"></div>
+        <div id="sliderBareB"></div>
+        <label class="radio"><input type="radio" name="bareMode" id="radioBareColor"><span data-i18n="bareColorMode">2. 绑定颜色（与基材色相似）</span></label>
+        <div id="sliderBareSim"></div>
+      </div></div>
+    </div>
+
+    <div class="group" id="groupEdge" data-master="edge">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edgeOperations">边缘操作</span></button>
+      <div class="content"><div class="inner">
+        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeStroke"><span data-i18n="edgeStroke">描边</span></label>
+        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeEnhance" checked><span data-i18n="edgeEnhance">边缘增强</span></label>
+        <div id="sliderEdgeThresh"></div>
+        <div id="sliderEdgeThreshMax"></div>
+        <label class="check"><input type="checkbox" id="chkUseMetal"><span data-i18n="useMetal">使用金属</span></label>
+        <label class="check" id="exposeMetalWrap"><input type="checkbox" id="chkExposeMetal" checked><span data-i18n="exposeMetal">裸露金属勾线</span></label>
+        <div id="sliderAutoInvert"></div>
+      </div></div>
+    </div>
+    </div>
+
+    <div class="mode-specific" id="grayControls">
+      <div class="group open" id="groupGray">
+        <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="grayParameters">纯灰度三分参数</span></button>
+        <div class="content"><div class="inner">
+          <div id="sliderGraySilk"></div>
+          <div id="sliderGrayMask"></div>
+          <div id="sliderGrayThick"></div>
+          <div id="sliderGrayBlur"></div>
+          <label class="gray-color"><span class="lab" data-i18n="grayPreviewMaskColor">合成预览阻焊颜色</span><select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option></select></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="group open" id="groupActions">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="drawingActions">图纸操作</span></button>
+      <div class="content"><div class="inner">
+        <div class="btn-row">
+          <button type="button" class="btn flex-fill" id="btnImport" data-i18n="importDrawing">导入图纸</button>
+          <button type="button" class="btn accent flex-fill" id="btnExport" disabled data-i18n="exportDrawing">导出全部图纸</button>
+        </div>
+        <label class="ctl"><span class="lab" data-i18n="exportLayerSelect">选择导出层</span>
+          <select id="selectExportLayer" disabled>
+            <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
+            <option value="Top_Mask" data-i18n="layerMask">Top Mask（阻焊）</option>
+            <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
+          </select>
+        </label>
+        <div class="btn-row centered"><button type="button" class="btn accent" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="col-layers" id="colLayers" style="display:none">
+    <div class="layers-grid">
+      <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
+      <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
+      <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ============================================================
+ * PCB_lightgraph_portable —— 单文件实现
+ * 算法 1:1 移植自桌面版 (Qt/C++) 各模块。
+ * ============================================================ */
+
+/* ---------------- 界面多语言 ---------------- */
+const TRANSLATIONS = {
+  'zh-CN': {
+    pageTitle:'PCB_lightgraph Portable', menuFile:'文件', menuOption:'选项', importImage:'导入图片', importDrawing:'导入图纸', exportDrawing:'导出图纸', saveProject:'保存工程…', loadProject:'导入工程…', liveEditUnavailable:'画图实时编辑（不可用）', liveEditTitle:'浏览器版不支持外部画图实时联动', edgeMenu:'边缘处理 ▸', experimentalMenu:'实验性功能 ▸', filterPreprocess:'滤波预处理…', dpSimplify:'道格拉斯-普克抽稀…', uiScaleMenu:'界面缩放 ▸', languageMenu:'语言 ▸', colorSettings:'颜色设置…', resetAll:'重置所有设置…', previewHint:'【预览区】滚轮缩放，中键/右键拖动平移', importPlaceholder:'请导入图片…', processingMode:'分层模式', colorMode:'彩色识别分层', grayMode:'纯灰度三分分层', basicParameters:'基础参数', surfaceFinish:'表面处理工艺', finishEnig:'沉金（金黄色）', finishHasl:'喷锡（银色）', finishOsp:'OSP（玫瑰金）', maskColor:'阻焊颜色', maskBlue:'蓝色', maskBlack:'黑色', maskRed:'红色', maskGreen:'绿色', maskWhite:'白色', bareBinding:'裸露基材绑定', bareGrayMode:'1. 绑定层次（用灰度判断）', bareColorMode:'2. 绑定颜色（与基材色相似）', edgeOperations:'边缘操作', edgeStroke:'描边', edgeEnhance:'边缘增强', useMetal:'使用金属', exposeMetal:'裸露金属勾线', grayParameters:'纯灰度三分参数', grayPreviewMaskColor:'合成预览阻焊颜色', drawingActions:'图纸操作', expandLayerPreviews:'展开生产层预览', layerCopper:'Top Copper（线路）', layerMask:'Top Mask（阻焊）', layerSilk:'Top Silk（丝印）', goldThreshold:'金色/银色判定', silkThreshold:'丝印阈值', copperThreshold:'敷铜层较深阈值', bareGrayMin:'灰度下限 A（%）', bareGrayMax:'灰度上限 B（%）', bareSimilarity:'颜色相似度 C（%）', edgeThresholdMin:'强边缘阈值/边缘下限阈值', edgeThresholdMax:'弱边缘阈值/边缘上限阈值', autoInvertRange:'自动反色范围', graySilkThreshold:'丝印层阈值', grayMaskThreshold:'阻焊层阈值', grayThick:'边缘线条加粗', grayBlur:'抗锯齿平滑度', invalidImageSize:'图片尺寸无效', importFailed:'导入失败：', imageTooLarge:'导入失败：图片过大，无法处理', imageLoadFailed:'图片加载失败', exporting:'正在导出…', exportSuccess:'导出成功，共 {count} 个文件', projectSaved:'工程已导出为 project.pcblg.json', projectImported:'工程已导入', projectParseFailed:'工程文件解析失败', resetSuccess:'已重置所有设置', runtimeError:'出错：', filterTitle:'滤波预处理（实验性）', enableGaussian:'启用高斯预滤波', gaussianKernel:'高斯模糊矩阵大小', sigma:'Sigma', cancel:'取消', confirm:'确定', dpTitle:'道格拉斯-普克抽稀（实验性）', enableDp:'启用抽稀', tolerance:'容忍度', lineWidth:'线宽', dpNote:'注：桌面版当前未将抽稀接入渲染管线，此处仅保存参数。', colorTitle:'颜色设置（本地持久化，与工程无关）', colorEnig:'沉金 ENIG', colorOsp:'OSP（玫瑰金）', colorHasl:'喷锡 HASL', colorBare:'裸露基材', welcomeTitle:'欢迎使用 PCB_lightgraph Portable 🎉', welcomeIntro:'单文件 HTML 版，双击即可在浏览器中使用，无需安装。', welcomeStep1:'1. 文件 → 导入图片（无需预处理）', welcomeStep2:'2. 展开各参数分组调节', welcomeStep3:'3. 文件 → 导出图纸（下载为 PNG）', dontShowAgain:'不再显示', getStarted:'开始使用', liveEditMessage:'浏览器版不支持外部画图实时联动，请重新导入图片', canvasContextFailed:'无法创建绘图上下文', unknownError:'未知错误'
+  },
+  'zh-TW': {
+    pageTitle:'PCB_lightgraph Portable', menuFile:'檔案', menuOption:'選項', importImage:'匯入圖片', importDrawing:'匯入圖紙', exportDrawing:'匯出圖紙', saveProject:'儲存工程…', loadProject:'匯入工程…', liveEditUnavailable:'即時繪圖編輯（不可用）', liveEditTitle:'瀏覽器版不支援外部繪圖即時連動', edgeMenu:'邊緣處理 ▸', experimentalMenu:'實驗性功能 ▸', filterPreprocess:'濾波預處理…', dpSimplify:'Douglas-Peucker 簡化…', uiScaleMenu:'介面縮放 ▸', languageMenu:'語言 ▸', colorSettings:'顏色設定…', resetAll:'重設所有設定…', previewHint:'【預覽區】滾輪縮放，中鍵／右鍵拖曳平移', importPlaceholder:'請匯入圖片…', processingMode:'分層模式', colorMode:'彩色識別分層', grayMode:'純灰階三分分層', basicParameters:'基本參數', surfaceFinish:'表面處理工藝', finishEnig:'沉金（金黃色）', finishHasl:'噴錫（銀色）', finishOsp:'OSP（玫瑰金）', maskColor:'阻焊顏色', maskBlue:'藍色', maskBlack:'黑色', maskRed:'紅色', maskGreen:'綠色', maskWhite:'白色', bareBinding:'裸露基材綁定', bareGrayMode:'1. 綁定層次（以灰階判斷）', bareColorMode:'2. 綁定顏色（與基材色相似）', edgeOperations:'邊緣操作', edgeStroke:'描邊', edgeEnhance:'邊緣增強', useMetal:'使用金屬', exposeMetal:'裸露金屬勾線', grayParameters:'純灰階三分參數', grayPreviewMaskColor:'合成預覽阻焊顏色', drawingActions:'圖紙操作', expandLayerPreviews:'展開生產層預覽', layerCopper:'Top Copper（線路）', layerMask:'Top Mask（阻焊）', layerSilk:'Top Silk（絲印）', goldThreshold:'金色／銀色判定', silkThreshold:'絲印閾值', copperThreshold:'敷銅層較深閾值', bareGrayMin:'灰階下限 A（%）', bareGrayMax:'灰階上限 B（%）', bareSimilarity:'顏色相似度 C（%）', edgeThresholdMin:'強邊緣閾值／邊緣下限閾值', edgeThresholdMax:'弱邊緣閾值／邊緣上限閾值', autoInvertRange:'自動反色範圍', graySilkThreshold:'絲印層閾值', grayMaskThreshold:'阻焊層閾值', grayThick:'邊緣線條加粗', grayBlur:'抗鋸齒平滑度', invalidImageSize:'圖片尺寸無效', importFailed:'匯入失敗：', imageTooLarge:'匯入失敗：圖片過大，無法處理', imageLoadFailed:'圖片載入失敗', exporting:'正在匯出…', exportSuccess:'匯出成功，共 {count} 個檔案', projectSaved:'工程已匯出為 project.pcblg.json', projectImported:'工程已匯入', projectParseFailed:'工程檔案解析失敗', resetSuccess:'已重設所有設定', runtimeError:'錯誤：', filterTitle:'濾波預處理（實驗性）', enableGaussian:'啟用高斯預濾波', gaussianKernel:'高斯模糊矩陣大小', sigma:'Sigma', cancel:'取消', confirm:'確定', dpTitle:'Douglas-Peucker 簡化（實驗性）', enableDp:'啟用簡化', tolerance:'容忍度', lineWidth:'線寬', dpNote:'註：桌面版目前未將簡化接入渲染管線，此處僅儲存參數。', colorTitle:'顏色設定（本機持久化，與工程無關）', colorEnig:'沉金 ENIG', colorOsp:'OSP（玫瑰金）', colorHasl:'噴錫 HASL', colorBare:'裸露基材', welcomeTitle:'歡迎使用 PCB_lightgraph Portable 🎉', welcomeIntro:'單檔 HTML 版，雙擊即可在瀏覽器中使用，無需安裝。', welcomeStep1:'1. 檔案 → 匯入圖片（無需預處理）', welcomeStep2:'2. 展開各參數分組調整', welcomeStep3:'3. 檔案 → 匯出圖紙（下載為 PNG）', dontShowAgain:'不再顯示', getStarted:'開始使用', liveEditMessage:'瀏覽器版不支援外部繪圖即時連動，請重新匯入圖片', canvasContextFailed:'無法建立繪圖內容', unknownError:'未知錯誤'
+  },
+  en: {
+    pageTitle:'PCB_lightgraph Portable', menuFile:'File', menuOption:'Options', importImage:'Import Image', importDrawing:'Import Drawing', exportDrawing:'Export Drawing', saveProject:'Save Project…', loadProject:'Load Project…', liveEditUnavailable:'Live Editing (Unavailable)', liveEditTitle:'Browser version cannot monitor external drawing changes', edgeMenu:'Edge Processing ▸', experimentalMenu:'Experimental ▸', filterPreprocess:'Filter Preprocess…', dpSimplify:'Douglas-Peucker Simplification…', uiScaleMenu:'UI Scale ▸', languageMenu:'Language ▸', colorSettings:'Color Settings…', resetAll:'Reset All Settings…', previewHint:'[Preview] Wheel: zoom; middle/right drag: pan', importPlaceholder:'Import an image…', processingMode:'Layering Mode', colorMode:'Color Recognition', grayMode:'Grayscale Three-way', basicParameters:'Basic Parameters', surfaceFinish:'Surface Finish', finishEnig:'ENIG (Gold)', finishHasl:'HASL (Silver)', finishOsp:'OSP (Rose Gold)', maskColor:'Solder Mask Color', maskBlue:'Blue', maskBlack:'Black', maskRed:'Red', maskGreen:'Green', maskWhite:'White', bareBinding:'Bare Substrate Binding', bareGrayMode:'1. Bind by level (grayscale)', bareColorMode:'2. Bind by color (similar to substrate)', edgeOperations:'Edge Operations', edgeStroke:'Stroke', edgeEnhance:'Edge Enhancement', useMetal:'Use Metal', exposeMetal:'Outline Exposed Metal', grayParameters:'Grayscale Three-way Parameters', grayPreviewMaskColor:'Preview Solder Mask Color', drawingActions:'Drawing Actions', expandLayerPreviews:'Show Production Layer Previews', layerCopper:'Top Copper (Traces)', layerMask:'Top Mask (Solder Mask)', layerSilk:'Top Silk (Silkscreen)', goldThreshold:'Gold/Silver Threshold', silkThreshold:'Silkscreen Threshold', copperThreshold:'Copper Depth Threshold', bareGrayMin:'Grayscale Lower Bound A (%)', bareGrayMax:'Grayscale Upper Bound B (%)', bareSimilarity:'Color Similarity C (%)', edgeThresholdMin:'Strong Edge / Lower Threshold', edgeThresholdMax:'Weak Edge / Upper Threshold', autoInvertRange:'Auto-invert Range', graySilkThreshold:'Silkscreen Threshold', grayMaskThreshold:'Solder Mask Threshold', grayThick:'Edge Thickening', grayBlur:'Anti-alias Smoothing', invalidImageSize:'Invalid image dimensions', importFailed:'Import failed: ', imageTooLarge:'Import failed: image is too large to process', imageLoadFailed:'Image failed to load', exporting:'Exporting…', exportSuccess:'Export complete: {count} files', projectSaved:'Project exported as project.pcblg.json', projectImported:'Project imported', projectParseFailed:'Project file could not be parsed', resetSuccess:'All settings reset', runtimeError:'Error: ', filterTitle:'Filter Preprocess (Experimental)', enableGaussian:'Enable Gaussian prefilter', gaussianKernel:'Gaussian kernel size', sigma:'Sigma', cancel:'Cancel', confirm:'OK', dpTitle:'Douglas-Peucker Simplification (Experimental)', enableDp:'Enable simplification', tolerance:'Tolerance', lineWidth:'Line width', dpNote:'Note: the desktop version does not currently apply simplification to its render pipeline; these parameters are stored only.', colorTitle:'Color Settings (local only, not saved in projects)', colorEnig:'ENIG', colorOsp:'OSP (Rose Gold)', colorHasl:'HASL', colorBare:'Bare Substrate', welcomeTitle:'Welcome to PCB_lightgraph Portable 🎉', welcomeIntro:'A single-file HTML version. Double-click to use it in a browser; no installation needed.', welcomeStep1:'1. File → Import Image (no preprocessing required)', welcomeStep2:'2. Expand parameter groups to adjust settings', welcomeStep3:'3. File → Export Drawing (PNG download)', dontShowAgain:"Don't show again", getStarted:'Get Started', liveEditMessage:'The browser version cannot monitor external drawing changes. Please import the image again.'
+  },
+  ja: {
+    pageTitle:'PCB_lightgraph Portable', menuFile:'ファイル', menuOption:'オプション', importImage:'画像を読み込む', importDrawing:'図面を読み込む', exportDrawing:'図面を書き出す', saveProject:'プロジェクトを保存…', loadProject:'プロジェクトを読み込む…', liveEditUnavailable:'ライブ編集（利用不可）', liveEditTitle:'ブラウザ版は外部描画の変更をリアルタイムに監視できません', edgeMenu:'エッジ処理 ▸', experimentalMenu:'実験的機能 ▸', filterPreprocess:'フィルター前処理…', dpSimplify:'Douglas-Peucker 簡略化…', uiScaleMenu:'UI 拡大率 ▸', languageMenu:'言語 ▸', colorSettings:'色の設定…', resetAll:'すべての設定をリセット…', previewHint:'【プレビュー】ホイールで拡大縮小、中／右ボタンのドラッグで移動', importPlaceholder:'画像を読み込んでください…', processingMode:'レイヤー分離モード', colorMode:'カラー認識分離', grayMode:'グレースケール三分割', basicParameters:'基本パラメータ', surfaceFinish:'表面仕上げ', finishEnig:'ENIG（金色）', finishHasl:'HASL（銀色）', finishOsp:'OSP（ローズゴールド）', maskColor:'ソルダーレジスト色', maskBlue:'青', maskBlack:'黒', maskRed:'赤', maskGreen:'緑', maskWhite:'白', bareBinding:'露出基材の紐付け', bareGrayMode:'1. 階調で紐付け', bareColorMode:'2. 色で紐付け（基材色に近似）', edgeOperations:'エッジ操作', edgeStroke:'輪郭線', edgeEnhance:'エッジ強調', useMetal:'金属を使用', exposeMetal:'露出金属を輪郭化', grayParameters:'グレースケール三分割パラメータ', grayPreviewMaskColor:'プレビュー用レジスト色', drawingActions:'図面操作', expandLayerPreviews:'製造レイヤープレビューを表示', layerCopper:'Top Copper（配線）', layerMask:'Top Mask（レジスト）', layerSilk:'Top Silk（シルク）', goldThreshold:'金／銀の判定', silkThreshold:'シルク閾値', copperThreshold:'銅層の濃度閾値', bareGrayMin:'階調下限 A（%）', bareGrayMax:'階調上限 B（%）', bareSimilarity:'色の類似度 C（%）', edgeThresholdMin:'強エッジ／下限閾値', edgeThresholdMax:'弱エッジ／上限閾値', autoInvertRange:'自動反転範囲', graySilkThreshold:'シルク層閾値', grayMaskThreshold:'レジスト層閾値', grayThick:'エッジ線を太くする', grayBlur:'アンチエイリアス平滑度', invalidImageSize:'画像サイズが無効です', importFailed:'読み込みに失敗しました：', imageTooLarge:'読み込みに失敗しました：画像が大きすぎます', imageLoadFailed:'画像の読み込みに失敗しました', exporting:'書き出し中…', exportSuccess:'書き出し完了：{count} ファイル', projectSaved:'プロジェクトを project.pcblg.json として書き出しました', projectImported:'プロジェクトを読み込みました', projectParseFailed:'プロジェクトファイルを解析できませんでした', resetSuccess:'すべての設定をリセットしました', runtimeError:'エラー：', filterTitle:'フィルター前処理（実験的）', enableGaussian:'ガウス前処理を有効化', gaussianKernel:'ガウスぼかしカーネルサイズ', sigma:'Sigma', cancel:'キャンセル', confirm:'OK', dpTitle:'Douglas-Peucker 簡略化（実験的）', enableDp:'簡略化を有効化', tolerance:'許容誤差', lineWidth:'線幅', dpNote:'注：デスクトップ版では現在、簡略化は描画処理に接続されていません。ここではパラメータのみ保存します。', colorTitle:'色の設定（ローカル保存、プロジェクトとは無関係）', colorEnig:'ENIG', colorOsp:'OSP（ローズゴールド）', colorHasl:'HASL', colorBare:'露出基材', welcomeTitle:'PCB_lightgraph Portable へようこそ 🎉', welcomeIntro:'単一 HTML ファイル版です。ダブルクリックでブラウザから使用でき、インストールは不要です。', welcomeStep1:'1. ファイル → 画像を読み込む（前処理不要）', welcomeStep2:'2. 各パラメータグループを開いて調整', welcomeStep3:'3. ファイル → 図面を書き出す（PNG をダウンロード）', dontShowAgain:'今後表示しない', getStarted:'開始', liveEditMessage:'ブラウザ版は外部描画の変更をリアルタイムに監視できません。画像を再度読み込んでください。'
+  }
+};
+Object.assign(TRANSLATIONS.en, { canvasContextFailed:'Unable to create a drawing context', unknownError:'Unknown error' });
+Object.assign(TRANSLATIONS.ja, { canvasContextFailed:'描画コンテキストを作成できません', unknownError:'不明なエラー' });
+Object.assign(TRANSLATIONS['zh-CN'], { cropTitle:'快捷裁剪', cropHint:'拖动裁剪框移动；拖动边或四角调整范围。', cropSkip:'取消并导入原图', cropConfirm:'裁剪并导入' });
+Object.assign(TRANSLATIONS['zh-TW'], { cropTitle:'快速裁切', cropHint:'拖曳裁切框移動；拖曳邊或四角調整範圍。', cropSkip:'取消並匯入原圖', cropConfirm:'裁切並匯入' });
+Object.assign(TRANSLATIONS.en, { cropTitle:'Quick Crop', cropHint:'Drag the crop area to move it; drag edges or corners to resize.', cropSkip:'Skip and Import Original', cropConfirm:'Crop and Import' });
+Object.assign(TRANSLATIONS.ja, { cropTitle:'クイックトリミング', cropHint:'枠内をドラッグして移動し、辺または角をドラッグして範囲を調整します。', cropSkip:'キャンセルして元画像を読み込む', cropConfirm:'トリミングして読み込む' });
+Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', githubLink:'跳转至 GitHub', issueFeedback:'问题反馈' });
+Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', githubLink:'前往 GitHub', issueFeedback:'問題回饋' });
+Object.assign(TRANSLATIONS.en, { menuHelp:'About', githubLink:'Open GitHub', issueFeedback:'Report an Issue' });
+Object.assign(TRANSLATIONS.ja, { menuHelp:'概要', githubLink:'GitHub を開く', issueFeedback:'問題を報告' });
+Object.assign(TRANSLATIONS['zh-CN'], { checkUpdates:'检查更新', checkingUpdates:'正在检查更新…', updateAvailableTitle:'检查有新版本发布', currentVersion:'当前版本', latestVersion:'最新版本', openRelease:'跳转至 Release', alreadyLatest:'已是最新版本', noReleaseAvailable:'暂未发现已发布版本', updateCheckFailed:'检查更新失败，请稍后重试' });
+Object.assign(TRANSLATIONS['zh-TW'], { checkUpdates:'檢查更新', checkingUpdates:'正在檢查更新…', updateAvailableTitle:'檢查到新版本發布', currentVersion:'目前版本', latestVersion:'最新版本', openRelease:'前往 Release', alreadyLatest:'已是最新版本', noReleaseAvailable:'暫未發現已發布版本', updateCheckFailed:'檢查更新失敗，請稍後再試' });
+Object.assign(TRANSLATIONS.en, { checkUpdates:'Check for Updates', checkingUpdates:'Checking for Updates…', updateAvailableTitle:'A New Version Is Available', currentVersion:'Current Version', latestVersion:'Latest Version', openRelease:'Open Release', alreadyLatest:'You are up to date', noReleaseAvailable:'No published release found', updateCheckFailed:'Unable to check for updates. Please try again later.' });
+Object.assign(TRANSLATIONS.ja, { checkUpdates:'更新を確認', checkingUpdates:'更新を確認中…', updateAvailableTitle:'新しいバージョンが公開されました', currentVersion:'現在のバージョン', latestVersion:'最新バージョン', openRelease:'Release を開く', alreadyLatest:'最新バージョンです', noReleaseAvailable:'公開済みの Release はありません', updateCheckFailed:'更新を確認できませんでした。後でもう一度お試しください。' });
+Object.assign(TRANSLATIONS['zh-CN'], { menuView:'视图', viewOverlay:'叠加视图', viewSplit:'分隔视图', viewQuad:'四分视图' });
+Object.assign(TRANSLATIONS['zh-TW'], { menuView:'檢視', viewOverlay:'疊加檢視', viewSplit:'分隔檢視', viewQuad:'四分檢視' });
+Object.assign(TRANSLATIONS.en, { menuView:'View', viewOverlay:'Overlay View', viewSplit:'Split View', viewQuad:'Quad View' });
+Object.assign(TRANSLATIONS.ja, { menuView:'表示', viewOverlay:'重ね合わせ表示', viewSplit:'分割表示', viewQuad:'4 分割表示' });
+Object.assign(TRANSLATIONS['zh-CN'], { exportDrawing:'导出全部图纸', exportLayerSelect:'选择导出层', exportSelectedLayer:'导出单张图纸' });
+Object.assign(TRANSLATIONS['zh-TW'], { exportDrawing:'匯出全部圖紙', exportLayerSelect:'選擇匯出層', exportSelectedLayer:'匯出單張圖紙' });
+Object.assign(TRANSLATIONS.en, { exportDrawing:'Export All Drawings', exportLayerSelect:'Layer to Export', exportSelectedLayer:'Export Selected Drawing' });
+Object.assign(TRANSLATIONS.ja, { exportDrawing:'すべての図面を書き出す', exportLayerSelect:'書き出すレイヤー', exportSelectedLayer:'選択した図面を書き出す' });
+Object.assign(TRANSLATIONS['zh-CN'], { lightingSettings:'灯光 / 显示 / 布灯', showLightOverlay:'在预览中叠加显示灯光与范围', autoLightSensitivity:'自动布灯敏感度（0 关闭）', autoSuggestLights:'自动重心布灯', lightRadius:'灯光散射半径', lightIntensity:'灯光中心不透明度', lightPlacementHint:'在合成预览中连续左键两次，可手动放置一条灯光。', lightPlacementStart:'已记录起点，请左键选择终点。' });
+Object.assign(TRANSLATIONS['zh-TW'], { lightingSettings:'燈光 / 顯示 / 佈燈', showLightOverlay:'在預覽中疊加顯示燈光與範圍', autoLightSensitivity:'自動佈燈敏感度（0 關閉）', autoSuggestLights:'自動重心佈燈', lightRadius:'燈光散射半徑', lightIntensity:'中心不透明度', lightPlacementHint:'在合成預覽中連續左鍵兩次，即可手動放置一條燈光。', lightPlacementStart:'已記錄起點，請左鍵選擇終點。' });
+Object.assign(TRANSLATIONS.en, { lightingSettings:'Lighting / Display / Placement', showLightOverlay:'Show lights and range in preview', autoLightSensitivity:'Auto-light Sensitivity (0 Off)', autoSuggestLights:'Auto Centroid Placement', lightRadius:'Light Diffusion Radius', lightIntensity:'Light Center Opacity', lightPlacementHint:'Left-click twice in the composite preview to place a light strip.', lightPlacementStart:'Start recorded. Left-click to choose the end.' });
+Object.assign(TRANSLATIONS.ja, { lightingSettings:'照明 / 表示 / 配置', showLightOverlay:'プレビューに照明と範囲を重ねて表示', autoLightSensitivity:'自動配置の感度（0 でオフ）', autoSuggestLights:'重心に自動配置', lightRadius:'照明の拡散半径', lightIntensity:'中心の不透明度', lightPlacementHint:'合成プレビューを左クリック 2 回でライトバーを手動配置できます。', lightPlacementStart:'始点を記録しました。左クリックで終点を選択してください。' });
+const PRODUCT_NAME = 'PCB_lightgraph_portable';
+const APP_VERSION = 'v0.1.0';
+const GITHUB_REPOSITORY = 'Ashlixy17/PCB_lightgraph_portable';
+const GITHUB_RELEASES_URL = 'https://github.com/' + GITHUB_REPOSITORY + '/releases';
+const GITHUB_LATEST_RELEASE_API = 'https://api.github.com/repos/' + GITHUB_REPOSITORY + '/releases/latest';
+let currentLanguage = 'zh-CN';
+function t(key, values){
+  let text = (TRANSLATIONS[currentLanguage] && TRANSLATIONS[currentLanguage][key]) || TRANSLATIONS['zh-CN'][key] || key;
+  if(values) for(const name in values) text = text.replaceAll('{'+name+'}', String(values[name]));
+  return text;
+}
+function refreshSliderLabel(label, input){ label.textContent = t(label.dataset.i18nSlider) + ': ' + input.value; }
+function withProductName(text){ return text.replace('PCB_lightgraph Portable', PRODUCT_NAME); }
+function applyTranslations(){
+  document.documentElement.lang = currentLanguage;
+  document.title = PRODUCT_NAME;
+  document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(node => { node.setAttribute('aria-label', t(node.dataset.i18nAria)); });
+  document.querySelectorAll('[data-i18n-title]').forEach(node => { node.title = t(node.dataset.i18nTitle); });
+  document.querySelectorAll('.lab[data-i18n-slider]').forEach(label => refreshSliderLabel(label, label.parentElement.querySelector('input')));
+  document.querySelectorAll('[data-language]').forEach(button => button.classList.toggle('active', button.dataset.language === currentLanguage));
+}
+function setLanguage(language, persist){
+  currentLanguage = TRANSLATIONS[language] ? language : 'zh-CN';
+  if(persist) localStorage.setItem('pcblg_language', currentLanguage);
+  applyTranslations();
+}
+
+/* ---------------- 基础工具 ---------------- */
+function clamp(v, lo, hi){ return v < lo ? lo : (v > hi ? hi : v); }
+function qGrayRgb(r,g,b){ return Math.floor((r*11 + g*16 + b*5) / 32); }
+/* 注意：必须返回真正的 ImageData，putImageData / canvas 要求其类型 */
+function makeImg(w,h){ return new ImageData(w, h); }
+function cloneImg(img){ return new ImageData(new Uint8ClampedArray(img.data), img.width, img.height); }
+const canvasOf = new WeakMap();
+function toCanvas(img){
+  let c = canvasOf.get(img);
+  if(!c){
+    c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    c.getContext('2d').putImageData(img, 0, 0); canvasOf.set(img, c);
+  }
+  return c;
+}
+function scaleImageData(img, w, h){
+  const c = toCanvas(img);
+  const oc = document.createElement('canvas'); oc.width = w; oc.height = h;
+  const ctx = oc.getContext('2d');
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(c, 0, 0, w, h);
+  return ctx.getImageData(0, 0, w, h);
+}
+
+/* RGB <-> HSV，遵循 Qt QColor 语义（hue 0..359，-1 表示无彩色；s/v 0..255，整数运算） */
+function rgbToHsv(r,g,b){
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  const v = max, delta = max - min;
+  let s = (v === 0) ? 0 : Math.trunc(255 * delta / v);
+  let h = -1;
+  if(delta !== 0){
+    let hh;
+    if(max === r) hh = Math.trunc(60 * (g - b) / delta);
+    else if(max === g) hh = Math.trunc(60 * (b - r) / delta) + 120;
+    else hh = Math.trunc(60 * (r - g) / delta) + 240;
+    if(hh < 0) hh += 360;
+    h = hh;
+  }
+  return { h, s, v };
+}
+function hsvToRgb(h, s, v){
+  if(s <= 0 || h < 0) return { r:v, g:v, b:v };
+  const sf = s/255, vf = v/255;
+  const c = vf * sf;
+  const hp = (h % 360) / 60;
+  const x = c * (1 - Math.abs(hp % 2 - 1));
+  let r=0,g=0,b=0;
+  if(hp < 1){ r=c; g=x; }
+  else if(hp < 2){ r=x; g=c; }
+  else if(hp < 3){ g=c; b=x; }
+  else if(hp < 4){ g=x; b=c; }
+  else if(hp < 5){ r=x; b=c; }
+  else { r=c; b=x; }
+  const m = vf - c;
+  return { r:Math.round((r+m)*255), g:Math.round((g+m)*255), b:Math.round((b+m)*255) };
+}
+function blendColor(base, top, topWeight255){
+  const bw = 255 - topWeight255;
+  return {
+    r: Math.floor((base.r*bw + top.r*topWeight255)/255),
+    g: Math.floor((base.g*bw + top.g*topWeight255)/255),
+    b: Math.floor((base.b*bw + top.b*topWeight255)/255)
+  };
+}
+function lighter(col, factor){
+  const { h, s, v } = rgbToHsv(col.r, col.g, col.b);
+  let nv;
+  if(factor < 100) nv = Math.round(v * factor / 100);
+  else nv = Math.round(v + (255 - v) * (factor - 100) / 100);
+  return hsvToRgb(h, s, clamp(nv, 0, 255));
+}
+function colorSimilarityPercent(a, b){
+  const dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
+  const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+  const maxDist = Math.sqrt(3*255*255);
+  const sim = (1 - dist/maxDist) * 100;
+  return clamp(Math.round(sim), 0, 100);
+}
+
+/* ---------------- 自定义色值（持久化） ---------------- */
+const DEFAULTS = {
+  enig:{r:240,g:217,b:140},
+  osp:{r:240,g:170,b:147},
+  hasl:{r:200,g:200,b:215},
+  bare:{r:153,g:187,b:119}
+};
+const custom = { enig:{...DEFAULTS.enig}, osp:{...DEFAULTS.osp}, hasl:{...DEFAULTS.hasl}, bare:{...DEFAULTS.bare} };
+function getSolderMaskColor(id){
+  if(id === 'blue') return {r:0,g:50,b:150};
+  if(id === 'red') return {r:150,g:0,b:0};
+  if(id === 'black') return {r:10,g:10,b:10};
+  if(id === 'green') return {r:0,g:100,b:50};
+  return {r:240,g:240,b:240}; // white
+}
+function getSilkColor(maskId){
+  if(maskId === 'white') return {r:20,g:20,b:20};
+  return {r:255,g:255,b:255};
+}
+function getMetalRenderColor(finishType){
+  if(finishType === 'hasl') return custom.hasl;
+  if(finishType === 'osp') return custom.osp;
+  return custom.enig;
+}
+function getBareColor(){ return custom.bare; }
+function isMetal(r,g,b, finishType, goldThresh, satThresh, valThresh){
+  if(satThresh === undefined) satThresh = 50;
+  if(valThresh === undefined) valThresh = 70;
+  const { h, s, v } = rgbToHsv(r,g,b);
+  if(finishType === 'hasl'){
+    const isSilver = (s < 40 || (h > 160 && h < 260));
+    return isSilver && (v > goldThresh);
+  }
+  if(finishType === 'osp'){
+    const ospHue = rgbToHsv(custom.osp.r, custom.osp.g, custom.osp.b).h;
+    return (Math.abs(h - ospHue) < 25 && s > satThresh && v > valThresh);
+  }
+  return (Math.abs(h - goldThresh) < 25 && s > satThresh && v > valThresh);
+}
+
+/* ---------------- 高斯模糊（可分离核，3..7 奇数） ---------------- */
+function clampOddKernelSize(k){
+  if(k < 3) k = 3;
+  if(k > 7) k = 7;
+  if(k % 2 === 0) --k;
+  if(k < 3) k = 3;
+  return k;
+}
+function buildGaussian1D(kernelSize, sigma){
+  kernelSize = clampOddKernelSize(kernelSize);
+  sigma = Math.max(sigma, 1e-3);
+  const radius = Math.floor(kernelSize/2);
+  const w = new Array(kernelSize);
+  const twoSigma2 = 2*sigma*sigma;
+  let sum = 0;
+  for(let i = -radius; i <= radius; i++){
+    const v = Math.exp(-(i*i)/twoSigma2);
+    w[i+radius] = v; sum += v;
+  }
+  for(let i = 0; i < kernelSize; i++) w[i] /= sum;
+  return w;
+}
+function applyGaussianBlur(src, kernelSize, sigma){
+  kernelSize = clampOddKernelSize(kernelSize);
+  if(!src || kernelSize <= 1) return src;
+  const weights = buildGaussian1D(kernelSize, sigma);
+  const radius = Math.floor(kernelSize/2);
+  const w = src.width, h = src.height, sd = src.data;
+  const tmp = new Float32Array(w*h*4);
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      let a=0,r=0,g=0,b=0;
+      for(let k = -radius; k <= radius; k++){
+        const sx = clamp(x+k, 0, w-1);
+        const i = (y*w + sx)*4, wt = weights[k+radius];
+        a += sd[i+3]*wt; r += sd[i]*wt; g += sd[i+1]*wt; b += sd[i+2]*wt;
+      }
+      const o = (y*w + x)*4;
+      tmp[o]=r; tmp[o+1]=g; tmp[o+2]=b; tmp[o+3]=a;
+    }
+  }
+  const out = makeImg(w,h), od = out.data;
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      let a=0,r=0,g=0,b=0;
+      for(let k = -radius; k <= radius; k++){
+        const sy = clamp(y+k, 0, h-1);
+        const i = (sy*w + x)*4, wt = weights[k+radius];
+        a += tmp[i+3]*wt; r += tmp[i]*wt; g += tmp[i+1]*wt; b += tmp[i+2]*wt;
+      }
+      const o = (y*w + x)*4;
+      od[o]=Math.floor(r+0.5); od[o+1]=Math.floor(g+0.5); od[o+2]=Math.floor(b+0.5); od[o+3]=Math.floor(a+0.5);
+    }
+  }
+  return out;
+}
+
+/* ---------------- 图像分层核心 ---------------- */
+class ImageProcessor {
+  constructor(){ this.cachedSource = null; this.cachedParams = null; this.cached = null; }
+  paramsKey(src, p){
+    return [src, p.finishType, p.maskColorName, p.isWhiteMask, p.goldThresh, p.silkThresh,
+      p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim].join('|');
+  }
+  processImage(src, p, mutable){
+    if(!src) return { copper:null, mask:null, silk:null, composite:null };
+    const key = this.paramsKey(src, p);
+    const makeOut = (base) => ({
+      copper: mutable ? cloneImg(base.copper) : base.copper,
+      mask: mutable ? cloneImg(base.mask) : base.mask,
+      silk: mutable ? cloneImg(base.silk) : base.silk,
+      composite: mutable ? cloneImg(base.composite) : base.composite
+    });
+    if(this.cachedSource === src && this.cachedParams === key){
+      return makeOut(this.cached);
+    }
+    const base = this.buildBaseLayers(src, p);
+    this.cachedSource = src; this.cachedParams = key; this.cached = base;
+    return makeOut(base);
+  }
+  buildBaseLayers(src, p){
+    const w = src.width, h = src.height;
+    const maskColor = getSolderMaskColor(p.maskColorName);
+    const silkColor = getSilkColor(p.maskColorName);
+    const metalColor = getMetalRenderColor(p.finishType);
+    const bareColor = getBareColor();
+    const grayMinPct = clamp(Math.min(p.bareGrayMin, p.bareGrayMax), 0, 100);
+    const grayMaxPct = clamp(Math.max(p.bareGrayMin, p.bareGrayMax), 0, 100);
+    const simThresh = clamp(p.bareSim, 0, 100);
+    const effCopper = clamp(p.copperDepth, 0, 254);
+    const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), comp = makeImg(w,h);
+    const sd = src.data, cd = copper.data, md = mask.data, sid = silk.data, pd = comp.data;
+    for(let y = 0; y < h; y++){
+      const row = y*w;
+      for(let x = 0; x < w; x++){
+        const i = (row + x)*4;
+        const r = sd[i], g = sd[i+1], b = sd[i+2];
+        const gray = qGrayRgb(r,g,b);
+        const grayPct = Math.round(gray*100/255);
+        const isMetalPx = isMetal(r,g,b, p.finishType, p.goldThresh);
+        const silkPx = !isMetalPx && (p.isWhiteMask ? (gray < (255 - p.silkThresh)) : (gray > p.silkThresh));
+        let copperUnderMask = !isMetalPx && !silkPx && (p.isWhiteMask ? (gray < effCopper) : (gray > effCopper));
+        let barePx = false;
+        if(p.enableBare && !isMetalPx){
+          if(p.bareGrayMode) barePx = (grayPct >= grayMinPct && grayPct <= grayMaxPct);
+          else barePx = colorSimilarityPercent({r,g,b}, bareColor) >= simThresh;
+        }
+        if(barePx) copperUnderMask = false;
+        const maskOpen = isMetalPx || (silkPx && !p.isWhiteMask) || barePx;
+
+        cd[i] = cd[i+1] = cd[i+2] = (isMetalPx || copperUnderMask) ? 255 : 0; cd[i+3] = 255;
+        md[i] = md[i+1] = md[i+2] = maskOpen ? 255 : 0; md[i+3] = 255;
+        sid[i] = sid[i+1] = sid[i+2] = (silkPx && !barePx) ? 255 : 0; sid[i+3] = 255;
+
+        let pr = { r:40, g:35, b:25 };
+        if(isMetalPx) pr = metalColor;
+        else if(barePx) pr = bareColor;
+        else {
+          if(!maskOpen){
+            if(p.isWhiteMask){
+              const applied = copperUnderMask ? blendColor(maskColor, {r:200,g:200,b:210}, 60) : maskColor;
+              pr = blendColor(pr, applied, 250);
+            } else {
+              const applied = copperUnderMask ? lighter(maskColor, 135) : maskColor;
+              pr = blendColor(pr, applied, copperUnderMask ? 170 : 205);
+            }
+          }
+          if(silkPx) pr = silkColor;
+        }
+        pd[i] = pr.r; pd[i+1] = pr.g; pd[i+2] = pr.b; pd[i+3] = 255;
+      }
+    }
+    return { copper, mask, silk, composite: comp };
+  }
+}
+
+/* ---------------- 边缘处理（拉普拉斯 / Canny / DP） ---------------- */
+function perpendicularDistance(a, b, p){
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const num = Math.abs(dy*p.x - dx*p.y + b.x*a.y - b.y*a.x);
+  const den = Math.sqrt(dx*dx + dy*dy);
+  return den === 0 ? 0 : num/den;
+}
+function extractConnectedComponents(mask){
+  const comps = [];
+  const w = mask.w, h = mask.h, d = mask.data;
+  if(!w || !h) return comps;
+  const visited = new Uint8Array(w*h);
+  const dx = [1,1,0,-1,-1,-1,0,1], dy = [0,1,1,1,0,-1,-1,-1];
+  for(let y = 1; y < h-1; y++){
+    for(let x = 1; x < w-1; x++){
+      const id = y*w + x;
+      if(!d[id] || visited[id]) continue;
+      const stack = [id]; visited[id] = 1;
+      const comp = [];
+      while(stack.length){
+        const p = stack.pop();
+        const px = p % w, py = Math.floor(p / w);
+        comp.push({x:px, y:py});
+        for(let k = 0; k < 8; k++){
+          const nx = px + dx[k], ny = py + dy[k];
+          if(nx <= 0 || nx >= w-1 || ny <= 0 || ny >= h-1) continue;
+          const nid = ny*w + nx;
+          if(!visited[nid] && d[nid]){
+            visited[nid] = 1; stack.push(nid);
+          }
+        }
+      }
+      if(comp.length >= 2) comps.push(comp);
+    }
+  }
+  return comps;
+}
+function douglasPeuckerSimplify(pts, eps){
+  const n = pts.length;
+  if(n < 3) return pts.slice();
+  if(eps <= 0) eps = 1e-3;
+  const keep = new Array(n).fill(false);
+  keep[0] = true; keep[n-1] = true;
+  const stack = [[0, n-1]];
+  while(stack.length){
+    const s = stack.pop(), s0 = s[0], s1 = s[1];
+    let idxMax = s0, distMax = 0;
+    for(let i = s0+1; i < s1; i++){
+      const d = perpendicularDistance(pts[s0], pts[s1], pts[i]);
+      if(d > distMax){ distMax = d; idxMax = i; }
+    }
+    if(distMax > eps){
+      keep[idxMax] = true;
+      stack.push([idxMax, s1]);
+      stack.push([s0, idxMax]);
+    }
+  }
+  const out = [];
+  for(let i = 0; i < n; i++) if(keep[i]) out.push(pts[i]);
+  return out;
+}
+
+class EdgeSharpener {
+  constructor(){ this.reset(); }
+  reset(){
+    this.workSource = null; this.workW = 0; this.workH = 0;
+    this.workPrefilter = null; this.workKernel = 0; this.workSigma = 0; this.workImage = null;
+    this.cacheKey = null; this.w = 0; this.h = 0;
+    this.gray = null; this.edgeStrength = null; this.integral = null;
+    this.sobelMag = null; this.sobelDir = null; this.cannyNms = null; this.cannyReady = false;
+  }
+  acquireWorkingImage(src, enablePreFilter, kernelSize, sigma){
+    const changed = this.workSource !== src || this.workW !== src.width || this.workH !== src.height
+      || this.workPrefilter !== enablePreFilter || this.workKernel !== kernelSize
+      || Math.abs(this.workSigma - sigma) > 1e-6;
+    if(!changed && this.workImage) return this.workImage;
+    this.workSource = src; this.workW = src.width; this.workH = src.height;
+    this.workPrefilter = enablePreFilter; this.workKernel = kernelSize; this.workSigma = sigma;
+    this.workImage = enablePreFilter ? applyGaussianBlur(src, kernelSize, sigma) : src;
+    return this.workImage;
+  }
+  buildCacheIfNeeded(src){
+    if(!src) return;
+    if(this.cacheKey === src && this.w === src.width && this.h === src.height) return;
+    this.cacheKey = src; this.w = src.width; this.h = src.height;
+    const w = this.w, h = this.h, d = src.data;
+    this.gray = new Int32Array(w*h);
+    this.edgeStrength = new Int32Array(w*h);
+    this.integral = new Float64Array((w+1)*(h+1));
+    this.sobelMag = null; this.sobelDir = null; this.cannyNms = null; this.cannyReady = false;
+    for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+      const i = (y*w + x)*4;
+      this.gray[y*w + x] = qGrayRgb(d[i], d[i+1], d[i+2]);
+    }
+    for(let y = 1; y < h-1; y++) for(let x = 1; x < w-1; x++){
+      const c = this.gray[y*w + x];
+      this.edgeStrength[y*w + x] = Math.abs(4*c - this.gray[y*w + x - 1] - this.gray[y*w + x + 1]
+        - this.gray[(y-1)*w + x] - this.gray[(y+1)*w + x]);
+    }
+    const iw = w+1;
+    for(let j = 0; j <= h; j++) for(let i = 0; i <= w; i++){
+      if(i === 0 || j === 0) this.integral[j*iw + i] = 0;
+      else this.integral[j*iw + i] = this.integral[(j-1)*iw + i] + this.integral[j*iw + i - 1]
+        - this.integral[(j-1)*iw + i - 1] + this.gray[(j-1)*w + (i-1)];
+    }
+  }
+  buildCannyCacheIfNeeded(){
+    if(this.w <= 2 || this.h <= 2) return;
+    if(this.cannyReady) return;
+    const w = this.w, h = this.h;
+    this.sobelMag = new Int32Array(w*h);
+    this.sobelDir = new Uint8Array(w*h);
+    this.cannyNms = new Int32Array(w*h);
+    const RAD2DEG = 57.29577951308232;
+    for(let y = 1; y < h-1; y++) for(let x = 1; x < w-1; x++){
+      const idx = y*w + x;
+      const a = this.gray[(y-1)*w + x-1], b = this.gray[(y-1)*w + x], c = this.gray[(y-1)*w + x+1];
+      const d = this.gray[y*w + x-1], f = this.gray[y*w + x+1];
+      const g = this.gray[(y+1)*w + x-1], hv = this.gray[(y+1)*w + x], ii = this.gray[(y+1)*w + x+1];
+      const gx = -a + c - 2*d + 2*f - g + ii;
+      const gy = a + 2*b + c - g - 2*hv - ii;
+      this.sobelMag[idx] = Math.floor(Math.sqrt(gx*gx + gy*gy));
+      let angle = Math.atan2(gy, gx) * RAD2DEG;
+      if(angle < 0) angle += 180;
+      let dir = 0;
+      if((angle >= 0 && angle < 22.5) || angle >= 157.5) dir = 0;
+      else if(angle < 67.5) dir = 45;
+      else if(angle < 112.5) dir = 90;
+      else dir = 135;
+      this.sobelDir[idx] = dir;
+    }
+    for(let y = 1; y < h-1; y++) for(let x = 1; x < w-1; x++){
+      const idx = y*w + x, mag = this.sobelMag[idx];
+      let m1 = 0, m2 = 0;
+      switch(this.sobelDir[idx]){
+        case 0: m1 = this.sobelMag[idx-1]; m2 = this.sobelMag[idx+1]; break;
+        case 45: m1 = this.sobelMag[(y-1)*w + x+1]; m2 = this.sobelMag[(y+1)*w + x-1]; break;
+        case 90: m1 = this.sobelMag[(y-1)*w + x]; m2 = this.sobelMag[(y+1)*w + x]; break;
+        default: m1 = this.sobelMag[(y-1)*w + x-1]; m2 = this.sobelMag[(y+1)*w + x+1]; break;
+      }
+      this.cannyNms[idx] = (mag >= m1 && mag >= m2) ? mag : 0;
+    }
+    this.cannyReady = true;
+  }
+  averageGrayInBox(x0,y0,x1,y1){
+    if(this.w <= 0 || this.h <= 0) return 128;
+    x0 = Math.max(0, Math.min(x0, this.w-1)); x1 = Math.max(0, Math.min(x1, this.w-1));
+    y0 = Math.max(0, Math.min(y0, this.h-1)); y1 = Math.max(0, Math.min(y1, this.h-1));
+    if(x1 < x0 || y1 < y0) return 128;
+    const w = this.w, iw = w+1;
+    const A = this.integral[y0*iw + x0], B = this.integral[y0*iw + x1+1];
+    const C = this.integral[(y1+1)*iw + x0], D = this.integral[(y1+1)*iw + x1+1];
+    const sum = D + A - B - C;
+    const cnt = (x1-x0+1)*(y1-y0+1);
+    if(cnt === 0) return 128;
+    return Math.floor(sum/cnt);
+  }
+  buildLaplacianMask(min, max){
+    const w = this.w, h = this.h, data = new Uint8Array(w*h);
+    for(let y = 1; y < h-1; y++) for(let x = 1; x < w-1; x++){
+      const ev = this.edgeStrength[y*w + x];
+      if(ev > min && ev < max) data[y*w + x] = 255;
+    }
+    return { w, h, data };
+  }
+  buildCannyMask(min, max){
+    this.buildCannyCacheIfNeeded();
+    const w = this.w, h = this.h;
+    let low = clamp(min, 0, 4096), high = clamp(max, 0, 4096);
+    if(low > high){ const t = low; low = high; high = t; }
+    const data = new Uint8Array(w*h);
+    const visited = new Uint8Array(w*h);
+    const stack = [];
+    for(let y = 1; y < h-1; y++) for(let x = 1; x < w-1; x++){
+      const idx = y*w + x;
+      if(visited[idx] || this.cannyNms[idx] < high) continue;
+      stack.length = 0;
+      stack.push(idx); visited[idx] = 1;
+      while(stack.length){
+        const p = stack.pop();
+        const px = p % w, py = Math.floor(p / w);
+        data[p] = 255;
+        for(let dy = -1; dy <= 1; dy++) for(let dx = -1; dx <= 1; dx++){
+          if(dx === 0 && dy === 0) continue;
+          const nx = px + dx, ny = py + dy;
+          if(nx <= 0 || nx >= w-1 || ny <= 0 || ny >= h-1) continue;
+          const nidx = ny*w + nx;
+          if(visited[nidx]) continue;
+          if(this.cannyNms[nidx] >= low){ visited[nidx] = 1; stack.push(nidx); }
+        }
+      }
+    }
+    return { w, h, data };
+  }
+  buildEdgeMaskForImage(src, mode, min, max, prefilter, kernel, sigma){
+    const working = this.acquireWorkingImage(src, prefilter, kernel, sigma);
+    this.buildCacheIfNeeded(working);
+    return (mode === 'canny') ? this.buildCannyMask(min, max) : this.buildLaplacianMask(min, max);
+  }
+}
+
+/* ---------------- 生产层生成 / 导出 ---------------- */
+function invertImg(img){
+  const out = makeImg(img.width, img.height);
+  const d = img.data, o = out.data;
+  for(let i = 0; i < d.length; i += 4){
+    o[i] = 255 - d[i]; o[i+1] = 255 - d[i+1]; o[i+2] = 255 - d[i+2]; o[i+3] = d[i+3];
+  }
+  return out;
+}
+function generateLayers(copper, mask, silk){
+  return { Top_Copper: invertImg(copper), Top_Mask: invertImg(mask), Top_Silk: invertImg(silk) };
+}
+
+/* ---------------- 纯灰度三分分层（Processerv_2 语义） ---------------- */
+const MASK_COLOR_IDS = ['blue', 'black', 'red', 'green', 'white'];
+const GRAY_DEFAULTS = { silkThreshold:100, maskThreshold:150, thickRadius:0, blurRadius:0, previewMaskId:'blue' };
+function grayPreviewColor(maskId){
+  return getSolderMaskColor(MASK_COLOR_IDS.includes(maskId) ? maskId : GRAY_DEFAULTS.previewMaskId);
+}
+function gaussianBlurGray(src, w, h, radius){
+  const rs = Math.ceil(radius * 2.57);
+  const weights = new Float32Array(rs * 2 + 1);
+  let sum = 0;
+  for(let i = -rs; i <= rs; i++){ const weight = Math.exp(-(i*i) / (2*radius*radius)); weights[i+rs] = weight; sum += weight; }
+  for(let i = 0; i < weights.length; i++) weights[i] /= sum;
+  const temp = new Float32Array(w*h), out = new Float32Array(w*h);
+  for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+    let value = 0;
+    for(let dx = -rs; dx <= rs; dx++) value += src[y*w + clamp(x+dx, 0, w-1)] * weights[dx+rs];
+    temp[y*w+x] = value;
+  }
+  for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+    let value = 0;
+    for(let dy = -rs; dy <= rs; dy++) value += temp[clamp(y+dy, 0, h-1)*w + x] * weights[dy+rs];
+    out[y*w+x] = value;
+  }
+  return out;
+}
+function processGrayLayers(src, p){
+  const w = src.width, h = src.height, sd = src.data;
+  let lumas = new Float32Array(w*h);
+  for(let i = 0, px = 0; i < sd.length; i += 4, px++){
+    // 与上传版本一致：近透明像素归为白色，避免其被误分到丝印层。
+    lumas[px] = sd[i+3] < 30 ? 255 : 0.299*sd[i] + 0.587*sd[i+1] + 0.114*sd[i+2];
+  }
+  if(p.blurRadius > 0) lumas = gaussianBlurGray(lumas, w, h, p.blurRadius);
+
+  const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), composite = makeImg(w,h);
+  const cd = copper.data, md = mask.data, sid = silk.data, pd = composite.data;
+  const t1 = clamp(p.silkThreshold, 0, 255), t2 = clamp(p.maskThreshold, 0, 255);
+  // 原页面用 parseInt 读取该滑块；这里保留其整数像素半径语义。
+  const radius = clamp(Math.trunc(p.thickRadius), 0, 12);
+  const mid = grayPreviewColor(p.previewMaskId);
+  for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+    const px = y*w + x, i = px*4;
+    let luma = lumas[px];
+    if(radius > 0 && luma >= t1){
+      let minLuma = luma;
+      for(let dy = -radius; dy <= radius; dy++) for(let dx = -radius; dx <= radius; dx++){
+        if(dx*dx + dy*dy > radius*radius) continue;
+        const nx = x + dx, ny = y + dy;
+        if(nx >= 0 && nx < w && ny >= 0 && ny < h) minLuma = Math.min(minLuma, lumas[ny*w+nx]);
+      }
+      luma = minLuma;
+    }
+    if(luma < t1){
+      sid[i]=sid[i+1]=sid[i+2]=255; sid[i+3]=255;
+      pd[i]=pd[i+1]=pd[i+2]=0; pd[i+3]=255;
+    } else if(luma < t2){
+      md[i]=md[i+1]=md[i+2]=255; md[i+3]=255;
+      pd[i]=mid.r; pd[i+1]=mid.g; pd[i+2]=mid.b; pd[i+3]=255;
+    } else {
+      cd[i]=cd[i+1]=cd[i+2]=255; cd[i+3]=255;
+      pd[i]=pd[i+1]=pd[i+2]=255; pd[i+3]=255;
+    }
+  }
+  return { copper, mask, silk, composite };
+}
+
+/* ---------------- 渐进渲染（像素预算自适应） ---------------- */
+function sizeForPixelBudget(sw, sh, targetPixels){
+  if(sw <= 0 || sh <= 0 || targetPixels <= 0) return {w:0, h:0};
+  const srcPixels = sw*sh;
+  if(srcPixels <= targetPixels) return {w:sw, h:sh};
+  const scale = Math.sqrt(targetPixels/srcPixels);
+  let w = Math.max(1, Math.floor(sw*scale));
+  let h = Math.max(1, Math.floor(sh*scale));
+  if(w*h > targetPixels){
+    if(w >= h) w = Math.max(1, Math.floor(targetPixels/h));
+    else h = Math.max(1, Math.floor(targetPixels/w));
+  }
+  return {w, h};
+}
+function interactivePreviewSize(src){ return sizeForPixelBudget(src.w, src.h, 200000); }
+function refinementSizes(src){
+  const sizes = [];
+  const r = sizeForPixelBudget(src.w, src.h, 1000000);
+  if(!(r.w === src.w && r.h === src.h)) sizes.push(r);
+  const last = sizes[sizes.length-1];
+  if(!last || last.w !== src.w || last.h !== src.h) sizes.push({w:src.w, h:src.h});
+  return sizes;
+}
+
+/* ---------------- 应用状态 ---------------- */
+const state = {
+  origin: null,          // 原图 ImageData
+  originCanvas: null,    // 原图 canvas（导出/工程用）
+  processingMode: 'gray', // color: 现有彩色识别；gray: 纯灰度三分
+  viewMode: 'overlay',   // 仅控制预览布局，不影响分层、导出或工程数据
+  gray: { ...GRAY_DEFAULTS },
+  generation: 0,
+  fullResGeneration: -1,
+  layers: null,          // 权威生产层（可导出）
+  previewLayers: null,   // 当前预览层
+  composite: null,       // 当前预览合成图 ImageData
+  prefilter: { enabled:true, kernel:5, sigma:1.1 },
+  dp: { enabled:false, tolerance:1.0, lineWidth:2 },
+  light: { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null }
+};
+
+const prc = {
+  sourceSize: {w:0, h:0},
+  generation: 0,
+  refinementGeneration: 0,
+  refinementSizes: [],
+  nextRefinementIndex: 0,
+  interactiveTimer: null,
+  interactivePending: false
+};
+function prcInvalidate(){
+  if(prc.interactiveTimer){ clearTimeout(prc.interactiveTimer); prc.interactiveTimer = null; }
+  prc.interactivePending = false;
+  prc.generation++;
+  prc.refinementGeneration = 0;
+  prc.refinementSizes = [];
+  prc.nextRefinementIndex = 0;
+  return prc.generation;
+}
+function prcSliderPressed(src){ prcInvalidate(); prc.sourceSize = src; }
+function prcControllerRender(tw, th, generation, authoritative){
+  renderAtSize(tw, th, generation, authoritative);
+  prcRenderFinished(generation);
+}
+function prcRenderFinished(generation){
+  if(generation !== prc.generation || generation !== prc.refinementGeneration) return;
+  prcQueueNextRefinement(generation, 25);
+}
+function prcStartInteractiveTimer(){
+  prc.interactiveTimer = setTimeout(() => {
+    prc.interactiveTimer = null;
+    if(!prc.interactivePending || !prc.sourceSize || prc.sourceSize.w <= 0) return;
+    prc.interactivePending = false;
+    prcStartInteractiveTimer();
+    const sz = interactivePreviewSize(prc.sourceSize);
+    prcControllerRender(sz.w, sz.h, prc.generation, false);
+  }, 30);
+}
+function prcSliderValueChanged(src){
+  prc.sourceSize = src;
+  prc.generation++;
+  prc.refinementGeneration = 0;
+  prc.refinementSizes = [];
+  prc.nextRefinementIndex = 0;
+  if(!src || src.w <= 0){
+    prc.interactivePending = false;
+    if(prc.interactiveTimer){ clearTimeout(prc.interactiveTimer); prc.interactiveTimer = null; }
+    return;
+  }
+  if(prc.interactiveTimer){ prc.interactivePending = true; return; }
+  prc.interactivePending = false;
+  prcStartInteractiveTimer();
+  const sz = interactivePreviewSize(src);
+  prcControllerRender(sz.w, sz.h, prc.generation, false);
+}
+function prcSliderReleased(src){
+  const g = prcInvalidate();
+  prc.sourceSize = src;
+  prc.refinementSizes = refinementSizes(src);
+  prc.nextRefinementIndex = 0;
+  prc.refinementGeneration = g;
+  prcQueueNextRefinement(g, 0);
+}
+function prcQueueNextRefinement(g, delay){
+  setTimeout(() => prcRequestNextRefinement(g), delay);
+}
+function prcRequestNextRefinement(g){
+  if(g !== prc.generation || g !== prc.refinementGeneration) return;
+  if(prc.nextRefinementIndex >= prc.refinementSizes.length) return;
+  const t = prc.refinementSizes[prc.nextRefinementIndex++];
+  const authoritative = (t.w === prc.sourceSize.w && t.h === prc.sourceSize.h);
+  prcControllerRender(t.w, t.h, g, authoritative);
+}
+
+/* ---------------- 渲染管线（等价 renderAtSize） ---------------- */
+const imageProcessor = new ImageProcessor();
+const edgeSharpener = new EdgeSharpener();
+
+function renderOriginForSize(tw, th){
+  if(tw === state.origin.width && th === state.origin.height) return state.origin;
+  if(!state._roCache || state._roCache.src !== state.origin || state._roCache.w !== tw || state._roCache.h !== th){
+    state._roCache = { src: state.origin, w: tw, h: th, img: scaleImageData(state.origin, tw, th) };
+  }
+  return state._roCache.img;
+}
+
+function pointToSegmentDistance(x, y, start, end){
+  const dx = end.x-start.x, dy = end.y-start.y, len2 = dx*dx + dy*dy;
+  if(len2 === 0) return Math.hypot(x-start.x, y-start.y);
+  const t = clamp(((x-start.x)*dx + (y-start.y)*dy) / len2, 0, 1);
+  return Math.hypot(x-(start.x+t*dx), y-(start.y+t*dy));
+}
+function scaleLightStrips(strips, sw, sh, tw, th){
+  const sx = tw/sw, sy = th/sh, radiusScale = Math.min(sx, sy);
+  return strips.map(strip => ({
+    start:{ x:Math.round(strip.start.x*sx), y:Math.round(strip.start.y*sy) },
+    end:{ x:Math.round(strip.end.x*sx), y:Math.round(strip.end.y*sy) },
+    color:strip.color,
+    radius:Math.max(1, Math.round(state.light.radius*radiusScale))
+  }));
+}
+function drawLightCapsules(composite, strips){
+  const canvas = document.createElement('canvas');
+  canvas.width = composite.width; canvas.height = composite.height;
+  const ctx = canvas.getContext('2d');
+  ctx.putImageData(composite, 0, 0);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for(const strip of strips){
+    const dx = strip.end.x-strip.start.x, dy = strip.end.y-strip.start.y;
+    const length = Math.hypot(dx, dy), radius = strip.radius;
+    ctx.save();
+    ctx.translate((strip.start.x+strip.end.x)/2, (strip.start.y+strip.end.y)/2);
+    ctx.rotate(Math.atan2(dy, dx));
+    ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = Math.max(1, composite.width/300); ctx.setLineDash([7, 5]);
+    ctx.beginPath();
+    const left = -length/2-radius, top = -radius, width = length+radius*2, height = radius*2;
+    if(typeof ctx.roundRect === 'function') ctx.roundRect(left, top, width, height, radius);
+    else { // 兼容不支持 roundRect 的浏览器，仍绘制同样的灯光胶囊轮廓。
+      ctx.moveTo(left+radius, top); ctx.lineTo(left+width-radius, top); ctx.arcTo(left+width, top, left+width, top+radius, radius);
+      ctx.lineTo(left+width, top+height-radius); ctx.arcTo(left+width, top+height, left+width-radius, top+height, radius);
+      ctx.lineTo(left+radius, top+height); ctx.arcTo(left, top+height, left, top+height-radius, radius);
+      ctx.lineTo(left, top+radius); ctx.arcTo(left, top, left+radius, top, radius);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = 'rgb(' + strip.color.r + ',' + strip.color.g + ',' + strip.color.b + ')';
+    ctx.lineWidth = clamp(composite.width/700, 1, 3);
+    ctx.beginPath(); ctx.moveTo(-length/2, 0); ctx.lineTo(length/2, 0); ctx.stroke();
+    ctx.restore();
+  }
+  composite.data.set(ctx.getImageData(0, 0, composite.width, composite.height).data);
+}
+function renderLightsOnComposite(composite, copper, strips, intensity){
+  const cd = composite.data, copperData = copper.data, w = composite.width, h = composite.height;
+  for(const strip of strips){
+    const radius = strip.radius;
+    const minX = clamp(Math.floor(Math.min(strip.start.x, strip.end.x)-radius), 0, w-1);
+    const maxX = clamp(Math.ceil(Math.max(strip.start.x, strip.end.x)+radius), 0, w-1);
+    const minY = clamp(Math.floor(Math.min(strip.start.y, strip.end.y)-radius), 0, h-1);
+    const maxY = clamp(Math.ceil(Math.max(strip.start.y, strip.end.y)+radius), 0, h-1);
+    for(let y = minY; y <= maxY; y++) for(let x = minX; x <= maxX; x++){
+      const pixel = (y*w+x)*4;
+      if(copperData[pixel] > 128) continue; // 与桌面版一致：敷铜区域阻挡灯光本体。
+      const distance = pointToSegmentDistance(x, y, strip.start, strip.end);
+      if(distance >= radius) continue;
+      const alpha = clamp(Math.round(intensity*Math.pow(1-distance/radius, 1.8)), 0, 255) / 255;
+      cd[pixel] = Math.round(strip.color.r*alpha + cd[pixel]*(1-alpha));
+      cd[pixel+1] = Math.round(strip.color.g*alpha + cd[pixel+1]*(1-alpha));
+      cd[pixel+2] = Math.round(strip.color.b*alpha + cd[pixel+2]*(1-alpha));
+    }
+  }
+  drawLightCapsules(composite, strips);
+}
+function autoSuggestLights(){
+  if(!state.origin || state.processingMode !== 'color') return;
+  const count = Math.trunc(state.light.autoSense);
+  state.light.pendingStart = null;
+  if(count <= 0){ state.light.strips = []; updateProcess(); return; }
+  const buckets = new Map(), src = state.origin, d = src.data;
+  for(let y = 0; y < src.height; y += 15) for(let x = 0; x < src.width; x += 15){
+    const i = (y*src.width+x)*4, value = Math.max(d[i], d[i+1], d[i+2]);
+    if(d[i+3] < 30 || value <= 80) continue;
+    const hsv = rgbToHsv(d[i], d[i+1], d[i+2]), key = hsv.s < 30 ? -1 : Math.floor(hsv.h/30);
+    const bucket = buckets.get(key) || { points:[], weight:0 };
+    bucket.points.push({x,y,color:{r:d[i],g:d[i+1],b:d[i+2],value}}); bucket.weight += value;
+    buckets.set(key, bucket);
+  }
+  const strips = [];
+  for(const bucket of [...buckets.values()].sort((a,b) => b.weight-a.weight)){
+    if(strips.length >= count) break;
+    let best = null;
+    for(const point of bucket.points){
+      if(best && point.color.value <= best.color.value) continue;
+      const start = {x:point.x, y:clamp(point.y-25, 0, src.height-1)};
+      const end = {x:point.x, y:clamp(point.y+25, 0, src.height-1)};
+      if(strips.some(strip => pointToSegmentDistance(start.x, start.y, strip.start, strip.end) < state.light.radius + strip.radius || pointToSegmentDistance(end.x, end.y, strip.start, strip.end) < state.light.radius + strip.radius)) continue;
+      best = { start, end, color:point.color };
+    }
+    if(best) strips.push({ start:best.start, end:best.end, radius:state.light.radius, color:best.color });
+  }
+  state.light.strips = strips;
+  updateProcess();
+}
+
+function renderAtSize(tw, th, generation, authoritative){
+  if(!state.origin || tw <= 0 || th <= 0) return;
+  const renderOrigin = renderOriginForSize(tw, th);
+
+  if(state.processingMode === 'gray'){
+    const gray = processGrayLayers(renderOrigin, state.gray);
+    const layers = { Top_Copper:gray.copper, Top_Mask:gray.mask, Top_Silk:gray.silk };
+    state.composite = gray.composite;
+    state.previewLayers = layers;
+    refreshPreviews();
+    if(authoritative && renderOrigin.width === state.origin.width && renderOrigin.height === state.origin.height){
+      state.layers = layers;
+      state.fullResGeneration = generation;
+    }
+    return;
+  }
+
+  const maskColorName = el('#selectMask').value;
+  const finishType = el('#selectFinish').value;
+  const isWhiteMask = maskColorName === 'white';
+  const enableBare = masterState.bare;
+  const bareGrayMode = el('#radioBareGray').checked;
+  const useMetalEdge = el('#chkUseMetal').checked;
+  const metalEdgeColor = getMetalRenderColor(finishType);
+  const edgeMode = el('#radioEdgeStroke').checked ? 'canny' : 'enhance';
+
+  const goldThresh = sliderVal('#sliderGold');
+  const silkThresh = sliderVal('#sliderSilk');
+  const copperDepth = sliderVal('#sliderCopper');
+
+  let edgeMask = null;
+  if(masterState.edge){
+    edgeMask = edgeSharpener.buildEdgeMaskForImage(
+      renderOrigin, edgeMode,
+      sliderVal('#sliderEdgeThresh'), sliderVal('#sliderEdgeThreshMax'),
+      state.prefilter.enabled, state.prefilter.kernel, state.prefilter.sigma);
+  }
+
+  const p = {
+    finishType, maskColorName, isWhiteMask,
+    goldThresh, silkThresh, copperDepth,
+    enableBare, bareGrayMode,
+    bareGrayMin: sliderVal('#sliderBareA'), bareGrayMax: sliderVal('#sliderBareB'), bareSim: sliderVal('#sliderBareSim')
+  };
+  const mutableLayers = !!edgeMask;
+  let { copper, mask, silk, composite } = imageProcessor.processImage(renderOrigin, p, mutableLayers);
+
+  if(edgeMask){
+    const w = Math.min(edgeMask.w, copper.width), h = Math.min(edgeMask.h, copper.height);
+    const silkColor = getSilkColor(maskColorName);
+    const cd = copper.data, md = mask.data, sid = silk.data, pd = composite.data, em = edgeMask.data;
+    if(useMetalEdge){
+      const mr = metalEdgeColor.r, mg = metalEdgeColor.g, mb = metalEdgeColor.b;
+      const maskColor = getSolderMaskColor(maskColorName);
+      const pmLight = lighter(maskColor, 135);
+      const expose = el('#chkExposeMetal').checked;
+      for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+        const ei = y*w + x;
+        if(em[ei] > 0){
+          const i = ei*4;
+          cd[i]=cd[i+1]=cd[i+2]=255;
+          if(expose){
+            sid[i]=sid[i+1]=sid[i+2]=0;
+            md[i]=md[i+1]=md[i+2]=255;
+            pd[i]=mr; pd[i+1]=mg; pd[i+2]=mb;
+          } else {
+            const blended = blendColor({r:pd[i], g:pd[i+1], b:pd[i+2]}, pmLight, 170);
+            pd[i]=blended.r; pd[i+1]=blended.g; pd[i+2]=blended.b;
+          }
+        }
+      }
+    } else {
+      const sr = silkColor.r, sg = silkColor.g, sb = silkColor.b;
+      for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+        const ei = y*w + x;
+        if(em[ei] > 0){
+          const i = ei*4;
+          sid[i]=sid[i+1]=sid[i+2]=255;
+          pd[i]=sr; pd[i+1]=sg; pd[i+2]=sb;
+        }
+      }
+    }
+  }
+
+  const layers = generateLayers(copper, mask, silk);
+
+  if(masterState.light && state.light.showOverlay && state.light.strips.length){
+    // 灯光只叠加到合成预览；生产层保持干净，导出结果不受布灯影响。
+    composite = cloneImg(composite);
+    const strips = scaleLightStrips(state.light.strips, state.origin.width, state.origin.height, composite.width, composite.height);
+    renderLightsOnComposite(composite, copper, strips, state.light.intensity);
+  }
+
+  state.composite = composite;
+  state.previewLayers = layers;
+
+  refreshPreviews();
+
+  if(authoritative && renderOrigin.width === state.origin.width && renderOrigin.height === state.origin.height){
+    state.layers = layers;
+    state.fullResGeneration = generation;
+  }
+}
+
+/* 非滑块修改：全分辨率重渲 */
+function updateProcess(){
+  if(!state.origin) return;
+  const g = prcInvalidate();
+  renderAtSize(state.origin.width, state.origin.height, g, true);
+}
+
+/* ---------------- UI 元素获取 ---------------- */
+function el(sel){ return document.querySelector(sel); }
+function sliderVal(sel){
+  const e = el(sel);
+  if(!e) return 0;
+  const input = e.querySelector('input');
+  return input ? (parseFloat(input.value) || 0) : 0;
+}
+
+/* 折叠组：master 状态（bare/edge 展开=启用） */
+const masterState = { light:false, bare:false, edge:false };
+
+function setProcessingMode(mode, shouldRender){
+  state.processingMode = mode === 'gray' ? 'gray' : 'color';
+  const isGray = state.processingMode === 'gray';
+  if(isGray) state.light.pendingStart = null;
+  el('#colorControls').hidden = isGray;
+  el('#grayControls').hidden = !isGray;
+  document.querySelectorAll('[data-processing-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
+  if(shouldRender && state.origin) updateProcess();
+}
+
+function setViewMode(mode){
+  state.viewMode = ['overlay', 'split', 'quad'].includes(mode) ? mode : 'overlay';
+  const isQuad = state.viewMode === 'quad';
+  el('#compositeWrap').hidden = isQuad;
+  el('#quadGrid').hidden = !isQuad;
+  el('#colLayers').style.display = state.viewMode === 'split' ? 'flex' : 'none';
+  document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
+  updateQuadPlaceholders();
+  // 布局切换后容器尺寸才会稳定，延后一帧再重设画布像素尺寸。
+  requestAnimationFrame(resizeCanvases);
+}
+
+function setGroupOpen(groupId, open, withMaster){
+  const g = el('#'+groupId);
+  if(open) g.classList.add('open'); else g.classList.remove('open');
+  if(withMaster){
+    const k = g.getAttribute('data-master');
+    if(k) masterState[k] = open;
+  }
+}
+
+/* ---------------- 预览画布 ---------------- */
+const previewStates = {
+  composite: { canvas:'#canvasComposite', img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
+  copper:    { canvas:'#canvasCopper',   img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
+  mask:      { canvas:'#canvasMask',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
+  silk:      { canvas:'#canvasSilk',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} }
+};
+const quadPreviewCanvases = {
+  composite:'#canvasQuadComposite', silk:'#canvasQuadSilk', mask:'#canvasQuadMask', copper:'#canvasQuadCopper'
+};
+// 四分视图共享相机，保证任意窗口操作后四张图保持同一观察位置。
+const quadCamera = { zoom:1, pan:{x:0,y:0} };
+// 分隔视图也复用同一相机，使主预览与三个生产层始终同步。
+const splitCamera = { zoom:1, pan:{x:0,y:0} };
+
+function calcPreviewRect(labelW, labelH, imgW, imgH, zoom, pan){
+  if(labelW <= 0 || labelH <= 0 || imgW <= 0 || imgH <= 0) return {x:0,y:0,w:0,h:0};
+  const fit = Math.min(labelW/imgW, labelH/imgH);
+  const dw = imgW*fit*zoom, dh = imgH*fit*zoom;
+  return { x:(labelW-dw)*0.5 + pan.x, y:(labelH-dh)*0.5 + pan.y, w:dw, h:dh };
+}
+function clampPanForImage(view, img, cw, ch){
+  if(!img) { view.pan = {x:0,y:0}; return; }
+  const r = calcPreviewRect(cw, ch, img.width, img.height, view.zoom, {x:0,y:0});
+  const maxX = Math.max(0, (r.w - cw)*0.5), maxY = Math.max(0, (r.h - ch)*0.5);
+  view.pan.x = clamp(view.pan.x, -maxX, maxX);
+  view.pan.y = clamp(view.pan.y, -maxY, maxY);
+}
+function setPreviewImage(st, img){
+  st.img = img;
+  st.srcCanvas = null; // 懒创建：仅在实际绘制时生成画布，折叠/未展开的层预览不占内存
+}
+function renderPreviewCanvas(st, canvasEl, view, isComposite){
+  view = view || st;
+  const ctx = canvasEl.getContext('2d');
+  const cw = canvasEl.width, ch = canvasEl.height;
+  if(state.processingMode === 'gray' && !isComposite){
+    // 透明生产层需要可见的底色；合成预览仍保持原有深色背景。
+    const size = 12;
+    for(let y = 0; y < ch; y += size) for(let x = 0; x < cw; x += size){
+      ctx.fillStyle = ((x/size + y/size) % 2 === 0) ? '#262626' : '#171717';
+      ctx.fillRect(x, y, size, size);
+    }
+  } else {
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, cw, ch);
+  }
+  if(!st.img) return;
+  if(!st.srcCanvas) st.srcCanvas = toCanvas(st.img);
+  clampPanForImage(view, st.img, cw, ch);
+  const rect = calcPreviewRect(cw, ch, st.img.width, st.img.height, view.zoom, view.pan);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(st.srcCanvas, rect.x, rect.y, rect.w, rect.h);
+}
+function refreshPreviews(){
+  if(state.composite){ setPreviewImage(previewStates.composite, state.composite); el('#compositePlaceholder').style.display = 'none'; }
+  const keys = { copper:'Top_Copper', mask:'Top_Mask', silk:'Top_Silk' };
+  if(state.previewLayers){
+    for(const k in keys) setPreviewImage(previewStates[k], state.previewLayers[keys[k]]);
+  }
+  updateQuadPlaceholders();
+  renderAllPreviews();
+}
+function updateQuadPlaceholders(){
+  document.querySelectorAll('[data-quad-placeholder]').forEach(node => {
+    node.style.display = previewStates[node.dataset.quadPlaceholder].img ? 'none' : 'flex';
+  });
+}
+function renderAllPreviews(){
+  for(const k in previewStates){
+    const st = previewStates[k];
+    const c = el(st.canvas);
+    const view = state.viewMode === 'split' ? splitCamera : st;
+    if(c.width > 0 && c.height > 0) renderPreviewCanvas(st, c, view, k === 'composite');
+  }
+  if(state.viewMode === 'quad'){
+    for(const k in quadPreviewCanvases){
+      const c = el(quadPreviewCanvases[k]);
+      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[k], c, quadCamera, k === 'composite');
+    }
+  }
+}
+function resizeCanvases(){
+  for(const k in previewStates){
+    const st = previewStates[k];
+    const c = el(st.canvas);
+    const parent = c.parentElement;
+    if(parent && parent.clientWidth > 0 && parent.clientHeight > 0){
+      c.width = parent.clientWidth; c.height = parent.clientHeight;
+    }
+  }
+  for(const k in quadPreviewCanvases){
+    const c = el(quadPreviewCanvases[k]);
+    const parent = c.parentElement;
+    if(parent && parent.clientWidth > 0 && parent.clientHeight > 0){
+      c.width = parent.clientWidth; c.height = parent.clientHeight;
+    }
+  }
+  renderAllPreviews();
+}
+
+/* ---------------- 预览交互 ---------------- */
+function attachPreviewInteraction(key){
+  const st = previewStates[key];
+  const c = el(st.canvas);
+  let panning = false, lastX = 0, lastY = 0;
+  c.addEventListener('wheel', function(e){
+    e.preventDefault();
+    if(!st.img) return;
+    const view = state.viewMode === 'split' ? splitCamera : st;
+    const factor = Math.pow(1.12, e.deltaY/120);
+    const oldZoom = view.zoom;
+    const newZoom = clamp(oldZoom*factor, 0.2, 8.0);
+    if(Math.abs(newZoom-oldZoom) < 1e-6) return;
+    const r = c.getBoundingClientRect();
+    const cx = e.clientX - r.left, cy = e.clientY - r.top;
+    const oldRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, oldZoom, view.pan);
+    view.zoom = newZoom;
+    if(cx >= oldRect.x && cx <= oldRect.x+oldRect.w && cy >= oldRect.y && cy <= oldRect.y+oldRect.h){
+      const u = (cx-oldRect.x)/oldRect.w, v = (cy-oldRect.y)/oldRect.h;
+      const nr = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, newZoom, view.pan);
+      const mx = nr.x + u*nr.w, my = nr.y + v*nr.h;
+      view.pan.x += cx - mx; view.pan.y += cy - my;
+    }
+    clampPanForImage(view, st.img, c.width, c.height);
+    if(state.viewMode === 'split') renderAllPreviews();
+    else renderPreviewCanvas(st, c, st, key === 'composite');
+  }, { passive:false });
+
+  c.addEventListener('pointerdown', function(e){
+    if(e.button === 1 || e.button === 2){
+      panning = true; lastX = e.clientX; lastY = e.clientY;
+      c.style.cursor = 'grabbing';
+      e.preventDefault();
+    }
+  });
+  window.addEventListener('pointermove', function(e){
+    if(!panning) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    const view = state.viewMode === 'split' ? splitCamera : st;
+    view.pan.x += dx; view.pan.y += dy;
+    clampPanForImage(view, st.img, c.width, c.height);
+    if(state.viewMode === 'split') renderAllPreviews();
+    else renderPreviewCanvas(st, c, st, key === 'composite');
+  });
+  window.addEventListener('pointerup', function(e){
+    if(panning){ panning = false; c.style.cursor = 'default'; }
+  });
+  c.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+}
+
+function attachQuadPreviewInteraction(key){
+  const st = previewStates[key], c = el(quadPreviewCanvases[key]);
+  let panning = false, lastX = 0, lastY = 0;
+  c.addEventListener('wheel', function(e){
+    e.preventDefault();
+    if(!st.img) return;
+    const oldZoom = quadCamera.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, e.deltaY/120), 0.2, 8.0);
+    if(Math.abs(newZoom-oldZoom) < 1e-6) return;
+    const r = c.getBoundingClientRect(), cx = e.clientX - r.left, cy = e.clientY - r.top;
+    const oldRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, oldZoom, quadCamera.pan);
+    quadCamera.zoom = newZoom;
+    if(cx >= oldRect.x && cx <= oldRect.x+oldRect.w && cy >= oldRect.y && cy <= oldRect.y+oldRect.h){
+      const u = (cx-oldRect.x)/oldRect.w, v = (cy-oldRect.y)/oldRect.h;
+      const nextRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, newZoom, quadCamera.pan);
+      quadCamera.pan.x += cx - (nextRect.x + u*nextRect.w);
+      quadCamera.pan.y += cy - (nextRect.y + v*nextRect.h);
+    }
+    clampPanForImage(quadCamera, st.img, c.width, c.height);
+    renderAllPreviews();
+  }, { passive:false });
+  c.addEventListener('pointerdown', function(e){
+    if(e.button === 1 || e.button === 2){
+      panning = true; lastX = e.clientX; lastY = e.clientY; c.style.cursor = 'grabbing'; e.preventDefault();
+    }
+  });
+  window.addEventListener('pointermove', function(e){
+    if(!panning) return;
+    quadCamera.pan.x += e.clientX - lastX; quadCamera.pan.y += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    clampPanForImage(quadCamera, st.img, c.width, c.height);
+    renderAllPreviews();
+  });
+  window.addEventListener('pointerup', function(){ if(panning){ panning = false; c.style.cursor = 'default'; } });
+  c.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+}
+
+function attachLightPlacement(canvasSelector, isQuadCanvas){
+  const canvas = el(canvasSelector);
+  canvas.addEventListener('pointerdown', function(e){
+    if(e.button !== 0 || state.processingMode !== 'color' || !masterState.light || !state.origin) return;
+    const st = previewStates.composite;
+    if(!st.img) return;
+    const view = isQuadCanvas ? quadCamera : (state.viewMode === 'split' ? splitCamera : st);
+    const bounds = canvas.getBoundingClientRect();
+    const x = (e.clientX-bounds.left)*canvas.width/bounds.width, y = (e.clientY-bounds.top)*canvas.height/bounds.height;
+    const rect = calcPreviewRect(canvas.width, canvas.height, st.img.width, st.img.height, view.zoom, view.pan);
+    if(x < rect.x || x > rect.x+rect.w || y < rect.y || y > rect.y+rect.h) return;
+    const point = {
+      x:clamp(Math.floor((x-rect.x)/rect.w*state.origin.width), 0, state.origin.width-1),
+      y:clamp(Math.floor((y-rect.y)/rect.h*state.origin.height), 0, state.origin.height-1)
+    };
+    if(!state.light.pendingStart){
+      state.light.pendingStart = point;
+      toast(t('lightPlacementStart'));
+    } else {
+      const i = (point.y*state.origin.width+point.x)*4;
+      const color = {r:state.origin.data[i], g:state.origin.data[i+1], b:state.origin.data[i+2]};
+      if(Math.max(color.r, color.g, color.b) < 50) color.r = color.g = color.b = 255;
+      state.light.strips.push({ start:state.light.pendingStart, end:point, radius:state.light.radius, color });
+      state.light.pendingStart = null;
+      updateProcess();
+    }
+    e.preventDefault();
+  });
+}
+
+/* ---------------- 滑块创建 ---------------- */
+let draggingSlider = false;
+function createSlider(containerId, titleKey, min, max, def, step, onValueChange){
+  const host = document.getElementById(containerId);
+  const lab = document.createElement('label');
+  lab.className = 'ctl';
+  const labText = document.createElement('span');
+  labText.className = 'lab';
+  labText.dataset.i18nSlider = titleKey;
+  const input = document.createElement('input');
+  input.type = 'range'; input.min = min; input.max = max; input.step = step || 1; input.value = def;
+  refreshSliderLabel(labText, input);
+  lab.appendChild(labText); lab.appendChild(input);
+  host.appendChild(lab);
+
+  function onInput(){
+    refreshSliderLabel(labText, input);
+    if(onValueChange) onValueChange(parseFloat(input.value));
+    if(!state.origin){ updateProcess(); }
+    else if(draggingSlider){ prcSliderValueChanged({w:state.origin.width, h:state.origin.height}); }
+    else { updateProcess(); }
+  }
+  input.addEventListener('input', onInput);
+  input.addEventListener('pointerdown', function(){
+    draggingSlider = true;
+    if(state.origin) prcSliderPressed({w:state.origin.width, h:state.origin.height});
+  });
+  input.addEventListener('change', function(){
+    if(draggingSlider){
+      draggingSlider = false;
+      if(state.origin) prcSliderReleased({w:state.origin.width, h:state.origin.height});
+    }
+  });
+  input.addEventListener('pointerup', function(){
+    /* change 事件负责结束；键盘/触控不会触发 change 前的手动标记 */
+  });
+  return input;
+}
+
+/* ---------------- 弹窗 / 提示 ---------------- */
+function showModal(html, modalClass){
+  const body = el('#modalBody');
+  body.className = 'modal' + (modalClass ? ' ' + modalClass : '');
+  body.innerHTML = html;
+  el('#modalBack').classList.add('show');
+}
+function closeModal(){ el('#modalBack').classList.remove('show'); }
+let toastTimer = null;
+function toast(msg){
+  const t = el('#toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2600);
+}
+
+/* ---------------- 检查更新 ---------------- */
+function parseVersionTag(tag){
+  const match = String(tag || '').trim().match(/^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:[-+].*)?$/i);
+  return match ? [Number(match[1]), Number(match[2] || 0), Number(match[3] || 0)] : null;
+}
+function compareVersionTags(current, latest){
+  // 仅比较数字语义版本；latest 接口不会返回 GitHub 的草稿或预发布版本。
+  const currentParts = parseVersionTag(current), latestParts = parseVersionTag(latest);
+  if(!currentParts || !latestParts) return null;
+  for(let i=0; i<currentParts.length; i++){
+    if(latestParts[i] !== currentParts[i]) return latestParts[i] > currentParts[i] ? 1 : -1;
+  }
+  return 0;
+}
+function escapeHtml(text){
+  // 远程版本标签会写入弹窗 HTML，先转义以避免把外部数据当作页面结构。
+  return String(text).replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' })[char]);
+}
+function showUpdateAvailableDialog(release){
+  const latestTag = escapeHtml(release.tag_name || '');
+  const releaseUrl = release.html_url || GITHUB_RELEASES_URL;
+  showModal(
+    '<h3>' + t('updateAvailableTitle') + '</h3>' +
+    '<div class="mrow"><label>' + t('currentVersion') + '</label><span>' + APP_VERSION + '</span></div>' +
+    '<div class="mrow"><label>' + t('latestVersion') + '</label><span>' + latestTag + '</span></div>' +
+    '<div class="btns" style="justify-content:center"><button type="button" class="btn accent" id="btnOpenRelease">' + t('openRelease') + '</button></div>'
+  );
+  el('#btnOpenRelease').onclick = () => window.open(releaseUrl, '_blank', 'noopener');
+}
+async function checkForUpdates(){
+  const button = el('#mCheckUpdates');
+  if(button.disabled) return;
+  button.disabled = true;
+  button.textContent = t('checkingUpdates');
+  try{
+    // 应用可通过 file:// 直接打开，因此只请求公开、无需凭据的 GitHub API。
+    const response = await fetch(GITHUB_LATEST_RELEASE_API, { cache:'no-store', headers:{ Accept:'application/vnd.github+json' } });
+    if(response.status === 404){ toast(t('alreadyLatest')); return; }
+    if(!response.ok) throw new Error('GitHub API: ' + response.status);
+    const release = await response.json();
+    const comparison = compareVersionTags(APP_VERSION, release.tag_name);
+    if(comparison === null) throw new Error('Unsupported release tag: ' + release.tag_name);
+    if(comparison > 0) showUpdateAvailableDialog(release);
+    else toast(t('alreadyLatest'));
+  }catch(error){
+    console.warn('Update check failed:', error);
+    toast(t('updateCheckFailed'));
+  }finally{
+    button.disabled = false;
+    button.textContent = t('checkUpdates');
+  }
+}
+
+/* ---------------- 导入图片 ---------------- */
+const MAX_IMPORT_PIXELS = 16000000;
+function scaleDownToPixelLimit(w, h, maxPixels){
+  if(w <= 0 || h <= 0 || maxPixels <= 0) return {w:0,h:0};
+  const srcPixels = w*h;
+  if(srcPixels < maxPixels) return {w, h};
+  const scale = Math.sqrt((maxPixels-1)/srcPixels);
+  let nw = Math.max(1, Math.floor(w*scale));
+  let nh = Math.max(1, Math.floor(h*scale));
+  while(nw*nh >= maxPixels && (nw > 1 || nh > 1)){
+    if(nw >= nh && nw > 1) --nw;
+    else if(nh > 1) --nh;
+    else break;
+  }
+  return {w:nw, h:nh};
+}
+
+function cropRectToSourceRect(rect, scale, nw, nh){
+  // 起点向下取整、终点向上取整，确保用户框选到的边缘像素不会在映射时丢失。
+  const left = clamp(Math.floor(rect.x/scale), 0, nw-1);
+  const top = clamp(Math.floor(rect.y/scale), 0, nh-1);
+  const right = clamp(Math.ceil((rect.x+rect.w)/scale), left+1, nw);
+  const bottom = clamp(Math.ceil((rect.y+rect.h)/scale), top+1, nh);
+  return { x:left, y:top, w:right-left, h:bottom-top };
+}
+function openCropDialog(img, onComplete){
+  const nw = img.naturalWidth, nh = img.naturalHeight;
+  const maxW = Math.min(820, Math.max(280, window.innerWidth - 96));
+  const maxH = Math.min(560, Math.max(220, window.innerHeight - 240));
+  const scale = Math.min(maxW/nw, maxH/nh, 1);
+  const cw = Math.max(1, Math.round(nw*scale)), ch = Math.max(1, Math.round(nh*scale));
+  const minSize = Math.min(24, cw, ch), handleSize = 10;
+  let crop = { x:0, y:0, w:cw, h:ch };
+  let drag = null, done = false;
+
+  showModal(
+    '<div><h3>' + t('cropTitle') + '</h3>' +
+    '<p class="crop-hint">' + t('cropHint') + '</p>' +
+    '<div class="crop-stage"><canvas id="cropCanvas" width="' + cw + '" height="' + ch + '"></canvas></div>' +
+    '<div class="btns"><button type="button" class="btn" id="cropSkip">' + t('cropSkip') + '</button><button type="button" class="btn accent" id="cropConfirm">' + t('cropConfirm') + '</button></div></div>',
+    'crop-modal'
+  );
+  const canvas = el('#cropCanvas'), ctx = canvas.getContext('2d'), back = el('#modalBack');
+
+  function finish(rect){
+    if(done) return;
+    done = true;
+    back.removeEventListener('click', onBackdropClick);
+    window.removeEventListener('keydown', onKeyDown);
+    closeModal();
+    onComplete(cropRectToSourceRect(rect || { x:0, y:0, w:cw, h:ch }, scale, nw, nh));
+  }
+  function onBackdropClick(e){ if(e.target === back) finish(null); }
+  function onKeyDown(e){ if(e.key === 'Escape') finish(null); }
+  function draw(){
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, 0, 0, cw, ch);
+    ctx.fillStyle = 'rgba(0,0,0,.58)';
+    ctx.fillRect(0, 0, cw, crop.y);
+    ctx.fillRect(0, crop.y, crop.x, crop.h);
+    ctx.fillRect(crop.x+crop.w, crop.y, cw-(crop.x+crop.w), crop.h);
+    ctx.fillRect(0, crop.y+crop.h, cw, ch-(crop.y+crop.h));
+    ctx.strokeStyle = '#4cc2ff'; ctx.lineWidth = 2;
+    ctx.strokeRect(crop.x, crop.y, crop.w, crop.h);
+    ctx.fillStyle = '#4cc2ff';
+    for(const point of [[crop.x,crop.y],[crop.x+crop.w,crop.y],[crop.x,crop.y+crop.h],[crop.x+crop.w,crop.y+crop.h]]){
+      ctx.fillRect(point[0]-handleSize/2, point[1]-handleSize/2, handleSize, handleSize);
+    }
+  }
+  function pointFromEvent(e){
+    const r = canvas.getBoundingClientRect();
+    return { x:(e.clientX-r.left)*cw/r.width, y:(e.clientY-r.top)*ch/r.height };
+  }
+  function hitTest(p){
+    const x = crop.x, y = crop.y, right = x+crop.w, bottom = y+crop.h, near = handleSize;
+    const close = (a,b) => Math.abs(a-b) <= near;
+    if(close(p.x,x) && close(p.y,y)) return 'nw';
+    if(close(p.x,right) && close(p.y,y)) return 'ne';
+    if(close(p.x,x) && close(p.y,bottom)) return 'sw';
+    if(close(p.x,right) && close(p.y,bottom)) return 'se';
+    if(p.x >= x && p.x <= right && close(p.y,y)) return 'n';
+    if(p.x >= x && p.x <= right && close(p.y,bottom)) return 's';
+    if(p.y >= y && p.y <= bottom && close(p.x,x)) return 'w';
+    if(p.y >= y && p.y <= bottom && close(p.x,right)) return 'e';
+    if(p.x >= x && p.x <= right && p.y >= y && p.y <= bottom) return 'move';
+    return null;
+  }
+  function cursorFor(hit){
+    if(hit === 'move') return 'move';
+    if(hit === 'n' || hit === 's') return 'ns-resize';
+    if(hit === 'e' || hit === 'w') return 'ew-resize';
+    if(hit === 'nw' || hit === 'se') return 'nwse-resize';
+    if(hit === 'ne' || hit === 'sw') return 'nesw-resize';
+    return 'default';
+  }
+  function resizeFromDrag(p){
+    const dx = p.x-drag.startX, dy = p.y-drag.startY, start = drag.rect;
+    let next = { ...start };
+    if(drag.kind === 'move'){
+      next.x = clamp(start.x+dx, 0, cw-start.w);
+      next.y = clamp(start.y+dy, 0, ch-start.h);
+      return next;
+    }
+    const right = start.x+start.w, bottom = start.y+start.h;
+    if(drag.kind.includes('w')){ next.x = clamp(start.x+dx, 0, right-minSize); next.w = right-next.x; }
+    if(drag.kind.includes('e')) next.w = clamp(start.w+dx, minSize, cw-start.x);
+    if(drag.kind.includes('n')){ next.y = clamp(start.y+dy, 0, bottom-minSize); next.h = bottom-next.y; }
+    if(drag.kind.includes('s')) next.h = clamp(start.h+dy, minSize, ch-start.y);
+    return next;
+  }
+
+  canvas.addEventListener('pointerdown', function(e){
+    const p = pointFromEvent(e), kind = hitTest(p);
+    if(!kind) return;
+    drag = { kind, startX:p.x, startY:p.y, rect:{ ...crop } };
+    canvas.setPointerCapture(e.pointerId);
+    canvas.style.cursor = cursorFor(kind);
+    e.preventDefault();
+  });
+  canvas.addEventListener('pointermove', function(e){
+    const p = pointFromEvent(e);
+    if(!drag){ canvas.style.cursor = cursorFor(hitTest(p)); return; }
+    crop = resizeFromDrag(p); draw(); e.preventDefault();
+  });
+  canvas.addEventListener('pointerup', function(e){
+    if(drag){ drag = null; canvas.style.cursor = cursorFor(hitTest(pointFromEvent(e))); }
+  });
+  canvas.addEventListener('pointercancel', function(){ drag = null; canvas.style.cursor = 'default'; });
+  back.addEventListener('click', onBackdropClick);
+  window.addEventListener('keydown', onKeyDown);
+  el('#cropSkip').onclick = () => finish(null);
+  el('#cropConfirm').onclick = () => finish(crop);
+  draw();
+}
+
+function importDecodedImage(img, rect){
+  // 裁切后的区域才参与像素上限计算，避免先缩小整图造成选区细节丢失。
+  let maxPixels = MAX_IMPORT_PIXELS;
+  let lim = scaleDownToPixelLimit(rect.w, rect.h, maxPixels);
+  for(let attempt = 0; attempt < 8; attempt++){
+    try {
+      const c = document.createElement('canvas');
+      c.width = lim.w; c.height = lim.h;
+      const ctx = c.getContext('2d');
+      if(!ctx) throw new Error(t('canvasContextFailed'));
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, rect.x, rect.y, rect.w, rect.h, 0, 0, lim.w, lim.h);
+      state.origin = ctx.getImageData(0, 0, lim.w, lim.h);
+      state.originCanvas = c;
+      state.fullResGeneration = -1;
+      state._roCache = null;
+      imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
+      edgeSharpener.reset();
+      state.light.strips = [];
+      state.light.pendingStart = null;
+      setExportControlsEnabled(true);
+      updateProcess();
+      return;
+    } catch(err){
+      const shrinkable = /array buffer|allocation|rangeerror/i.test(err.message);
+      if(shrinkable && maxPixels > 500000){
+        maxPixels = Math.floor(maxPixels / 2);
+        lim = scaleDownToPixelLimit(rect.w, rect.h, maxPixels);
+        continue;
+      }
+      toast(t('importFailed') + err.message);
+      return;
+    }
+  }
+  toast(t('imageTooLarge'));
+}
+function loadImageFile(file){
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = function(){
+    const w = img.naturalWidth, h = img.naturalHeight;
+    if(!w || !h){ URL.revokeObjectURL(url); toast(t('invalidImageSize')); return; }
+    URL.revokeObjectURL(url);
+    openCropDialog(img, rect => importDecodedImage(img, rect));
+  };
+  img.onerror = function(){ URL.revokeObjectURL(url); toast(t('imageLoadFailed')); };
+  img.src = url;
+}
+
+/* ---------------- 导出 ---------------- */
+function blobToPng(blob){ return blob; }
+function layerToPngBlob(layer, forceOpaqueMono){
+  const w = layer.width, h = layer.height;
+  const d = new Uint8ClampedArray(layer.data);
+  if(forceOpaqueMono){
+    for(let i = 0; i < d.length; i += 4){ const v = d[i] >= 128 ? 255 : 0; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255; }
+    const setPx = function(x, y, v){ const i = (y*w + x)*4; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255; };
+    setPx(0, 0, 255);
+    if(h > 1) setPx(0, 1, 0);
+    if(w > 1) setPx(1, 0, 0);
+    if(w > 1 && h > 1){ setPx(w-1, h-1, 255); setPx(w-1, h-2, 0); setPx(w-2, h-1, 0); }
+  }
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').putImageData(new ImageData(d, w, h), 0, 0);
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
+function downloadBlob(blob, name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.target = '_blank';   // 防止 file:// 下下载被忽略时页面导航到自身
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function setExportControlsEnabled(enabled){
+  el('#btnExport').disabled = !enabled;
+  el('#selectExportLayer').disabled = !enabled;
+  el('#btnExportSelected').disabled = !enabled;
+  el('#mExport').classList.toggle('disabled', !enabled);
+}
+function getExportSettings(){
+  if(!state.origin) return;
+  if(state.fullResGeneration !== prc.generation) updateProcess();
+  const finishType = el('#selectFinish').value;
+  const finishName = finishType === 'enig' ? 'ENIG' : (finishType === 'osp' ? 'OSP' : 'HASL');
+  return {
+    finishName,
+    grayscale:state.processingMode === 'gray',
+    grayNames:{ Top_Copper:'Top_Copper_Transparent.png', Top_Mask:'SolderMask_Transparent.png', Top_Silk:'Silkscreen_Transparent.png' }
+  };
+}
+async function downloadLayerExport(key, settings){
+  if(!state.layers || !state.layers[key]) return false;
+  const blob = await layerToPngBlob(state.layers[key], !settings.grayscale);
+  downloadBlob(blob, settings.grayscale ? settings.grayNames[key] : key + '_' + settings.finishName + '_Inverted.png');
+  return true;
+}
+async function exportLayers(){
+  const settings = getExportSettings();
+  if(!settings) return;
+  const keys = ['Top_Copper', 'Top_Mask', 'Top_Silk'];
+  closeModal();
+  toast(t('exporting'));
+  for(const k of keys){
+    await downloadLayerExport(k, settings);
+    await sleep(120);
+  }
+  toast(t('exportSuccess', {count:keys.length}));
+}
+async function exportSelectedLayer(){
+  const settings = getExportSettings(), key = el('#selectExportLayer').value;
+  if(!settings || !key) return;
+  toast(t('exporting'));
+  if(await downloadLayerExport(key, settings)) toast(t('exportSuccess', {count:1}));
+}
+
+/* ---------------- 工程保存 / 导入 ---------------- */
+function gatherControls(){
+  return {
+    processingMode: state.processingMode,
+    gray: { ...state.gray },
+    surfaceFinishIndex: el('#selectFinish').selectedIndex,
+    maskColorIndex: el('#selectMask').selectedIndex,
+    goldThresh: sliderVal('#sliderGold'),
+    silkThresh: sliderVal('#sliderSilk'),
+    copperDepth: sliderVal('#sliderCopper'),
+    light: {
+      enabled:masterState.light, showOverlay:state.light.showOverlay,
+      autoSense:state.light.autoSense, radius:state.light.radius, intensity:state.light.intensity
+    },
+    bareSubstrateEnable: masterState.bare,
+    bareSubstrateGrayMode: el('#radioBareGray').checked,
+    bareSubstrateGrayA: sliderVal('#sliderBareA'),
+    bareSubstrateGrayB: sliderVal('#sliderBareB'),
+    bareSubstrateColorSimilarity: sliderVal('#sliderBareSim'),
+    edgeEnable: masterState.edge,
+    edgeMode: el('#radioEdgeStroke').checked ? 'stroke' : 'enhance',
+    edgeThreshMin: sliderVal('#sliderEdgeThresh'),
+    edgeThreshMax: sliderVal('#sliderEdgeThreshMax'),
+    autoInvert: sliderVal('#sliderAutoInvert'),
+    useMetalEdge: el('#chkUseMetal').checked,
+    exposeMetalEdge: el('#chkExposeMetal').checked
+  };
+}
+function saveProject(){
+  if(!state.origin) return;
+  const root = {
+    schemaVersion: 3,
+    controls: gatherControls(),
+    experimental: { edgePrefilterEnabled:state.prefilter.enabled, edgePrefilterKernelSize:state.prefilter.kernel,
+      edgePrefilterSigma:state.prefilter.sigma, dpEnabled:state.dp.enabled, dpTolerance:state.dp.tolerance, dpLineWidth:state.dp.lineWidth },
+    image: state.originCanvas.toDataURL('image/png'),
+    ledStrips: state.light.strips
+  };
+  const blob = new Blob([JSON.stringify(root)], { type:'application/json' });
+  downloadBlob(blob, 'project.pcblg.json');
+  toast(t('projectSaved'));
+}
+function restoreControls(c){
+  const setIdx = (sel, i) => { const e = el(sel); if(i >= 0 && i < e.options.length) e.selectedIndex = i; };
+  setIdx('#selectFinish', c.surfaceFinishIndex || 0);
+  setIdx('#selectMask', c.maskColorIndex || 0);
+  setSlider('#sliderGold', c.goldThresh || 0);
+  setSlider('#sliderSilk', c.silkThresh || 0);
+  setSlider('#sliderCopper', c.copperDepth || 0);
+  const light = c.light || {};
+  state.light.showOverlay = light.showOverlay === true;
+  state.light.autoSense = clamp(Number.isFinite(light.autoSense) ? light.autoSense : 1, 0, 10);
+  state.light.radius = clamp(Number.isFinite(light.radius) ? light.radius : 150, 20, 500);
+  state.light.intensity = clamp(Number.isFinite(light.intensity) ? light.intensity : 200, 0, 255);
+  state.light.pendingStart = null;
+  setGroupOpen('groupLight', light.enabled === true, true);
+  el('#chkLightOverlay').checked = state.light.showOverlay;
+  setSlider('#sliderLightSense', state.light.autoSense);
+  setSlider('#sliderLightRadius', state.light.radius);
+  setSlider('#sliderLightIntensity', state.light.intensity);
+  setGroupOpen('groupBare', !!c.bareSubstrateEnable, true);
+  const bareGray = c.bareSubstrateGrayMode !== false;
+  el('#radioBareGray').checked = bareGray; el('#radioBareColor').checked = !bareGray;
+  setSlider('#sliderBareA', c.bareSubstrateGrayA || 0);
+  setSlider('#sliderBareB', c.bareSubstrateGrayB || 0);
+  setSlider('#sliderBareSim', c.bareSubstrateColorSimilarity || 0);
+  setGroupOpen('groupEdge', !!c.edgeEnable, true);
+  const stroke = c.edgeMode === 'stroke';
+  el('#radioEdgeStroke').checked = stroke; el('#radioEdgeEnhance').checked = !stroke;
+  setSlider('#sliderEdgeThresh', c.edgeThreshMin || 0);
+  setSlider('#sliderEdgeThreshMax', c.edgeThreshMax || 0);
+  setSlider('#sliderAutoInvert', c.autoInvert || 0);
+  el('#chkUseMetal').checked = !!c.useMetalEdge;
+  el('#chkExposeMetal').checked = c.exposeMetalEdge !== false;
+  const gray = c.gray || {};
+  state.gray.silkThreshold = clamp(Number.isFinite(gray.silkThreshold) ? gray.silkThreshold : GRAY_DEFAULTS.silkThreshold, 0, 255);
+  state.gray.maskThreshold = clamp(Number.isFinite(gray.maskThreshold) ? gray.maskThreshold : GRAY_DEFAULTS.maskThreshold, 0, 255);
+  state.gray.thickRadius = clamp(Number.isFinite(gray.thickRadius) ? gray.thickRadius : GRAY_DEFAULTS.thickRadius, 0, 12);
+  state.gray.blurRadius = clamp(Number.isFinite(gray.blurRadius) ? gray.blurRadius : GRAY_DEFAULTS.blurRadius, 0, 8);
+  // 旧工程的自由颜色无法映射预设色，导入时回退到默认蓝色。
+  state.gray.previewMaskId = MASK_COLOR_IDS.includes(gray.previewMaskId) ? gray.previewMaskId : GRAY_DEFAULTS.previewMaskId;
+  setSlider('#sliderGraySilk', state.gray.silkThreshold);
+  setSlider('#sliderGrayMask', state.gray.maskThreshold);
+  setSlider('#sliderGrayThick', state.gray.thickRadius);
+  setSlider('#sliderGrayBlur', state.gray.blurRadius);
+  el('#grayPreviewMask').value = state.gray.previewMaskId;
+  // 旧工程没有 mode 字段时保持原有彩色识别行为。
+  setProcessingMode(c.processingMode, false);
+  syncEdgeUI();
+}
+function setSlider(sel, v){
+  const e = el(sel);
+  if(!e) return;
+  const input = e.querySelector('input');
+  if(!input) return;
+  const lo = parseInt(input.min, 10), hi = parseInt(input.max, 10);
+  input.value = clamp(v, lo, hi);
+  const lab = input.parentElement.querySelector('.lab');
+  if(lab) refreshSliderLabel(lab, input);
+}
+function restoreLightStrips(raw){
+  state.light.strips = [];
+  state.light.pendingStart = null;
+  if(!state.origin || !Array.isArray(raw)) return;
+  // 工程文件可被手动修改；缺失或非法分量回退到安全值后再参与渲染。
+  const valid = (value, fallback) => Number.isFinite(value) ? value : fallback;
+  for(const strip of raw){
+    if(!strip || !strip.start || !strip.end || !strip.color) continue;
+    state.light.strips.push({
+      start:{ x:clamp(Math.round(valid(strip.start.x, 0)), 0, state.origin.width-1), y:clamp(Math.round(valid(strip.start.y, 0)), 0, state.origin.height-1) },
+      end:{ x:clamp(Math.round(valid(strip.end.x, 0)), 0, state.origin.width-1), y:clamp(Math.round(valid(strip.end.y, 0)), 0, state.origin.height-1) },
+      radius:clamp(Math.round(valid(strip.radius, state.light.radius)), 20, 500),
+      color:{ r:clamp(Math.round(valid(strip.color.r, 255)), 0, 255), g:clamp(Math.round(valid(strip.color.g, 255)), 0, 255), b:clamp(Math.round(valid(strip.color.b, 255)), 0, 255) }
+    });
+  }
+}
+function importProjectFile(file){
+  const reader = new FileReader();
+  reader.onload = function(){
+    try {
+      const root = JSON.parse(reader.result);
+      const c = root.controls || {};
+      restoreControls(c);
+      const exp = root.experimental || {};
+      state.prefilter.enabled = exp.edgePrefilterEnabled !== false;
+      state.prefilter.kernel = clampOddKernelSize(exp.edgePrefilterKernelSize || 5);
+      state.prefilter.sigma = Math.max(0.001, exp.edgePrefilterSigma || 1.1);
+      state.dp.enabled = !!exp.dpEnabled;
+      state.dp.tolerance = Math.max(0.001, exp.dpTolerance || 1.0);
+      state.dp.lineWidth = clamp(exp.dpLineWidth || 2, 1, 50);
+      const img = new Image();
+      img.onload = function(){
+        const w = img.naturalWidth, h = img.naturalHeight;
+        const lim = scaleDownToPixelLimit(w, h, MAX_IMPORT_PIXELS);
+        const cv = document.createElement('canvas'); cv.width = lim.w; cv.height = lim.h;
+        const ctx = cv.getContext('2d');
+        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, lim.w, lim.h);
+        state.origin = ctx.getImageData(0, 0, lim.w, lim.h);
+        state.originCanvas = cv;
+        state.fullResGeneration = -1; state._roCache = null;
+        imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
+        edgeSharpener.reset();
+        restoreLightStrips(root.ledStrips);
+        setExportControlsEnabled(true);
+        updateProcess();
+        toast(t('projectImported'));
+      };
+      img.src = root.image;
+    } catch(e){
+      toast(t('projectParseFailed'));
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------------- 边缘 UI 联动 ---------------- */
+function syncEdgeUI(){
+  const useMetal = el('#chkUseMetal').checked;
+  const ai = el('#sliderAutoInvert').querySelector('input');
+  const ctl = ai ? ai.closest('.ctl') : null;
+  if(ctl) ctl.style.opacity = useMetal ? 0.4 : 1;
+  el('#exposeMetalWrap').style.display = useMetal ? 'flex' : 'none';
+}
+
+/* ---------------- 菜单 / 弹窗 ---------------- */
+function setupMenus(){
+  // 下拉菜单由悬浮控制；focus-within 规则让键盘聚焦时也能访问同一菜单。
+
+  el('#mImport').onclick = () => el('#fileInput').click();
+  el('#btnImport').onclick = () => el('#fileInput').click();
+  el('#mExport').onclick = exportLayers;
+  el('#btnExport').onclick = exportLayers;
+  el('#btnExportSelected').onclick = exportSelectedLayer;
+  el('#mSave').onclick = saveProject;
+  el('#mLoad').onclick = () => el('#projInput').click();
+  el('#mFilter').onclick = openFilterDialog;
+  el('#mDP').onclick = openDPDialog;
+  el('#mColor').onclick = openColorDialog;
+  el('#mReset').onclick = resetAllSettings;
+  el('#mCheckUpdates').onclick = checkForUpdates;
+  el('#mGitHub').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable', '_blank', 'noopener');
+  el('#mIssueFeedback').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable/issues/new', '_blank', 'noopener');
+
+  // 界面缩放子菜单
+  const scaleMenu = el('#scaleMenu');
+  const scales = [0.75, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5];
+  scales.forEach(s => {
+    const b = document.createElement('button');
+    b.textContent = Math.round(s*100) + '%';
+    b.onclick = function(){
+      localStorage.setItem('pcblg_scale', String(s));
+      document.body.style.zoom = s;
+    };
+    scaleMenu.appendChild(b);
+  });
+  document.querySelectorAll('[data-language]').forEach(button => {
+    button.onclick = function(){
+      setLanguage(this.dataset.language, true);
+    };
+  });
+}
+
+/* ---------------- 各对话框 ---------------- */
+function openFilterDialog(){
+  showModal(
+    '<h3>' + t('filterTitle') + '</h3>' +
+    '<label class="check"><input type="checkbox" id="dlgFilterOn"' + (state.prefilter.enabled?' checked':'') + '>' + t('enableGaussian') + '</label>' +
+    '<div class="mrow"><label>' + t('gaussianKernel') + '</label><input type="number" id="dlgKernel" min="3" max="7" step="2" value="' + state.prefilter.kernel + '"></div>' +
+    '<div class="mrow"><label>' + t('sigma') + '</label><input type="number" id="dlgSigma" min="0.1" step="0.1" value="' + state.prefilter.sigma + '"></div>' +
+    '<div class="btns"><button type="button" class="btn" id="dlgFilterCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgFilterOk">' + t('confirm') + '</button></div>'
+  );
+  el('#dlgFilterOk').onclick = function(){
+    state.prefilter.enabled = el('#dlgFilterOn').checked;
+    state.prefilter.kernel = clampOddKernelSize(parseInt(el('#dlgKernel').value, 10) || 5);
+    state.prefilter.sigma = Math.max(0.001, parseFloat(el('#dlgSigma').value) || 1.1);
+    closeModal(); updateProcess();
+  };
+  el('#dlgFilterCancel').onclick = closeModal;
+}
+function openDPDialog(){
+  showModal(
+    '<h3>' + t('dpTitle') + '</h3>' +
+    '<label class="check"><input type="checkbox" id="dlgDPOn"' + (state.dp.enabled?' checked':'') + '>' + t('enableDp') + '</label>' +
+    '<div class="mrow"><label>' + t('tolerance') + '</label><input type="number" id="dlgDPTol" min="0.001" step="0.1" value="' + state.dp.tolerance + '"></div>' +
+    '<div class="mrow"><label>' + t('lineWidth') + '</label><input type="number" id="dlgDPLW" min="1" max="50" step="1" value="' + state.dp.lineWidth + '"></div>' +
+    '<p style="color:var(--text-dim);font-size:12.5px">' + t('dpNote') + '</p>' +
+    '<div class="btns"><button type="button" class="btn" id="dlgDPCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgDPOk">' + t('confirm') + '</button></div>'
+  );
+  el('#dlgDPOk').onclick = function(){
+    state.dp.enabled = el('#dlgDPOn').checked;
+    state.dp.tolerance = Math.max(0.001, parseFloat(el('#dlgDPTol').value) || 1.0);
+    state.dp.lineWidth = clamp(parseInt(el('#dlgDPLW').value, 10) || 2, 1, 50);
+    closeModal();
+  };
+  el('#dlgDPCancel').onclick = closeModal;
+}
+function colorRow(nameKey, key){
+  return '<div class="mrow"><label>' + t(nameKey) + '</label><input type="color" id="col_' + key + '" value="' + toHex(custom[key]) + '"></div>';
+}
+function toHex(c){ return '#' + [c.r,c.g,c.b].map(v => v.toString(16).padStart(2,'0')).join(''); }
+function openColorDialog(){
+  showModal(
+    '<h3>' + t('colorTitle') + '</h3>' +
+    colorRow('colorEnig', 'enig') +
+    colorRow('colorOsp', 'osp') +
+    colorRow('colorHasl', 'hasl') +
+    colorRow('colorBare', 'bare') +
+    '<div class="btns"><button type="button" class="btn" id="dlgColorCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgColorOk">' + t('confirm') + '</button></div>'
+  );
+  el('#dlgColorOk').onclick = function(){
+    for(const k of ['enig','osp','hasl','bare']){
+      const hex = el('#col_' + k).value;
+      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      if(!isNaN(r)){ custom[k] = {r,g,b}; }
+    }
+    saveLocalPrefs();
+    closeModal();
+    if(state.origin) updateProcess();
+  };
+  el('#dlgColorCancel').onclick = closeModal;
+}
+function resetAllSettings(){
+  localStorage.removeItem('pcblg_scale');
+  localStorage.removeItem('pcblg_prefs');
+  localStorage.removeItem('pcblg_language');
+  document.body.style.zoom = 1;
+  custom.enig = {...DEFAULTS.enig}; custom.osp = {...DEFAULTS.osp}; custom.hasl = {...DEFAULTS.hasl}; custom.bare = {...DEFAULTS.bare};
+  state.prefilter = { enabled:true, kernel:5, sigma:1.1 };
+  state.dp = { enabled:false, tolerance:1.0, lineWidth:2 };
+  state.light = { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null };
+  state.gray = { ...GRAY_DEFAULTS };
+  setGroupOpen('groupLight', false, true);
+  el('#chkLightOverlay').checked = false;
+  setSlider('#sliderLightSense', state.light.autoSense);
+  setSlider('#sliderLightRadius', state.light.radius);
+  setSlider('#sliderLightIntensity', state.light.intensity);
+  setSlider('#sliderGraySilk', state.gray.silkThreshold);
+  setSlider('#sliderGrayMask', state.gray.maskThreshold);
+  setSlider('#sliderGrayThick', state.gray.thickRadius);
+  setSlider('#sliderGrayBlur', state.gray.blurRadius);
+  el('#grayPreviewMask').value = state.gray.previewMaskId;
+  setProcessingMode('gray', false);
+  if(state.origin) updateProcess();
+  setLanguage('zh-CN', false);
+  toast(t('resetSuccess'));
+}
+
+/* ---------------- 本地偏好 ---------------- */
+function saveLocalPrefs(){
+  localStorage.setItem('pcblg_prefs', JSON.stringify({ custom, prefilter:state.prefilter, dp:state.dp }));
+}
+function loadLocalPrefs(){
+  setLanguage(localStorage.getItem('pcblg_language'), false);
+  const s = localStorage.getItem('pcblg_scale');
+  if(s) document.body.style.zoom = parseFloat(s) || 1;
+  const p = localStorage.getItem('pcblg_prefs');
+  if(p){
+    try {
+      const o = JSON.parse(p);
+      if(o.custom){ for(const k of ['enig','osp','hasl','bare']) if(o.custom[k]) custom[k] = o.custom[k]; }
+      if(o.prefilter) state.prefilter = o.prefilter;
+      if(o.dp) state.dp = o.dp;
+    } catch(e){}
+  }
+}
+
+/* ---------------- 初始化 ---------------- */
+function init(){
+  // 创建滑块
+  createSlider('sliderGold', 'goldThreshold', 0, 359, 45);
+  createSlider('sliderSilk', 'silkThreshold', 0, 255, 180);
+  createSlider('sliderCopper', 'copperThreshold', 0, 255, 150);
+  createSlider('sliderBareA', 'bareGrayMin', 0, 100, 20);
+  createSlider('sliderBareB', 'bareGrayMax', 0, 100, 65);
+  createSlider('sliderBareSim', 'bareSimilarity', 0, 100, 80);
+  createSlider('sliderEdgeThresh', 'edgeThresholdMin', 0, 255, 50);
+  createSlider('sliderEdgeThreshMax', 'edgeThresholdMax', 0, 255, 200);
+  createSlider('sliderAutoInvert', 'autoInvertRange', -1, 50, 10);
+  createSlider('sliderLightSense', 'autoLightSensitivity', 0, 10, state.light.autoSense, 1, v => { state.light.autoSense = v; });
+  createSlider('sliderLightRadius', 'lightRadius', 20, 500, state.light.radius, 1, v => { state.light.radius = v; });
+  createSlider('sliderLightIntensity', 'lightIntensity', 0, 255, state.light.intensity, 1, v => { state.light.intensity = v; });
+  createSlider('sliderGraySilk', 'graySilkThreshold', 0, 255, GRAY_DEFAULTS.silkThreshold, 1, v => { state.gray.silkThreshold = v; });
+  createSlider('sliderGrayMask', 'grayMaskThreshold', 0, 255, GRAY_DEFAULTS.maskThreshold, 1, v => { state.gray.maskThreshold = v; });
+  createSlider('sliderGrayThick', 'grayThick', 0, 12, GRAY_DEFAULTS.thickRadius, 0.2, v => { state.gray.thickRadius = v; });
+  createSlider('sliderGrayBlur', 'grayBlur', 0, 8, GRAY_DEFAULTS.blurRadius, 0.1, v => { state.gray.blurRadius = v; });
+
+  // 折叠组标题点击
+  document.querySelectorAll('.group>.group-header').forEach(h => {
+    h.addEventListener('click', function(){
+      const g = h.parentElement;
+      const open = !g.classList.contains('open');
+      setGroupOpen(g.id, open, true);
+      syncEdgeUI();
+      updateProcess();
+    });
+  });
+
+  // 主控件变更 → 全分辨率重渲
+  el('#selectFinish').addEventListener('change', function(){ syncEdgeUI(); updateProcess(); });
+  el('#selectMask').addEventListener('change', updateProcess);
+  el('#radioBareGray').addEventListener('change', function(){ if(this.checked) updateProcess(); });
+  el('#radioBareColor').addEventListener('change', function(){ if(this.checked) updateProcess(); });
+  el('#radioEdgeStroke').addEventListener('change', function(){ if(this.checked) updateProcess(); });
+  el('#radioEdgeEnhance').addEventListener('change', function(){ if(this.checked) updateProcess(); });
+  el('#chkUseMetal').addEventListener('change', function(){ syncEdgeUI(); updateProcess(); });
+  el('#chkExposeMetal').addEventListener('change', updateProcess);
+  el('#chkLightOverlay').addEventListener('change', function(){ state.light.showOverlay = this.checked; updateProcess(); });
+  el('#btnAutoLights').addEventListener('click', autoSuggestLights);
+  el('#grayPreviewMask').addEventListener('change', function(){ state.gray.previewMaskId = this.value; updateProcess(); });
+  document.querySelectorAll('[data-processing-mode]').forEach(btn => {
+    btn.addEventListener('click', function(){ setProcessingMode(this.dataset.processingMode, true); });
+  });
+  document.querySelectorAll('[data-view-mode]').forEach(btn => {
+    btn.addEventListener('click', function(){ setViewMode(this.dataset.viewMode); });
+  });
+
+  // 预览交互
+  attachPreviewInteraction('composite');
+  attachPreviewInteraction('copper');
+  attachPreviewInteraction('mask');
+  attachPreviewInteraction('silk');
+  for(const key in quadPreviewCanvases) attachQuadPreviewInteraction(key);
+  attachLightPlacement('#canvasComposite', false);
+  attachLightPlacement('#canvasQuadComposite', true);
+
+  // 文件输入
+  const fi = document.createElement('input');
+  fi.type = 'file'; fi.accept = 'image/*'; fi.id = 'fileInput'; fi.style.display = 'none';
+  fi.addEventListener('change', function(){ if(this.files[0]) loadImageFile(this.files[0]); this.value = ''; });
+  document.body.appendChild(fi);
+
+  const pi = document.createElement('input');
+  pi.type = 'file'; pi.accept = '.pcblg.json,.json'; pi.id = 'projInput'; pi.style.display = 'none';
+  pi.addEventListener('change', function(){ if(this.files[0]) importProjectFile(this.files[0]); this.value = ''; });
+  document.body.appendChild(pi);
+
+  el('#modalBack').addEventListener('click', function(e){ if(e.target === this) closeModal(); });
+
+  setupMenus();
+  loadLocalPrefs();
+  setViewMode('overlay');
+  syncEdgeUI();
+  resizeCanvases();
+  window.addEventListener('resize', resizeCanvases);
+}
+
+/* 全局错误提示：任何运行时错误都显示为 toast，避免“无声失败” */
+window.addEventListener('error', function(e){ try{ toast(t('runtimeError') + (e.message || t('unknownError'))); }catch(_){} });
+window.addEventListener('unhandledrejection', function(e){ try{ toast(t('runtimeError') + ((e.reason && e.reason.message) || t('unknownError'))); }catch(_){} });
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
