@@ -26,7 +26,7 @@ body{
 }
 /* ---- top bar ---- */
 .topbar{
-  display:flex;align-items:center;gap:8px;padding:6px 12px;
+  display:flex;align-items:center;gap:8px;padding:6px 12px;position:relative;
   background:var(--panel);border-bottom:1px solid var(--border);flex:0 0 auto;
 }
 .brand{font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap;}
@@ -39,6 +39,20 @@ body{
   cursor:pointer;font-size:14px;font-family:inherit;
 }
 .menu>button:hover,.menu:focus-within>button{background:var(--panel2);}
+.star-link{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:transparent;border:none;padding:6px 10px;border-radius:6px;
+  cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;
+  animation:star-rainbow 3s linear infinite;
+}
+.star-link:hover,.star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
+@keyframes star-rainbow{from{color:#ff758f;}20%{color:#ffbc4b;}40%{color:#8ad45b;}60%{color:#55c7ff;}80%{color:#b38cff;}to{color:#ff758f;}}
+/* 窄窗口让 Star 提示独占下一行，避免与菜单的可点击区域重叠。 */
+@media (max-width:1120px){
+  .topbar{flex-wrap:wrap;}
+  .menubar{flex-wrap:wrap;}
+  .star-link{position:static;transform:none;order:3;flex:0 0 100%;text-align:center;}
+}
 .dropdown{
   display:none;position:absolute;top:100%;left:0;min-width:200px;z-index:100;
   background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:4px;
@@ -242,6 +256,7 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
       </div>
     </div>
   </div>
+  <button type="button" class="star-link" id="btnStarProject" data-i18n="starProject">你觉得好用就给我点一个Star吧(ﾉ&gt;ω&lt;)ﾉ</button>
 </div>
 
 <div class="main">
@@ -409,6 +424,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', githubLink:'跳转至 
 Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', githubLink:'前往 GitHub', issueFeedback:'問題回饋' });
 Object.assign(TRANSLATIONS.en, { menuHelp:'About', githubLink:'Open GitHub', issueFeedback:'Report an Issue' });
 Object.assign(TRANSLATIONS.ja, { menuHelp:'概要', githubLink:'GitHub を開く', issueFeedback:'問題を報告' });
+Object.assign(TRANSLATIONS['zh-CN'], { starProject:'你觉得好用就给我点一个Star吧(ﾉ>ω<)ﾉ' });
+Object.assign(TRANSLATIONS['zh-TW'], { starProject:'覺得好用就給我一個 Star 吧(ﾉ>ω<)ﾉ' });
+Object.assign(TRANSLATIONS.en, { starProject:'Enjoy it? Please give it a Star! (ﾉ>ω<)ﾉ' });
+Object.assign(TRANSLATIONS.ja, { starProject:'気に入ったら Star をお願いします！(ﾉ>ω<)ﾉ' });
 Object.assign(TRANSLATIONS['zh-CN'], { checkUpdates:'检查更新', checkingUpdates:'正在检查更新…', updateAvailableTitle:'检查有新版本发布', currentVersion:'当前版本', latestVersion:'最新版本', openRelease:'跳转至 Release', alreadyLatest:'已是最新版本', noReleaseAvailable:'暂未发现已发布版本', updateCheckFailed:'检查更新失败，请稍后重试' });
 Object.assign(TRANSLATIONS['zh-TW'], { checkUpdates:'檢查更新', checkingUpdates:'正在檢查更新…', updateAvailableTitle:'檢查到新版本發布', currentVersion:'目前版本', latestVersion:'最新版本', openRelease:'前往 Release', alreadyLatest:'已是最新版本', noReleaseAvailable:'暫未發現已發布版本', updateCheckFailed:'檢查更新失敗，請稍後再試' });
 Object.assign(TRANSLATIONS.en, { checkUpdates:'Check for Updates', checkingUpdates:'Checking for Updates…', updateAvailableTitle:'A New Version Is Available', currentVersion:'Current Version', latestVersion:'Latest Version', openRelease:'Open Release', alreadyLatest:'You are up to date', noReleaseAvailable:'No published release found', updateCheckFailed:'Unable to check for updates. Please try again later.' });
@@ -2130,6 +2149,7 @@ function setupMenus(){
   el('#mColor').onclick = openColorDialog;
   el('#mReset').onclick = resetAllSettings;
   el('#mCheckUpdates').onclick = checkForUpdates;
+  el('#btnStarProject').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_Portable', '_blank', 'noopener');
   el('#mGitHub').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable', '_blank', 'noopener');
   el('#mIssueFeedback').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable/issues/new', '_blank', 'noopener');
 
