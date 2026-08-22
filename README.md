@@ -8,11 +8,17 @@
   <img alt="Runtime" src="https://img.shields.io/badge/Runtime-Browser-4285F4?logo=googlechrome&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/License-MIT-D22128">
 </p>
+
 <p align="center">
-  <strong>PCB_lightgraph Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的便携版。<br>
+  <strong>PCB_lightgraph Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的HTML便携版。<br>
   <strong>把工具装进一个 HTML 文件，随时生成 PCB 图纸。
   </strong><br>
   不用安装，不用编译，双击即可开始创作。<br>
+</p>
+
+<p align="center">
+  什么？你连下载的都懒得下载？真拿你没办法！<br>
+  <a href="https://ashlixy17.github.io/PCB_lightgraph_Portable/">点击此处开始使用网页版</a>
 </p>
 
 ## 界面&亮点功能
@@ -69,7 +75,7 @@
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
 [[QQ]雷霆PCB的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi) <br>
 
-### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ我已急哭！
+### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ
 
 ## 声明
 
