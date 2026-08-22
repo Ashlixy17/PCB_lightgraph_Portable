@@ -308,14 +308,6 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <button type="button" data-view-mode="quad" data-i18n="viewQuad">四分视图</button>
       </div>
     </div>
-    <div class="menu" id="menuHelp">
-      <button type="button" data-i18n="menuHelp">关于</button>
-      <div class="dropdown">
-        <button type="button" id="mCheckUpdates" data-i18n="checkUpdates">检查更新</button>
-        <button type="button" id="mGitHub" data-i18n="githubLink">跳转至 GitHub</button>
-        <button type="button" id="mIssueFeedback" data-i18n="issueFeedback">问题反馈</button>
-      </div>
-    </div>
   </div>
   <button type="button" class="star-link" id="btnStarProject" data-i18n="starProject">你觉得好用就给我点一个Star吧(ﾉ&gt;ω&lt;)ﾉ</button>
 </div>
@@ -2268,10 +2260,7 @@ function setupMenus(){
   el('#mDP').onclick = openDPDialog;
   el('#mColor').onclick = openColorDialog;
   el('#mReset').onclick = resetAllSettings;
-  el('#mCheckUpdates').onclick = checkForUpdates;
   el('#btnStarProject').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_Portable', '_blank', 'noopener');
-  el('#mGitHub').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable', '_blank', 'noopener');
-  el('#mIssueFeedback').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable/issues/new', '_blank', 'noopener');
 
   // 界面缩放子菜单
   const scaleMenu = el('#scaleMenu');
