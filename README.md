@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <strong>PCB_lightgraph Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的HTML便携版<br>
+  <strong>PCB_lightgraph_Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的HTML便携版<br>
   <strong>把工具装进一个 HTML 文件，随时生成 PCB 图纸
   </strong><br>
   不用安装，不用编译，双击即可开始创作<br>
@@ -65,14 +65,8 @@
   <img src="assets/support-star.gif" alt="感谢支持" width="180">
 </p>
 
-**安装版软件原作者**：<br>
-[[GitHub] @tomatorigid](https://github.com/tomatorigid)<br>
-[[b站] 芙ling痛恨数学分析](https://space.bilibili.com/549252923)
-<br>
-**此网页便携版作者**：<br>
-[[小黑盒]甲基苯冰胺](https://www.xiaoheihe.cn/app/user/profile/43387323)<br>
-[[b站] Laplac_heroin](https://space.bilibili.com/3461564136950176)
-<br>
+**原安装版软件**：
+[@tomatorigid / PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>
 **PCB绘制交流群**(非群主)：<br>
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
 [[QQ]雷霆PCB的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi) <br>
