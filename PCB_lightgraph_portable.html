@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PCB_lightgraph_portable</title>
+<title>PCB_lightgraph_Portable</title>
 <style>
 :root{
   --bg:#1b1b1b;
@@ -14,6 +14,8 @@
   --text-dim:#9d9d9d;
   --accent:#4cc2ff;
   --accent-hover:#6fd0ff;
+  --control-accent:#b9c5e8;
+  --control-accent-text:#091331;
   --radius:10px;
 }
 *{box-sizing:border-box;}
@@ -29,7 +31,9 @@ body{
   display:flex;align-items:center;gap:8px;padding:6px 12px;position:relative;
   background:var(--panel);border-bottom:1px solid var(--border);flex:0 0 auto;
 }
-.brand{font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap;}
+.brand{display:inline-flex;align-items:center;gap:5px;font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap;}
+.brand-badge{display:inline-flex;align-items:center;align-self:center;border-radius:3px;background:var(--control-accent);color:var(--control-accent-text);padding:2px 5px;font-size:10px;font-weight:700;letter-spacing:.03em;line-height:1.2;transform:translateY(1px);}
+.brand-badge[hidden]{display:none;}
 .brand .dot{color:var(--accent);}
 .brand .edition{color:var(--text-dim);font-weight:400;font-size:12.5px;}
 .menubar{display:flex;gap:2px;}
@@ -41,11 +45,21 @@ body{
 .menu>button:hover,.menu:focus-within>button{background:var(--panel2);}
 .star-link{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  background:transparent;border:none;padding:6px 10px;border-radius:6px;
+  background:transparent;border:none;padding:6px 10px;border-radius:10px;
   cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;
-  animation:star-rainbow 3s linear infinite;
+  animation:star-rainbow 3s linear infinite;transition:background 220ms ease;
 }
-.star-link:hover,.star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
+/* 顶部彩色文本复用模式切换的描边与扫光，但不影响彩虹文字本身的动画。 */
+.star-link::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
+.star-link::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
+@media (hover:hover){
+  .star-link.is-hovered{background:rgba(76,194,255,.15);}
+  .star-link.is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
+  .star-link.is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
+  .star-link.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
+}
+.star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
+.star-link:focus-visible::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 @keyframes star-rainbow{from{color:#ff758f;}20%{color:#ffbc4b;}40%{color:#8ad45b;}60%{color:#55c7ff;}80%{color:#b38cff;}to{color:#ff758f;}}
 /* 窄窗口让 Star 提示独占下一行，避免与菜单的可点击区域重叠。 */
 @media (max-width:1120px){
@@ -83,6 +97,7 @@ body{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   color:var(--text-dim);pointer-events:none;font-size:14px;
 }
+.preview-image-meta{flex:0 0 auto;text-align:center;color:var(--text-dim);font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .preview-stage{flex:1 1 auto;min-height:0;display:flex;}
 .preview-stage>.preview-wrap{width:100%;}
 .quad-grid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px;}
@@ -120,27 +135,44 @@ select{
   width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
   border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;
 }
-select:focus{border-color:var(--accent);}
+/* 操作区控件共用模式选中态配色，预览画布仍保留独立的蓝色提示。 */
+select:focus{border-color:var(--control-accent);}
 input[type=range]{
   -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;
-  background:var(--panel2);outline:none;border:1px solid var(--border);
+  background:var(--panel2);outline:none;border:1px solid var(--border);cursor:grab;
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;
-  background:var(--accent);cursor:pointer;border:none;
+  background:var(--control-accent);cursor:grab;border:none;
 }
-input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:none;}
-input[type=range]:disabled{opacity:.4;}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--control-accent);cursor:grab;border:none;}
+/* 按住滑杆期间与画布拖动一致，显示正在抓取的光标。 */
+input[type=range]:not(:disabled):active,input[type=range]:not(:disabled):active::-webkit-slider-thumb,input[type=range]:not(:disabled):active::-moz-range-thumb{cursor:grabbing;}
+input[type=range]:disabled,input[type=range]:disabled::-webkit-slider-thumb,input[type=range]:disabled::-moz-range-thumb{opacity:.4;cursor:not-allowed;}
 .check,.radio{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;cursor:pointer;}
-.check input,.radio input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;}
+.check input,.radio input{accent-color:var(--control-accent);width:16px;height:16px;cursor:pointer;}
 button.btn{
   background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;
   padding:8px 12px;cursor:pointer;font-size:13px;font-family:inherit;margin:3px 2px;
 }
-button.btn:hover{border-color:var(--accent);}
-button.btn.accent{background:var(--accent);color:#06283a;border-color:var(--accent);font-weight:600;}
-button.btn.accent:hover{background:var(--accent-hover);}
+button.btn:hover{border-color:var(--control-accent);}
+button.btn.accent{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
+button.btn.accent:hover{background:var(--control-accent);}
 button.btn:disabled{opacity:.4;cursor:not-allowed;}
+/* 图纸操作与模式切换共用同一套悬停描边和扫光，禁用按钮不参与交互动画。 */
+button.drawing-action-btn{position:relative;border-radius:10px;transition:color 220ms ease,background 220ms ease,border-color 220ms ease;}
+.drawing-action-btn::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
+.drawing-action-btn::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
+/* 导出动作沿用模式切换的选中态配色，导入动作仍保持普通按钮层级。 */
+button.drawing-action-btn.action-selected{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
+button.drawing-action-btn.action-selected:hover{background:var(--control-accent);}
+@media (hover:hover){
+  .drawing-action-btn:not(:disabled).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
+  .drawing-action-btn:not(:disabled).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
+  .drawing-action-btn:not(:disabled).is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
+}
+.drawing-action-btn:focus-visible:not(:disabled){outline:none;}
+.drawing-action-btn:focus-visible:not(:disabled)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 .btn-row{display:flex;gap:6px;}
 .btn-row.centered{justify-content:center;}
 .flex-fill{flex:1;}
@@ -176,9 +208,9 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
 .mode-switch button:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
 .mode-switch button:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 /* 当前算法的 active 状态由 setProcessingMode 统一维护，优先于悬停描边。 */
-.mode-switch button.active{background:#b9c5e8;color:#091331;font-weight:600;}
+.mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);font-weight:600;}
 .mode-switch button.active::before{opacity:0;}
-@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before{transition-duration:0ms;transition-delay:0ms;}}
+@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before,.drawing-action-btn,.drawing-action-btn::before{transition-duration:0ms;transition-delay:0ms;}}
 .mode-specific[hidden]{display:none;}
 .gray-color{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;font-size:13px;}
 .gray-color .lab{color:var(--text-dim);font-size:12.5px;}
@@ -225,7 +257,7 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
 <body>
 
 <div class="topbar">
-  <div class="brand">PCB_lightgraph_portable</div>
+  <div class="brand"><span data-i18n="brandName">PCB图片分层器</span><span class="brand-badge" id="brandBadge">便携版</span></div>
   <div class="menubar" id="menubar">
     <div class="menu" id="menuFile">
       <button type="button" data-i18n="menuFile">File</button>
@@ -291,6 +323,7 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
 <div class="main">
   <div class="col-preview">
     <div class="hint" data-i18n="previewHint">【预览区】滚轮缩放，中键/右键拖动平移</div>
+    <div class="preview-image-meta" id="previewImageMeta" hidden></div>
     <div class="preview-stage">
       <div class="preview-wrap" id="compositeWrap">
         <canvas id="canvasComposite"></canvas>
@@ -342,7 +375,7 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
       <div class="content"><div class="inner">
         <label class="check"><input type="checkbox" id="chkLightOverlay"><span data-i18n="showLightOverlay">在预览中叠加显示灯光与范围</span></label>
         <div id="sliderLightSense"></div>
-        <button type="button" class="btn flex-fill" id="btnAutoLights" data-i18n="autoSuggestLights">自动重心布灯</button>
+        <button type="button" class="btn drawing-action-btn action-selected flex-fill" id="btnAutoLights" data-i18n="autoSuggestLights">自动重心布灯</button>
         <div id="sliderLightRadius"></div>
         <div id="sliderLightIntensity"></div>
         <p class="note" data-i18n="lightPlacementHint">在合成预览中连续左键两次，可手动放置一条灯光。</p>
@@ -391,8 +424,8 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
       <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="drawingActions">图纸操作</span></button>
       <div class="content"><div class="inner">
         <div class="btn-row">
-          <button type="button" class="btn flex-fill" id="btnImport" data-i18n="importDrawing">导入图纸</button>
-          <button type="button" class="btn accent flex-fill" id="btnExport" disabled data-i18n="exportDrawing">导出全部图纸</button>
+          <button type="button" class="btn drawing-action-btn flex-fill" id="btnImport"><span class="drawing-action-label" data-i18n="importDrawing">导入图纸</span></button>
+          <button type="button" class="btn drawing-action-btn action-selected flex-fill" id="btnExport" disabled data-i18n="exportDrawing">导出全部图纸</button>
         </div>
         <label class="ctl"><span class="lab" data-i18n="exportLayerSelect">选择导出层</span>
           <select id="selectExportLayer" disabled>
@@ -401,7 +434,7 @@ button.btn:disabled{opacity:.4;cursor:not-allowed;}
             <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
           </select>
         </label>
-        <div class="btn-row centered"><button type="button" class="btn accent" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
+        <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
       </div></div>
     </div>
   </div>
@@ -469,11 +502,24 @@ Object.assign(TRANSLATIONS['zh-CN'], { exportDrawing:'导出全部图纸', expor
 Object.assign(TRANSLATIONS['zh-TW'], { exportDrawing:'匯出全部圖紙', exportLayerSelect:'選擇匯出層', exportSelectedLayer:'匯出單張圖紙' });
 Object.assign(TRANSLATIONS.en, { exportDrawing:'Export All Drawings', exportLayerSelect:'Layer to Export', exportSelectedLayer:'Export Selected Drawing' });
 Object.assign(TRANSLATIONS.ja, { exportDrawing:'すべての図面を書き出す', exportLayerSelect:'書き出すレイヤー', exportSelectedLayer:'選択した図面を書き出す' });
+Object.assign(TRANSLATIONS['zh-CN'], { importDrawingReplace:'导入图纸并覆盖' });
+Object.assign(TRANSLATIONS['zh-TW'], { importDrawingReplace:'匯入圖紙並覆蓋' });
+Object.assign(TRANSLATIONS.en, { importDrawingReplace:'Import Drawing and Replace' });
+Object.assign(TRANSLATIONS.ja, { importDrawingReplace:'図面を読み込んで上書き' });
 Object.assign(TRANSLATIONS['zh-CN'], { lightingSettings:'灯光 / 显示 / 布灯', showLightOverlay:'在预览中叠加显示灯光与范围', autoLightSensitivity:'自动布灯敏感度（0 关闭）', autoSuggestLights:'自动重心布灯', lightRadius:'灯光散射半径', lightIntensity:'灯光中心不透明度', lightPlacementHint:'在合成预览中连续左键两次，可手动放置一条灯光。', lightPlacementStart:'已记录起点，请左键选择终点。' });
 Object.assign(TRANSLATIONS['zh-TW'], { lightingSettings:'燈光 / 顯示 / 佈燈', showLightOverlay:'在預覽中疊加顯示燈光與範圍', autoLightSensitivity:'自動佈燈敏感度（0 關閉）', autoSuggestLights:'自動重心佈燈', lightRadius:'燈光散射半徑', lightIntensity:'中心不透明度', lightPlacementHint:'在合成預覽中連續左鍵兩次，即可手動放置一條燈光。', lightPlacementStart:'已記錄起點，請左鍵選擇終點。' });
 Object.assign(TRANSLATIONS.en, { lightingSettings:'Lighting / Display / Placement', showLightOverlay:'Show lights and range in preview', autoLightSensitivity:'Auto-light Sensitivity (0 Off)', autoSuggestLights:'Auto Centroid Placement', lightRadius:'Light Diffusion Radius', lightIntensity:'Light Center Opacity', lightPlacementHint:'Left-click twice in the composite preview to place a light strip.', lightPlacementStart:'Start recorded. Left-click to choose the end.' });
 Object.assign(TRANSLATIONS.ja, { lightingSettings:'照明 / 表示 / 配置', showLightOverlay:'プレビューに照明と範囲を重ねて表示', autoLightSensitivity:'自動配置の感度（0 でオフ）', autoSuggestLights:'重心に自動配置', lightRadius:'照明の拡散半径', lightIntensity:'中心の不透明度', lightPlacementHint:'合成プレビューを左クリック 2 回でライトバーを手動配置できます。', lightPlacementStart:'始点を記録しました。左クリックで終点を選択してください。' });
-const PRODUCT_NAME = 'PCB_lightgraph_portable';
+Object.assign(TRANSLATIONS['zh-CN'], { previewImageMeta:'总像素 {pixels} · {width} × {height} 像素 · 缩放 {zoom}%' });
+Object.assign(TRANSLATIONS['zh-TW'], { previewImageMeta:'總像素 {pixels} · {width} × {height} 像素 · 縮放 {zoom}%' });
+Object.assign(TRANSLATIONS.en, { previewImageMeta:'{pixels} pixels · {width} × {height} px · Zoom {zoom}%' });
+Object.assign(TRANSLATIONS.ja, { previewImageMeta:'総画素数 {pixels} · {width} × {height} px · ズーム {zoom}%' });
+/* 品牌名称与徽标独立翻译，语言切换时同步更新左上角和浏览器标题。 */
+Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版）', brandName:'PCB图片分层器', brandEdition:'便携版' });
+Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
+Object.assign(TRANSLATIONS.en, { pageTitle:'PCB_lightgraph_Portable', brandName:'PCB_lightgraph', brandEdition:'Portable' });
+Object.assign(TRANSLATIONS.ja, { pageTitle:'PCB画像レイヤー分離器（ポータブル版）', brandName:'PCB画像レイヤー分離器', brandEdition:'ポータブル版' });
+const PRODUCT_NAME = 'PCB_lightgraph_Portable';
 const APP_VERSION = 'v0.1.0';
 const GITHUB_REPOSITORY = 'Ashlixy17/PCB_lightgraph_portable';
 const GITHUB_RELEASES_URL = 'https://github.com/' + GITHUB_REPOSITORY + '/releases';
@@ -488,12 +534,20 @@ function refreshSliderLabel(label, input){ label.textContent = t(label.dataset.i
 function withProductName(text){ return text.replace('PCB_lightgraph Portable', PRODUCT_NAME); }
 function applyTranslations(){
   document.documentElement.lang = currentLanguage;
-  document.title = PRODUCT_NAME;
+  document.title = t('pageTitle');
   document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
+  const brandBadge = el('#brandBadge');
+  if(brandBadge){
+    // 各语言共用徽标结构，仅替换对应的便携版译文。
+    brandBadge.hidden = false;
+    brandBadge.textContent = t('brandEdition');
+  }
   document.querySelectorAll('[data-i18n-aria]').forEach(node => { node.setAttribute('aria-label', t(node.dataset.i18nAria)); });
   document.querySelectorAll('[data-i18n-title]').forEach(node => { node.title = t(node.dataset.i18nTitle); });
   document.querySelectorAll('.lab[data-i18n-slider]').forEach(label => refreshSliderLabel(label, label.parentElement.querySelector('input')));
   document.querySelectorAll('[data-language]').forEach(button => button.classList.toggle('active', button.dataset.language === currentLanguage));
+  syncImportDrawingButton();
+  syncPreviewImageMeta();
 }
 function setLanguage(language, persist){
   currentLanguage = TRANSLATIONS[language] ? language : 'zh-CN';
@@ -1401,6 +1455,7 @@ function setViewMode(mode){
   el('#colLayers').style.display = state.viewMode === 'split' ? 'flex' : 'none';
   document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
   updateQuadPlaceholders();
+  syncPreviewImageMeta();
   // 布局切换后容器尺寸才会稳定，延后一帧再重设画布像素尺寸。
   requestAnimationFrame(resizeCanvases);
 }
@@ -1428,6 +1483,21 @@ const quadPreviewCanvases = {
 const quadCamera = { zoom:1, pan:{x:0,y:0} };
 // 分隔视图也复用同一相机，使主预览与三个生产层始终同步。
 const splitCamera = { zoom:1, pan:{x:0,y:0} };
+
+function syncPreviewImageMeta(){
+  const mainMeta = el('#previewImageMeta');
+  if(!mainMeta) return;
+  if(!state.origin){
+    mainMeta.hidden = true;
+    return;
+  }
+  const zoom = state.viewMode === 'quad' ? quadCamera.zoom : (state.viewMode === 'split' ? splitCamera.zoom : previewStates.composite.zoom);
+  const pixels = new Intl.NumberFormat(document.documentElement.lang || currentLanguage).format(state.origin.width * state.origin.height);
+  const text = t('previewImageMeta', { pixels, width:state.origin.width, height:state.origin.height, zoom:Math.round(zoom * 100) });
+  mainMeta.textContent = text;
+  // 元信息保持在网格外，避免四分视图只有叠加格被额外文本压缩。
+  mainMeta.hidden = false;
+}
 
 function calcPreviewRect(labelW, labelH, imgW, imgH, zoom, pan){
   if(labelW <= 0 || labelH <= 0 || imgW <= 0 || imgH <= 0) return {x:0,y:0,w:0,h:0};
@@ -1475,6 +1545,7 @@ function refreshPreviews(){
     for(const k in keys) setPreviewImage(previewStates[k], state.previewLayers[keys[k]]);
   }
   updateQuadPlaceholders();
+  syncPreviewImageMeta();
   renderAllPreviews();
 }
 function updateQuadPlaceholders(){
@@ -1524,7 +1595,8 @@ function attachPreviewInteraction(key){
     e.preventDefault();
     if(!st.img) return;
     const view = state.viewMode === 'split' ? splitCamera : st;
-    const factor = Math.pow(1.12, e.deltaY/120);
+    // 与 Windows 图片查看器一致：滚轮向上放大，向下缩小。
+    const factor = Math.pow(1.12, -e.deltaY/120);
     const oldZoom = view.zoom;
     const newZoom = clamp(oldZoom*factor, 0.2, 8.0);
     if(Math.abs(newZoom-oldZoom) < 1e-6) return;
@@ -1539,6 +1611,7 @@ function attachPreviewInteraction(key){
       view.pan.x += cx - mx; view.pan.y += cy - my;
     }
     clampPanForImage(view, st.img, c.width, c.height);
+    syncPreviewImageMeta();
     if(state.viewMode === 'split') renderAllPreviews();
     else renderPreviewCanvas(st, c, st, key === 'composite');
   }, { passive:false });
@@ -1572,7 +1645,7 @@ function attachQuadPreviewInteraction(key){
   c.addEventListener('wheel', function(e){
     e.preventDefault();
     if(!st.img) return;
-    const oldZoom = quadCamera.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, e.deltaY/120), 0.2, 8.0);
+    const oldZoom = quadCamera.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, -e.deltaY/120), 0.2, 8.0);
     if(Math.abs(newZoom-oldZoom) < 1e-6) return;
     const r = c.getBoundingClientRect(), cx = e.clientX - r.left, cy = e.clientY - r.top;
     const oldRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, oldZoom, quadCamera.pan);
@@ -1584,6 +1657,7 @@ function attachQuadPreviewInteraction(key){
       quadCamera.pan.y += cy - (nextRect.y + v*nextRect.h);
     }
     clampPanForImage(quadCamera, st.img, c.width, c.height);
+    syncPreviewImageMeta();
     renderAllPreviews();
   }, { passive:false });
   c.addEventListener('pointerdown', function(e){
@@ -1780,7 +1854,7 @@ function openCropDialog(img, onComplete){
     '<div><h3>' + t('cropTitle') + '</h3>' +
     '<p class="crop-hint">' + t('cropHint') + '</p>' +
     '<div class="crop-stage"><canvas id="cropCanvas" width="' + cw + '" height="' + ch + '"></canvas></div>' +
-    '<div class="btns"><button type="button" class="btn" id="cropSkip">' + t('cropSkip') + '</button><button type="button" class="btn accent" id="cropConfirm">' + t('cropConfirm') + '</button></div></div>',
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="cropSkip">' + t('cropSkip') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="cropConfirm">' + t('cropConfirm') + '</button></div></div>',
     'crop-modal'
   );
   const canvas = el('#cropCanvas'), ctx = canvas.getContext('2d'), back = el('#modalBack');
@@ -1871,6 +1945,9 @@ function openCropDialog(img, onComplete){
   canvas.addEventListener('pointercancel', function(){ drag = null; canvas.style.cursor = 'default'; });
   back.addEventListener('click', onBackdropClick);
   window.addEventListener('keydown', onKeyDown);
+  // 裁剪弹窗按钮在运行时创建，需要在插入弹窗后绑定悬停动画。
+  attachFortniteHoverEffect(el('#cropSkip'));
+  attachFortniteHoverEffect(el('#cropConfirm'));
   el('#cropSkip').onclick = () => finish(null);
   el('#cropConfirm').onclick = () => finish(crop);
   draw();
@@ -1897,6 +1974,8 @@ function importDecodedImage(img, rect){
       state.light.strips = [];
       state.light.pendingStart = null;
       setExportControlsEnabled(true);
+      syncImportDrawingButton();
+      syncPreviewImageMeta();
       updateProcess();
       return;
     } catch(err){
@@ -1960,6 +2039,16 @@ function setExportControlsEnabled(enabled){
   el('#selectExportLayer').disabled = !enabled;
   el('#btnExportSelected').disabled = !enabled;
   el('#mExport').classList.toggle('disabled', !enabled);
+}
+function syncImportDrawingButton(){
+  const button = el('#btnImport');
+  if(!button) return;
+  const hasSourceImage = !!state.origin;
+  const label = button.querySelector('.drawing-action-label');
+  if(label){
+    label.dataset.i18n = hasSourceImage ? 'importDrawingReplace' : 'importDrawing';
+    label.textContent = t(label.dataset.i18n);
+  }
 }
 function getExportSettings(){
   if(!state.origin) return;
@@ -2142,6 +2231,8 @@ function importProjectFile(file){
         edgeSharpener.reset();
         restoreLightStrips(root.ledStrips);
         setExportControlsEnabled(true);
+        syncImportDrawingButton();
+        syncPreviewImageMeta();
         updateProcess();
         toast(t('projectImported'));
       };
@@ -2306,6 +2397,22 @@ function loadLocalPrefs(){
 }
 
 /* ---------------- 初始化 ---------------- */
+function attachFortniteHoverEffect(button){
+  let leaveTimer;
+  button.addEventListener('pointerenter', function(){
+    clearTimeout(leaveTimer);
+    this.classList.remove('is-leaving');
+    if(!this.disabled && !this.classList.contains('active')) this.classList.add('is-hovered');
+  });
+  button.addEventListener('pointerleave', function(){
+    this.classList.remove('is-hovered');
+    if(this.disabled || this.classList.contains('active')) return;
+    this.classList.add('is-leaving');
+    // 退出动画独立于 hover，指针越过描边边缘时也能完整播放。
+    leaveTimer = setTimeout(() => this.classList.remove('is-leaving'), 150);
+  });
+}
+
 function init(){
   // 创建滑块
   createSlider('sliderGold', 'goldThreshold', 0, 359, 45);
@@ -2349,21 +2456,11 @@ function init(){
   el('#btnAutoLights').addEventListener('click', autoSuggestLights);
   el('#grayPreviewMask').addEventListener('change', function(){ state.gray.previewMaskId = this.value; updateProcess(); });
   document.querySelectorAll('[data-processing-mode]').forEach(btn => {
-    let leaveTimer;
-    btn.addEventListener('pointerenter', function(){
-      clearTimeout(leaveTimer);
-      this.classList.remove('is-leaving');
-      if(!this.classList.contains('active')) this.classList.add('is-hovered');
-    });
-    btn.addEventListener('pointerleave', function(){
-      this.classList.remove('is-hovered');
-      if(this.classList.contains('active')) return;
-      this.classList.add('is-leaving');
-      // 退出动画独立于 hover，指针越过描边边缘时也能完整播放。
-      leaveTimer = setTimeout(() => this.classList.remove('is-leaving'), 150);
-    });
+    attachFortniteHoverEffect(btn);
     btn.addEventListener('click', function(){ setProcessingMode(this.dataset.processingMode, true); });
   });
+  attachFortniteHoverEffect(el('#btnStarProject'));
+  document.querySelectorAll('.drawing-action-btn').forEach(attachFortniteHoverEffect);
   document.querySelectorAll('[data-view-mode]').forEach(btn => {
     btn.addEventListener('click', function(){ setViewMode(this.dataset.viewMode); });
   });
