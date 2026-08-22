@@ -10,14 +10,14 @@
 </p>
 
 <p align="center">
-  <strong>PCB_lightgraph Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的HTML便携版。<br>
-  <strong>把工具装进一个 HTML 文件，随时生成 PCB 图纸。
+  <strong>PCB_lightgraph Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的HTML便携版<br>
+  <strong>把工具装进一个 HTML 文件，随时生成 PCB 图纸
   </strong><br>
-  不用安装，不用编译，双击即可开始创作。<br>
+  不用安装，不用编译，双击即可开始创作<br>
 </p>
 
 <p align="center">
-  什么？你连下载的都懒得下载？真拿你没办法！<br>
+  什么？你连下载的都懒得下载？那好吧<br>
   <a href="https://ashlixy17.github.io/PCB_lightgraph_Portable/">点击此处开始使用网页版</a>
 </p>
 
@@ -65,15 +65,18 @@
   <img src="assets/support-star.gif" alt="感谢支持" width="180">
 </p>
 
-**便携版作者**：
-[@Laplac_heroin](https://space.bilibili.com/3461564136950176)
+**安装版软件原作者**：<br>
+[[GitHub] @tomatorigid](https://github.com/tomatorigid)<br>
+[[b站] 芙ling痛恨数学分析](https://space.bilibili.com/549252923)
 <br>
-**软件原作者**：
-[@芙ling痛恨数学分析](https://space.bilibili.com/549252923)
+**此网页便携版作者**：<br>
+[[小黑盒]甲基苯冰胺](https://www.xiaoheihe.cn/app/user/profile/43387323)<br>
+[[b站] Laplac_heroin](https://space.bilibili.com/3461564136950176)
 <br>
-**PCB绘制交流群**：<br>
+**PCB绘制交流群**(非群主)：<br>
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
 [[QQ]雷霆PCB的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi) <br>
+如果你有任何关于**嘉立创EDA**和**PCB打印**的问题，都可以进群询问。
 
 ### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ
 
