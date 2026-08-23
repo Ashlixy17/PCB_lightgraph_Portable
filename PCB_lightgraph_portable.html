@@ -2044,6 +2044,18 @@ function layerToPngBlob(layer, forceOpaqueMono){
   c.getContext('2d').putImageData(new ImageData(d, w, h), 0, 0);
   return new Promise(res => c.toBlob(res, 'image/png'));
 }
+function ledReferenceToPngBlob(width, height, strips){
+  const c = document.createElement('canvas'); c.width = width; c.height = height;
+  const ctx = c.getContext('2d');
+  // 安装版参考图为透明背景，只保留与原始图等比例的圆头灯条轨迹。
+  ctx.lineCap = 'round';
+  ctx.lineWidth = Math.max(1, Math.floor(width / 60));
+  for(const strip of strips){
+    ctx.strokeStyle = 'rgb(' + strip.color.r + ',' + strip.color.g + ',' + strip.color.b + ')';
+    ctx.beginPath(); ctx.moveTo(strip.start.x, strip.start.y); ctx.lineTo(strip.end.x, strip.end.y); ctx.stroke();
+  }
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
 function downloadBlob(blob, name){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2090,6 +2102,12 @@ async function downloadLayerExport(key, settings){
   downloadBlob(blob, settings.grayscale ? settings.grayNames[key] : key + '_' + settings.finishName + '_Inverted.png');
   return true;
 }
+async function downloadLedReferenceExport(){
+  const blob = await ledReferenceToPngBlob(state.origin.width, state.origin.height, state.light.strips);
+  if(!blob) return false;
+  downloadBlob(blob, 'LED_Placement_Reference.png');
+  return true;
+}
 async function exportLayers(){
   const settings = getExportSettings();
   if(!settings) return;
@@ -2102,7 +2120,8 @@ async function exportLayers(){
     await downloadLayerExport(k, settings);
     await sleep(120);
   }
-  toast(t('exportSuccess', {count:keys.length}));
+  const referenceExported = !settings.grayscale && await downloadLedReferenceExport();
+  toast(t('exportSuccess', {count:keys.length + (referenceExported ? 1 : 0)}));
 }
 async function exportSelectedLayer(){
   const settings = getExportSettings(), key = el('#selectExportLayer').value;
