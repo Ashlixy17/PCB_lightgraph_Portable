@@ -50,16 +50,16 @@ body{
   animation:star-rainbow 3s linear infinite;transition:background 220ms ease;
 }
 /* 三类操作控件共用描边与扫光；仅模式按钮额外保留过渡和选中态。 */
-.star-link::before,.drawing-action-btn::before,.mode-switch button::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
-.star-link::after,.drawing-action-btn::after,.mode-switch button::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
+.star-link::before,.drawing-action-btn::before,.mode-switch button::before,.paint-tool::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
+.star-link::after,.drawing-action-btn::after,.mode-switch button::after,.paint-tool::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
 @media (hover:hover){
   .star-link.is-hovered{background:rgba(76,194,255,.15);}
-  .star-link.is-hovered::before,.drawing-action-btn:not(:disabled).is-hovered::before,.mode-switch button:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .star-link.is-hovered::after,.drawing-action-btn:not(:disabled).is-hovered::after,.mode-switch button:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .star-link.is-leaving::before,.drawing-action-btn:not(:disabled).is-leaving::before,.mode-switch button.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
+  .star-link.is-hovered::before,.drawing-action-btn:not(:disabled).is-hovered::before,.mode-switch button:not(.active).is-hovered::before,.paint-tool:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
+  .star-link.is-hovered::after,.drawing-action-btn:not(:disabled).is-hovered::after,.mode-switch button:not(.active).is-hovered::after,.paint-tool:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
+  .star-link.is-leaving::before,.drawing-action-btn:not(:disabled).is-leaving::before,.mode-switch button.is-leaving::before,.paint-tool.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
 }
 .star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
-.star-link:focus-visible::before,.drawing-action-btn:focus-visible:not(:disabled)::before,.mode-switch button:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
+.star-link:focus-visible::before,.drawing-action-btn:focus-visible:not(:disabled)::before,.mode-switch button:focus-visible:not(.active)::before,.paint-tool:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 @keyframes star-rainbow{from{color:#ff758f;}20%{color:#ffbc4b;}40%{color:#8ad45b;}60%{color:#55c7ff;}80%{color:#b38cff;}to{color:#ff758f;}}
 /* 窄窗口让 Star 提示独占下一行，避免与菜单的可点击区域重叠。 */
 @media (max-width:1120px){
@@ -79,7 +79,8 @@ body{
 }
 .dropdown button:hover{background:rgba(76,194,255,.15);}
 .dropdown button.active::after{content:'✓';float:right;color:var(--accent);}
-.dropdown button.disabled{color:#666;cursor:not-allowed;}
+.dropdown button.disabled,.dropdown button:disabled{color:#666;cursor:not-allowed;}
+.dropdown button:disabled:hover{background:transparent;}
 .dropdown .sep{height:1px;background:var(--border);margin:4px 6px;}
 .submenu{position:relative;}
 .submenu>.dropdown{left:100%;top:0;}
@@ -193,13 +194,14 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 }
 .mode-switch button:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
 /* 当前算法的 active 状态由 setProcessingMode 统一维护，优先于悬停描边。 */
-.mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);font-weight:600;}
+.mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);}
 .mode-switch button.active::before{opacity:0;}
-@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before,.drawing-action-btn,.drawing-action-btn::before{transition-duration:0ms;transition-delay:0ms;}}
+.mode-switch button.is-switching-in,.paint-tool.is-switching-in{animation:mode-switch-selected-enter 220ms ease both;}
+.mode-switch button.is-switching-out,.paint-tool.is-switching-out{pointer-events:none;animation:mode-switch-selected-leave 220ms ease both;}
+@keyframes mode-switch-selected-enter{from{background:rgb(185 197 232 / 0%);color:var(--text-dim);}to{background:var(--control-accent);color:var(--control-accent-text);}}
+@keyframes mode-switch-selected-leave{from{background:var(--control-accent);color:var(--control-accent-text);}to{background:rgb(185 197 232 / 0%);color:var(--text-dim);}}
+@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before,.paint-tool,.paint-tool::before,.drawing-action-btn,.drawing-action-btn::before{transition-duration:0ms;transition-delay:0ms;}}
 .mode-specific[hidden]{display:none;}
-.gray-color{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;font-size:13px;}
-.gray-color .lab{color:var(--text-dim);font-size:12.5px;}
-.gray-color input{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 /* layer previews grid */
 .layers-grid{
   flex:1 1 auto;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));gap:8px;min-height:0;
@@ -228,11 +230,33 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .modal input[type=number]{width:90px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;}
 .modal input[type=color]{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 .modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+/* 内置画板直接编辑原图像素；显示尺寸仅用于适配窗口，不改变源图分辨率。 */
+.paint-modal{width:min(1120px,94vw);max-width:1120px;height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;}
+.paint-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.paint-toolbar label{display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12.5px;}
+.paint-toolbar input[type=color]{width:34px;height:28px;}
+.paint-toolbar input[type=range]{width:120px;}
+.paint-tool-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;}
+/* 画笔和橡皮擦直接沿用主页模式切换的外观与动画，不叠加普通按钮边框。 */
+.paint-tool{position:relative;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 12px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
+.paint-tool::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
+@media (hover:hover){.paint-tool:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
+.paint-tool.active{background:var(--control-accent);color:var(--control-accent-text);}
+.paint-tool.active::before{opacity:0;}
+.paint-tool:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
+#paintBrushModeWrap{flex:0 0 auto;flex-wrap:nowrap;white-space:nowrap;}
+.paint-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;margin-top:10px;}
+.paint-stage canvas{display:block;flex:none;touch-action:none;cursor:crosshair;box-shadow:0 0 0 1px rgb(255 255 255 / 10%);will-change:transform;}
+.paint-size-indicator{position:absolute;border:1.5px solid var(--control-accent);border-radius:50%;box-sizing:border-box;pointer-events:none;z-index:1;opacity:0;transition:opacity .15s ease;box-shadow:0 0 3px rgb(0 0 0 / 82%);}
+.paint-size-indicator.show{opacity:1;}
+.paint-image-meta{margin-left:auto;color:var(--text-dim);font-size:12px;white-space:nowrap;}
+@media (max-width:680px){.paint-modal{width:98vw;height:94vh;padding:12px;}.paint-toolbar{gap:5px;}.paint-toolbar input[type=range]{width:86px;}}
 /* 裁剪画布按图片实际比例绘制，坐标直接映射回原图，避免预览缩放带来裁切偏差。 */
-.crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;}
+.crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;height:min(82vh,720px);max-height:calc(100vh - 32px);overflow:hidden;}
+.crop-modal>div{display:flex;flex-direction:column;min-height:0;height:100%;}
 .crop-hint{margin:0 0 12px;color:var(--text-dim);font-size:12.5px;line-height:1.5;}
-.crop-stage{display:flex;align-items:center;justify-content:center;max-height:60vh;overflow:auto;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
-.crop-stage canvas{display:block;max-width:100%;touch-action:none;cursor:default;}
+.crop-stage{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
+.crop-stage canvas{display:block;flex:none;max-width:none;touch-action:none;cursor:default;will-change:transform;}
 /* toast */
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);
@@ -253,6 +277,12 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <button type="button" id="mExport" class="disabled" data-i18n="exportDrawing">导出全部图纸</button>
         <button type="button" id="mSave" data-i18n="saveProject">保存工程…</button>
         <button type="button" id="mLoad" data-i18n="loadProject">导入工程…</button>
+      </div>
+    </div>
+    <div class="menu" id="menuEdit">
+      <button type="button" data-i18n="menuEdit">编辑</button>
+      <div class="dropdown">
+        <button type="button" id="mPaint" data-i18n="liveEdit" disabled>图纸快捷编辑</button>
       </div>
     </div>
     <div class="menu" id="menuOption">
@@ -397,13 +427,15 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 
     <div class="mode-specific" id="grayControls">
       <div class="group open" id="groupGray">
-        <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="grayParameters">纯灰度三分参数</span></button>
+        <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="basicParameters">基础参数</span></button>
         <div class="content"><div class="inner">
+          <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
+            <select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option></select>
+          </label>
           <div id="sliderGraySilk"></div>
           <div id="sliderGrayMask"></div>
           <div id="sliderGrayThick"></div>
           <div id="sliderGrayBlur"></div>
-          <label class="gray-color"><span class="lab" data-i18n="grayPreviewMaskColor">合成预览阻焊颜色</span><select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option></select></label>
         </div></div>
       </div>
     </div>
@@ -468,10 +500,10 @@ const TRANSLATIONS = {
 };
 Object.assign(TRANSLATIONS.en, { canvasContextFailed:'Unable to create a drawing context', unknownError:'Unknown error' });
 Object.assign(TRANSLATIONS.ja, { canvasContextFailed:'描画コンテキストを作成できません', unknownError:'不明なエラー' });
-Object.assign(TRANSLATIONS['zh-CN'], { cropTitle:'快捷裁剪', cropHint:'拖动裁剪框移动；拖动边或四角调整范围。', cropSkip:'取消并导入原图', cropConfirm:'裁剪并导入' });
-Object.assign(TRANSLATIONS['zh-TW'], { cropTitle:'快速裁切', cropHint:'拖曳裁切框移動；拖曳邊或四角調整範圍。', cropSkip:'取消並匯入原圖', cropConfirm:'裁切並匯入' });
-Object.assign(TRANSLATIONS.en, { cropTitle:'Quick Crop', cropHint:'Drag the crop area to move it; drag edges or corners to resize.', cropSkip:'Skip and Import Original', cropConfirm:'Crop and Import' });
-Object.assign(TRANSLATIONS.ja, { cropTitle:'クイックトリミング', cropHint:'枠内をドラッグして移動し、辺または角をドラッグして範囲を調整します。', cropSkip:'キャンセルして元画像を読み込む', cropConfirm:'トリミングして読み込む' });
+Object.assign(TRANSLATIONS['zh-CN'], { cropTitle:'快捷裁剪', cropHint:'拖动裁剪框移动；拖动边或四角调整范围。滚轮缩放，右键拖动画面。', cropSkip:'取消并导入原图', cropConfirm:'裁剪并导入' });
+Object.assign(TRANSLATIONS['zh-TW'], { cropTitle:'快速裁切', cropHint:'拖曳裁切框移動；拖曳邊或四角調整範圍。滾輪縮放，右鍵拖曳畫面。', cropSkip:'取消並匯入原圖', cropConfirm:'裁切並匯入' });
+Object.assign(TRANSLATIONS.en, { cropTitle:'Quick Crop', cropHint:'Drag the crop area to move it; drag edges or corners to resize. Wheel to zoom; right-drag to pan.', cropSkip:'Skip and Import Original', cropConfirm:'Crop and Import' });
+Object.assign(TRANSLATIONS.ja, { cropTitle:'クイックトリミング', cropHint:'枠内をドラッグして移動し、辺または角をドラッグして範囲を調整します。ホイールで拡大縮小、右ドラッグで移動できます。', cropSkip:'キャンセルして元画像を読み込む', cropConfirm:'トリミングして読み込む' });
 Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', githubLink:'跳转至 GitHub', issueFeedback:'问题反馈' });
 Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', githubLink:'前往 GitHub', issueFeedback:'問題回饋' });
 Object.assign(TRANSLATIONS.en, { menuHelp:'About', githubLink:'Open GitHub', issueFeedback:'Report an Issue' });
@@ -516,6 +548,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { noOutput:'无输出' });
 Object.assign(TRANSLATIONS['zh-TW'], { noOutput:'無輸出' });
 Object.assign(TRANSLATIONS.en, { noOutput:'No output' });
 Object.assign(TRANSLATIONS.ja, { noOutput:'出力なし' });
+Object.assign(TRANSLATIONS['zh-CN'], { menuEdit:'编辑', liveEdit:'图纸快捷编辑', liveEditNeedImage:'请先导入图片', paintBrush:'画笔', paintEraser:'橡皮擦', paintSize:'粗细', paintBrushMode:'画笔模式', paintWhite:'白色覆盖', paintTransparent:'透明擦除', paintSolderMask:'阻焊颜色', paintUndo:'撤销', paintRollback:'回退撤销', paintRedo:'重做', paintCancelEdit:'取消编辑', paintSaveEdit:'保存编辑' });
+Object.assign(TRANSLATIONS['zh-TW'], { menuEdit:'編輯', liveEdit:'圖紙快速編輯', liveEditNeedImage:'請先匯入圖片', paintBrush:'畫筆', paintEraser:'橡皮擦', paintSize:'粗細', paintBrushMode:'畫筆模式', paintWhite:'白色覆蓋', paintTransparent:'透明擦除', paintSolderMask:'阻焊顏色', paintUndo:'復原', paintRollback:'回退復原', paintRedo:'重做', paintCancelEdit:'取消編輯', paintSaveEdit:'儲存編輯' });
+Object.assign(TRANSLATIONS.en, { menuEdit:'Edit', liveEdit:'Quick Drawing Edit', liveEditNeedImage:'Import an image first', paintBrush:'Brush', paintEraser:'Eraser', paintSize:'Size', paintBrushMode:'Brush mode', paintWhite:'Paint white', paintTransparent:'Erase to transparent', paintSolderMask:'Solder mask color', paintUndo:'Undo', paintRollback:'Redo Undo', paintRedo:'Reset Drawing', paintCancelEdit:'Cancel Edit', paintSaveEdit:'Save Edit' });
+Object.assign(TRANSLATIONS.ja, { menuEdit:'編集', liveEdit:'図面クイック編集', liveEditNeedImage:'先に画像を読み込んでください', paintBrush:'ブラシ', paintEraser:'消しゴム', paintSize:'太さ', paintBrushMode:'ブラシの方式', paintWhite:'白で塗る', paintTransparent:'透明に消去', paintSolderMask:'レジスト色', paintUndo:'元に戻す', paintRollback:'取り消しを戻す', paintRedo:'描画をリセット', paintCancelEdit:'編集を取り消す', paintSaveEdit:'編集を保存' });
 /* 品牌名称与徽标独立翻译，语言切换时同步更新左上角和浏览器标题。 */
 Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版）', brandName:'PCB图片分层器', brandEdition:'便携版' });
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
@@ -1447,6 +1483,24 @@ function sliderVal(sel){
 /* 折叠组：master 状态（bare/edge 展开=启用） */
 const masterState = { light:false, bare:false, edge:false };
 
+function transitionSegmentedSelection(buttons, nextButton){
+  const list = Array.from(buttons);
+  const previous = list.find(button => button.classList.contains('active'));
+  if(previous === nextButton) return;
+  list.forEach(button => {
+    if(button._selectionTimer) clearTimeout(button._selectionTimer);
+    button.classList.remove('is-switching-in', 'is-switching-out');
+  });
+  if(previous){
+    previous.classList.remove('active');
+    previous.classList.add('is-switching-out');
+  }
+  nextButton.classList.add('active', 'is-switching-in');
+  [previous, nextButton].filter(Boolean).forEach(button => {
+    button._selectionTimer = setTimeout(() => button.classList.remove('is-switching-in', 'is-switching-out'), 220);
+  });
+}
+
 function setProcessingMode(mode, shouldRender){
   state.processingMode = mode === 'gray' ? 'gray' : 'color';
   const isGray = state.processingMode === 'gray';
@@ -1458,7 +1512,10 @@ function setProcessingMode(mode, shouldRender){
   el('#exportBottomOption').hidden = isGray;
   if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
   syncQuadPrimaryLabel();
-  document.querySelectorAll('[data-processing-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
+  const modeButtons = document.querySelectorAll('[data-processing-mode]');
+  const nextButton = Array.from(modeButtons).find(btn => btn.dataset.processingMode === state.processingMode);
+  if(shouldRender && nextButton) transitionSegmentedSelection(modeButtons, nextButton);
+  else modeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
   if(shouldRender && state.origin) updateProcess();
   schedulePreviewResize();
 }
@@ -1805,7 +1862,11 @@ function showModal(html, modalClass){
   body.innerHTML = html;
   el('#modalBack').classList.add('show');
 }
-function closeModal(){ el('#modalBack').classList.remove('show'); }
+function closeModal(){
+  if(paintSession && paintSession.cleanup) paintSession.cleanup();
+  paintSession = null;
+  el('#modalBack').classList.remove('show');
+}
 let toastTimer = null;
 function toast(msg){
   const t = el('#toast');
@@ -1813,6 +1874,286 @@ function toast(msg){
   t.style.display = 'block';
   if(toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2600);
+}
+
+/* ---------------- 内置画板：笔画结束后自动回读并重新分层 ---------------- */
+const PAINT_HISTORY_LIMIT = 50;
+let paintSession = null;
+function paintPointFromEvent(canvas, event){
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x:clamp((event.clientX-rect.left)*canvas.width/rect.width, 0, canvas.width-1),
+    y:clamp((event.clientY-rect.top)*canvas.height/rect.height, 0, canvas.height-1)
+  };
+}
+function paintConfigureContext(ctx, stroke){
+  ctx.globalCompositeOperation = stroke.action === 'transparent' ? 'destination-out' : 'source-over';
+  ctx.strokeStyle = stroke.action === 'mask' ? stroke.color : '#ffffff';
+  ctx.fillStyle = stroke.action === 'mask' ? stroke.color : '#ffffff';
+  ctx.lineWidth = stroke.size;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+}
+function paintCurrentMaskColor(){
+  const id = state.processingMode === 'gray' ? state.gray.previewMaskId : el('#selectMask').value;
+  const color = getSolderMaskColor(id);
+  return 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+}
+function paintRestoreSegment(ctx, sourceCanvas, stroke, from, to){
+  const radius = stroke.size * 0.5;
+  ctx.save(); ctx.beginPath();
+  if(from === to){
+    ctx.arc(to.x, to.y, radius, 0, Math.PI*2);
+  } else {
+    const dx = to.x-from.x, dy = to.y-from.y, length = Math.hypot(dx, dy) || 1;
+    const nx = -dy/length*radius, ny = dx/length*radius;
+    ctx.arc(from.x, from.y, radius, 0, Math.PI*2);
+    ctx.arc(to.x, to.y, radius, 0, Math.PI*2);
+    ctx.moveTo(from.x+nx, from.y+ny); ctx.lineTo(to.x+nx, to.y+ny);
+    ctx.lineTo(to.x-nx, to.y-ny); ctx.lineTo(from.x-nx, from.y-ny); ctx.closePath();
+  }
+  ctx.clip(); ctx.drawImage(sourceCanvas, 0, 0);
+  ctx.restore();
+}
+function paintDrawSegment(ctx, stroke, from, to, sourceCanvas){
+  if(stroke.action === 'restore') return paintRestoreSegment(ctx, sourceCanvas, stroke, from, to);
+  ctx.save(); paintConfigureContext(ctx, stroke);
+  if(from === to){ ctx.beginPath(); ctx.arc(to.x, to.y, stroke.size*0.5, 0, Math.PI*2); ctx.fill(); }
+  else { ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke(); }
+  ctx.restore();
+}
+function paintDrawStroke(ctx, stroke, sourceCanvas){
+  if(!stroke || !stroke.points || !stroke.points.length) return;
+  paintDrawSegment(ctx, stroke, stroke.points[0], stroke.points[0], sourceCanvas);
+  for(let i=1; i<stroke.points.length; i++) paintDrawSegment(ctx, stroke, stroke.points[i-1], stroke.points[i], sourceCanvas);
+}
+function paintReplay(){
+  const session = paintSession;
+  if(!session) return;
+  session.ctx.globalCompositeOperation = 'source-over';
+  session.ctx.putImageData(session.base, 0, 0);
+  for(const stroke of session.strokes) paintDrawStroke(session.ctx, stroke, session.sourceCanvas);
+  paintApplyToProject();
+}
+function paintResetAllStrokes(){
+  const session = paintSession;
+  if(!session || (!session.strokes.length && !session.redo.length)) return;
+  // 超过历史上限而折叠进 base 的笔画也要一并移除，恢复打开编辑器时的原图。
+  session.base = session.initialImage; session.strokes = []; session.redo = [];
+  session.ctx.globalCompositeOperation = 'source-over';
+  session.ctx.putImageData(session.initialImage, 0, 0);
+  paintApplyToProject(); paintRefreshControls();
+}
+function paintFoldOldestStroke(){
+  const session = paintSession;
+  const dropped = session && session.strokes.shift();
+  if(!dropped) return;
+  const canvas = document.createElement('canvas'); canvas.width = session.canvas.width; canvas.height = session.canvas.height;
+  const ctx = canvas.getContext('2d'); ctx.putImageData(session.base, 0, 0); paintDrawStroke(ctx, dropped, session.sourceCanvas);
+  session.base = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+function replaceProjectOrigin(imageData, sourceCanvas){
+  // 仅替换原图与相关缓存，分层参数、视图相机和灯条坐标保持不变。
+  state.origin = imageData; state.originCanvas = sourceCanvas;
+  state.fullResGeneration = -1; state._roCache = null;
+  imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
+  edgeSharpener.reset();
+  syncPreviewImageMeta();
+  updateProcess();
+}
+function paintApplyToProject(){
+  const session = paintSession;
+  if(!session) return;
+  replaceProjectOrigin(session.ctx.getImageData(0, 0, session.canvas.width, session.canvas.height), session.canvas);
+}
+function paintRefreshControls(){
+  const session = paintSession;
+  if(!session) return;
+  el('#paintBrush').classList.toggle('active', session.tool === 'brush');
+  el('#paintEraser').classList.toggle('active', session.tool === 'eraser');
+  el('#paintUndo').disabled = session.strokes.length === 0;
+  // 首笔完成后两个历史操作保持同等可见状态；只有撤销产生的笔画才会实际重做。
+  el('#paintRedo').disabled = session.strokes.length === 0 && session.redo.length === 0;
+  el('#paintReset').disabled = session.strokes.length === 0 && session.redo.length === 0;
+}
+function syncPaintImageMeta(){
+  const session = paintSession, meta = el('#paintImageMeta');
+  if(!session || !meta) return;
+  const pixels = new Intl.NumberFormat(document.documentElement.lang || currentLanguage).format(session.canvas.width * session.canvas.height);
+  meta.textContent = t('previewImageMeta', { pixels, width:session.canvas.width, height:session.canvas.height, zoom:Math.round(session.zoom * 100) });
+}
+function fitPaintCanvas(){
+  const session = paintSession, stage = el('#paintStage');
+  if(!session || !stage) return;
+  const fit = Math.min((stage.clientWidth-24)/session.canvas.width, (stage.clientHeight-24)/session.canvas.height, 1);
+  const scale = Math.max(0.01, fit) * session.zoom;
+  session.canvas.style.width = Math.max(1, Math.floor(session.canvas.width*scale)) + 'px';
+  session.canvas.style.height = Math.max(1, Math.floor(session.canvas.height*scale)) + 'px';
+  clampPaintPan();
+  if(el('#paintSizeIndicator')?.classList.contains('show')) updatePaintSizeIndicator(null, false);
+  syncPaintImageMeta();
+}
+function clampPaintPan(){
+  const session = paintSession, stage = el('#paintStage');
+  if(!session || !stage) return;
+  // 画板不设平移边界：未放大时也能横向、纵向自由移动图片。
+  session.canvas.style.transform = 'translate(' + session.pan.x + 'px,' + session.pan.y + 'px)';
+}
+function updatePaintSizeIndicator(point, keepVisible){
+  const session = paintSession, stage = el('#paintStage'), indicator = el('#paintSizeIndicator');
+  if(!session || !stage || !indicator) return;
+  const canvasRect = session.canvas.getBoundingClientRect(), stageRect = stage.getBoundingClientRect();
+  const diameter = Math.max(2, session.size * canvasRect.width / session.canvas.width);
+  indicator.style.width = diameter + 'px'; indicator.style.height = diameter + 'px';
+  // 粗细提示固定在画布中心，不随指针移动而遮挡待绘制区域。
+  indicator.style.left = (canvasRect.left-stageRect.left + canvasRect.width*0.5-diameter*0.5) + 'px';
+  indicator.style.top = (canvasRect.top-stageRect.top + canvasRect.height*0.5-diameter*0.5) + 'px';
+  if(!keepVisible) return;
+  indicator.classList.add('show');
+  if(session.indicatorTimer) clearTimeout(session.indicatorTimer);
+  session.indicatorTimer = setTimeout(() => { if(paintSession === session) indicator.classList.remove('show'); }, 850);
+}
+function zoomPaintCanvas(event){
+  const session = paintSession, stage = el('#paintStage');
+  if(!session || !stage) return;
+  event.preventDefault();
+  const point = paintPointFromEvent(session.canvas, event);
+  const oldZoom = session.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, -event.deltaY/120), 0.2, 8.0);
+  if(Math.abs(newZoom-oldZoom) < 1e-6) return;
+  session.zoom = newZoom; fitPaintCanvas();
+  const nextRect = session.canvas.getBoundingClientRect();
+  const targetX = nextRect.left + point.x/session.canvas.width*nextRect.width;
+  const targetY = nextRect.top + point.y/session.canvas.height*nextRect.height;
+  session.pan.x += event.clientX-targetX; session.pan.y += event.clientY-targetY;
+  clampPaintPan(); updatePaintSizeIndicator(null, false);
+}
+function createPaintSourceCanvas(imageData){
+  const canvas = document.createElement('canvas'); canvas.width = imageData.width; canvas.height = imageData.height;
+  canvas.getContext('2d').putImageData(imageData, 0, 0);
+  return canvas;
+}
+function cancelPaintEditor(){
+  const session = paintSession;
+  if(!session) return closeModal();
+  // 画板会实时回读，所以取消时必须显式恢复打开画板前的原图。
+  replaceProjectOrigin(session.initialImage, session.sourceCanvas);
+  closeModal();
+}
+function openPaintEditor(){
+  if(!state.origin){ toast(t('liveEditNeedImage')); return; }
+  showModal(
+    '<h3>' + t('liveEdit') + '</h3>' +
+    '<div class="paint-toolbar">' +
+      '<div class="paint-tool-switch"><button type="button" class="paint-tool active" id="paintBrush">' + t('paintBrush') + '</button>' +
+      '<button type="button" class="paint-tool" id="paintEraser">' + t('paintEraser') + '</button></div>' +
+      '<label>' + t('paintSize') + '<input type="range" id="paintSize" min="1" max="160" value="12"><span id="paintSizeValue">12</span></label>' +
+      '<label id="paintBrushModeWrap">' + t('paintBrushMode') + '<select id="paintBrushMode"><option value="white">' + t('paintWhite') + '</option><option value="transparent">' + t('paintTransparent') + '</option><option value="mask">' + t('paintSolderMask') + '</option></select></label>' +
+      '<button type="button" class="btn drawing-action-btn" id="paintUndo">' + t('paintUndo') + '</button>' +
+      '<button type="button" class="btn drawing-action-btn" id="paintRedo">' + t('paintRollback') + '</button>' +
+      '<button type="button" class="btn drawing-action-btn" id="paintReset">' + t('paintRedo') + '</button>' +
+      '<span class="paint-image-meta" id="paintImageMeta"></span>' +
+    '</div><div class="paint-stage" id="paintStage"><canvas id="paintCanvas"></canvas><span class="paint-size-indicator" id="paintSizeIndicator"></span></div>' +
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="paintCancel">' + t('paintCancelEdit') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="paintSave">' + t('paintSaveEdit') + '</button></div>',
+    'paint-modal'
+  );
+  const canvas = el('#paintCanvas'), stage = el('#paintStage'); canvas.width = state.origin.width; canvas.height = state.origin.height;
+  const context = canvas.getContext('2d');
+  paintSession = { initialImage:state.origin, base:state.origin, sourceCanvas:createPaintSourceCanvas(state.origin), strokes:[], redo:[], canvas, ctx:context, tool:'brush', brushMode:'white', size:12, zoom:1, pan:{x:0,y:0}, activeStroke:null, panDrag:null, indicatorTimer:0, cleanup:null };
+  context.putImageData(state.origin, 0, 0);
+  const resize = () => fitPaintCanvas();
+  const finishStroke = event => {
+    const session = paintSession;
+    if(!session || !session.activeStroke || (event && event.pointerId !== session.activeStroke.pointerId)) return;
+    try { canvas.releasePointerCapture(session.activeStroke.pointerId); } catch(error) {}
+    delete session.activeStroke.pointerId;
+    session.strokes.push(session.activeStroke); session.activeStroke = null; session.redo = [];
+    while(session.strokes.length > PAINT_HISTORY_LIMIT) paintFoldOldestStroke();
+    paintApplyToProject(); paintRefreshControls();
+  };
+  const finishPaintPointer = event => {
+    const session = paintSession;
+    if(session?.panDrag && event.pointerId === session.panDrag.pointerId){
+      try { session.panDrag.target.releasePointerCapture(event.pointerId); } catch(error) {}
+      session.panDrag.target.style.cursor = ''; session.panDrag = null; canvas.style.cursor = 'crosshair'; return;
+    }
+    finishStroke(event);
+  };
+  const onKeyDown = event => {
+    if(!paintSession || !event.ctrlKey) return;
+    if(event.key.toLowerCase() === 'z'){ event.preventDefault(); el('#paintUndo').click(); }
+    if(event.key.toLowerCase() === 'y'){ event.preventDefault(); el('#paintRedo').click(); }
+  };
+  paintSession.cleanup = () => { if(paintSession?.indicatorTimer) clearTimeout(paintSession.indicatorTimer); window.removeEventListener('resize', resize); window.removeEventListener('keydown', onKeyDown); };
+  window.addEventListener('resize', resize); window.addEventListener('keydown', onKeyDown);
+  canvas.addEventListener('wheel', zoomPaintCanvas, { passive:false });
+  canvas.addEventListener('pointerdown', event => {
+    const session = paintSession;
+    if(!session) return;
+    if(event.button === 2){
+      session.panDrag = { pointerId:event.pointerId, x:event.clientX, y:event.clientY, target:canvas };
+      canvas.setPointerCapture(event.pointerId); canvas.style.cursor = 'grabbing'; event.preventDefault(); return;
+    }
+    if(event.button !== 0) return;
+    const point = paintPointFromEvent(canvas, event);
+    const action = session.tool === 'eraser' ? 'restore' : session.brushMode;
+    session.activeStroke = { action, color:action === 'mask' ? paintCurrentMaskColor() : '#ffffff', size:session.size, points:[point], pointerId:event.pointerId };
+    canvas.setPointerCapture(event.pointerId); paintDrawSegment(session.ctx, session.activeStroke, point, point, session.sourceCanvas); event.preventDefault();
+  });
+  canvas.addEventListener('pointermove', event => {
+    const session = paintSession; if(!session) return;
+    if(session.panDrag && session.panDrag.target === canvas && event.pointerId === session.panDrag.pointerId){
+      session.pan.x += event.clientX-session.panDrag.x; session.pan.y += event.clientY-session.panDrag.y;
+      session.panDrag.x = event.clientX; session.panDrag.y = event.clientY;
+      clampPaintPan(); updatePaintSizeIndicator(null, false); event.preventDefault(); return;
+    }
+    const point = paintPointFromEvent(canvas, event);
+    if(el('#paintSizeIndicator')?.classList.contains('show')) updatePaintSizeIndicator(point, false);
+    const stroke = session.activeStroke;
+    if(!stroke || stroke.pointerId !== event.pointerId) return;
+    const previous = stroke.points[stroke.points.length-1];
+    if(Math.hypot(point.x-previous.x, point.y-previous.y) < 0.25) return;
+    stroke.points.push(point); paintDrawSegment(session.ctx, stroke, previous, point, session.sourceCanvas); event.preventDefault();
+  });
+  canvas.addEventListener('pointerup', finishPaintPointer); canvas.addEventListener('pointercancel', finishPaintPointer);
+  canvas.addEventListener('contextmenu', event => event.preventDefault());
+  // 黑色留白同样可以开始右键平移，不再依赖指针必须落在图片上。
+  stage.addEventListener('pointerdown', event => {
+    if(event.target !== stage || event.button !== 2 || !paintSession) return;
+    paintSession.panDrag = { pointerId:event.pointerId, x:event.clientX, y:event.clientY, target:stage };
+    stage.setPointerCapture(event.pointerId); stage.style.cursor = 'grabbing'; event.preventDefault();
+  });
+  stage.addEventListener('pointermove', event => {
+    const session = paintSession;
+    if(!session?.panDrag || session.panDrag.target !== stage || event.pointerId !== session.panDrag.pointerId) return;
+    session.pan.x += event.clientX-session.panDrag.x; session.pan.y += event.clientY-session.panDrag.y;
+    session.panDrag.x = event.clientX; session.panDrag.y = event.clientY;
+    clampPaintPan(); updatePaintSizeIndicator(null, false); event.preventDefault();
+  });
+  stage.addEventListener('pointerup', finishPaintPointer); stage.addEventListener('pointercancel', finishPaintPointer);
+  stage.addEventListener('contextmenu', event => event.preventDefault());
+  const setPaintTool = tool => {
+    if(!paintSession) return;
+    const target = tool === 'brush' ? el('#paintBrush') : el('#paintEraser');
+    transitionSegmentedSelection([el('#paintBrush'), el('#paintEraser')], target);
+    paintSession.tool = tool; el('#paintBrushModeWrap').hidden = tool === 'eraser'; paintRefreshControls();
+  };
+  el('#paintBrush').onclick = () => setPaintTool('brush');
+  el('#paintEraser').onclick = () => setPaintTool('eraser');
+  el('#paintSize').oninput = function(){ if(paintSession){ paintSession.size = Number(this.value); el('#paintSizeValue').textContent = this.value; updatePaintSizeIndicator(null, true); } };
+  el('#paintBrushMode').onchange = function(){ if(paintSession) paintSession.brushMode = this.value; };
+  el('#paintUndo').onclick = () => {
+    const session = paintSession; if(!session || !session.strokes.length) return;
+    session.redo.push(session.strokes.pop()); paintReplay(); paintRefreshControls();
+  };
+  el('#paintRedo').onclick = () => {
+    const session = paintSession; if(!session || !session.redo.length) return;
+    session.strokes.push(session.redo.pop()); paintReplay(); paintRefreshControls();
+  };
+  el('#paintReset').onclick = paintResetAllStrokes;
+  el('#paintCancel').onclick = cancelPaintEditor;
+  el('#paintSave').onclick = closeModal;
+  document.querySelectorAll('#modalBody .drawing-action-btn').forEach(attachFortniteHoverEffect);
+  document.querySelectorAll('#paintBrush,#paintEraser').forEach(attachFortniteHoverEffect);
+  paintRefreshControls(); requestAnimationFrame(fitPaintCanvas);
 }
 
 /* ---------------- 检查更新 ---------------- */
@@ -1901,16 +2242,17 @@ function openCropDialog(img, onComplete){
   const cw = Math.max(1, Math.round(nw*scale)), ch = Math.max(1, Math.round(nh*scale));
   const minSize = Math.min(24, cw, ch), handleSize = 10;
   let crop = { x:0, y:0, w:cw, h:ch };
-  let drag = null, done = false;
+  let drag = null, panDrag = null, done = false;
+  const cropView = { zoom:1, pan:{x:0,y:0} };
 
   showModal(
     '<div><h3>' + t('cropTitle') + '</h3>' +
     '<p class="crop-hint">' + t('cropHint') + '</p>' +
-    '<div class="crop-stage"><canvas id="cropCanvas" width="' + cw + '" height="' + ch + '"></canvas></div>' +
+    '<div class="crop-stage" id="cropStage"><canvas id="cropCanvas" width="' + cw + '" height="' + ch + '"></canvas></div>' +
     '<div class="btns"><button type="button" class="btn drawing-action-btn" id="cropSkip">' + t('cropSkip') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="cropConfirm">' + t('cropConfirm') + '</button></div></div>',
     'crop-modal'
   );
-  const canvas = el('#cropCanvas'), ctx = canvas.getContext('2d'), back = el('#modalBack');
+  const canvas = el('#cropCanvas'), ctx = canvas.getContext('2d'), stage = el('#cropStage'), back = el('#modalBack');
 
   function finish(rect){
     if(done) return;
@@ -1940,6 +2282,22 @@ function openCropDialog(img, onComplete){
   function pointFromEvent(e){
     const r = canvas.getBoundingClientRect();
     return { x:(e.clientX-r.left)*cw/r.width, y:(e.clientY-r.top)*ch/r.height };
+  }
+  function applyCropTransform(){
+    canvas.style.width = Math.max(1, Math.round(cw*cropView.zoom)) + 'px';
+    canvas.style.height = Math.max(1, Math.round(ch*cropView.zoom)) + 'px';
+    canvas.style.transform = 'translate(' + cropView.pan.x + 'px,' + cropView.pan.y + 'px)';
+  }
+  function zoomCropCanvas(e){
+    e.preventDefault();
+    const point = pointFromEvent(e);
+    const nextZoom = clamp(cropView.zoom * Math.pow(1.12, -e.deltaY/120), 0.2, 8.0);
+    if(Math.abs(nextZoom-cropView.zoom) < 1e-6) return;
+    cropView.zoom = nextZoom; applyCropTransform();
+    const r = canvas.getBoundingClientRect();
+    cropView.pan.x += e.clientX-(r.left + point.x/cw*r.width);
+    cropView.pan.y += e.clientY-(r.top + point.y/ch*r.height);
+    applyCropTransform();
   }
   function hitTest(p){
     const x = crop.x, y = crop.y, right = x+crop.w, bottom = y+crop.h, near = handleSize;
@@ -1980,6 +2338,11 @@ function openCropDialog(img, onComplete){
   }
 
   canvas.addEventListener('pointerdown', function(e){
+    if(e.button === 2){
+      panDrag = { pointerId:e.pointerId, x:e.clientX, y:e.clientY, target:canvas };
+      canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; e.preventDefault(); return;
+    }
+    if(e.button !== 0) return;
     const p = pointFromEvent(e), kind = hitTest(p);
     if(!kind) return;
     drag = { kind, startX:p.x, startY:p.y, rect:{ ...crop } };
@@ -1988,14 +2351,43 @@ function openCropDialog(img, onComplete){
     e.preventDefault();
   });
   canvas.addEventListener('pointermove', function(e){
+    if(panDrag && panDrag.target === canvas && panDrag.pointerId === e.pointerId){
+      cropView.pan.x += e.clientX-panDrag.x; cropView.pan.y += e.clientY-panDrag.y;
+      panDrag.x = e.clientX; panDrag.y = e.clientY;
+      applyCropTransform(); e.preventDefault(); return;
+    }
     const p = pointFromEvent(e);
     if(!drag){ canvas.style.cursor = cursorFor(hitTest(p)); return; }
     crop = resizeFromDrag(p); draw(); e.preventDefault();
   });
   canvas.addEventListener('pointerup', function(e){
+    if(panDrag && panDrag.target === canvas && panDrag.pointerId === e.pointerId){
+      panDrag = null; canvas.style.cursor = cursorFor(hitTest(pointFromEvent(e))); return;
+    }
     if(drag){ drag = null; canvas.style.cursor = cursorFor(hitTest(pointFromEvent(e))); }
   });
-  canvas.addEventListener('pointercancel', function(){ drag = null; canvas.style.cursor = 'default'; });
+  canvas.addEventListener('pointercancel', function(){ drag = null; panDrag = null; canvas.style.cursor = 'default'; });
+  canvas.addEventListener('wheel', zoomCropCanvas, { passive:false });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+  // 裁剪画布外的黑色留白也可开始右键平移。
+  stage.addEventListener('pointerdown', function(e){
+    if(e.target !== stage || e.button !== 2) return;
+    panDrag = { pointerId:e.pointerId, x:e.clientX, y:e.clientY, target:stage };
+    stage.setPointerCapture(e.pointerId); stage.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!panDrag || panDrag.target !== stage || panDrag.pointerId !== e.pointerId) return;
+    cropView.pan.x += e.clientX-panDrag.x; cropView.pan.y += e.clientY-panDrag.y;
+    panDrag.x = e.clientX; panDrag.y = e.clientY;
+    applyCropTransform(); e.preventDefault();
+  });
+  stage.addEventListener('pointerup', function(e){
+    if(!panDrag || panDrag.target !== stage || panDrag.pointerId !== e.pointerId) return;
+    try { stage.releasePointerCapture(e.pointerId); } catch(error) {}
+    panDrag = null; stage.style.cursor = ''; e.preventDefault();
+  });
+  stage.addEventListener('pointercancel', function(){ if(panDrag?.target === stage){ panDrag = null; stage.style.cursor = ''; } });
+  stage.addEventListener('contextmenu', e => e.preventDefault());
   back.addEventListener('click', onBackdropClick);
   window.addEventListener('keydown', onKeyDown);
   // 裁剪弹窗按钮在运行时创建，需要在插入弹窗后绑定悬停动画。
@@ -2003,7 +2395,7 @@ function openCropDialog(img, onComplete){
   attachFortniteHoverEffect(el('#cropConfirm'));
   el('#cropSkip').onclick = () => finish(null);
   el('#cropConfirm').onclick = () => finish(crop);
-  draw();
+  draw(); applyCropTransform();
 }
 
 function importDecodedImage(img, rect){
@@ -2114,6 +2506,8 @@ function syncImportDrawingButton(){
     label.dataset.i18n = hasSourceImage ? 'importDrawingReplace' : 'importDrawing';
     label.textContent = t(label.dataset.i18n);
   }
+  const quickEdit = el('#mPaint');
+  if(quickEdit){ quickEdit.disabled = !hasSourceImage; quickEdit.classList.toggle('disabled', !hasSourceImage); }
 }
 function getExportSettings(){
   if(!state.origin) return;
@@ -2537,6 +2931,7 @@ function setupMenus(){
   el('#btnExportSelected').onclick = exportSelectedLayer;
   el('#mSave').onclick = saveProject;
   el('#mLoad').onclick = () => el('#projInput').click();
+  el('#mPaint').onclick = openPaintEditor;
   el('#mFilter').onclick = openFilterDialog;
   el('#mDP').onclick = openDPDialog;
   el('#mColor').onclick = openColorDialog;
@@ -2572,7 +2967,7 @@ function openFilterDialog(){
     '<label class="check"><input type="checkbox" id="dlgFilterOn"' + (state.prefilter.enabled?' checked':'') + '>' + t('enableGaussian') + '</label>' +
     '<div class="mrow"><label>' + t('gaussianKernel') + '</label><input type="number" id="dlgKernel" min="3" max="7" step="2" value="' + state.prefilter.kernel + '"></div>' +
     '<div class="mrow"><label>' + t('sigma') + '</label><input type="number" id="dlgSigma" min="0.1" step="0.1" value="' + state.prefilter.sigma + '"></div>' +
-    '<div class="btns"><button type="button" class="btn" id="dlgFilterCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgFilterOk">' + t('confirm') + '</button></div>'
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="dlgFilterCancel">' + t('cancel') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="dlgFilterOk">' + t('confirm') + '</button></div>'
   );
   el('#dlgFilterOk').onclick = function(){
     state.prefilter.enabled = el('#dlgFilterOn').checked;
@@ -2581,6 +2976,8 @@ function openFilterDialog(){
     closeModal(); updateProcess();
   };
   el('#dlgFilterCancel').onclick = closeModal;
+  attachFortniteHoverEffect(el('#dlgFilterCancel'));
+  attachFortniteHoverEffect(el('#dlgFilterOk'));
 }
 function openDPDialog(){
   showModal(
@@ -2589,7 +2986,7 @@ function openDPDialog(){
     '<div class="mrow"><label>' + t('tolerance') + '</label><input type="number" id="dlgDPTol" min="0.001" step="0.1" value="' + state.dp.tolerance + '"></div>' +
     '<div class="mrow"><label>' + t('lineWidth') + '</label><input type="number" id="dlgDPLW" min="1" max="50" step="1" value="' + state.dp.lineWidth + '"></div>' +
     '<p style="color:var(--text-dim);font-size:12.5px">' + t('dpNote') + '</p>' +
-    '<div class="btns"><button type="button" class="btn" id="dlgDPCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgDPOk">' + t('confirm') + '</button></div>'
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="dlgDPCancel">' + t('cancel') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="dlgDPOk">' + t('confirm') + '</button></div>'
   );
   el('#dlgDPOk').onclick = function(){
     state.dp.enabled = el('#dlgDPOn').checked;
@@ -2598,6 +2995,8 @@ function openDPDialog(){
     closeModal();
   };
   el('#dlgDPCancel').onclick = closeModal;
+  attachFortniteHoverEffect(el('#dlgDPCancel'));
+  attachFortniteHoverEffect(el('#dlgDPOk'));
 }
 function colorRow(nameKey, key){
   return '<div class="mrow"><label>' + t(nameKey) + '</label><input type="color" id="col_' + key + '" value="' + toHex(custom[key]) + '"></div>';
