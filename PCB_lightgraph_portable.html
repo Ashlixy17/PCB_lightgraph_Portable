@@ -202,10 +202,10 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .gray-color input{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 /* layer previews grid */
 .layers-grid{
-  flex:1 1 auto;display:grid;grid-template-columns:repeat(3, 1fr);grid-template-rows:1fr;gap:8px;min-height:0;
+  flex:1 1 auto;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));gap:8px;min-height:0;
 }
-/* 彩色识别模式显示四个生产层，布局与安装版的 2×2 层预览保持一致。 */
-.layers-grid.has-bottom{grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));}
+/* 两种算法共用 2×2 预览格；灰度模式的第四格明确标为无输出。 */
+.layers-grid .lp[hidden]{display:none;}
 .layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
 .layers-grid .lp .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
 .layers-grid .lp .w{
@@ -433,7 +433,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
-      <div class="lp" id="bottomPreviewItem" hidden><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
+      <div class="lp" id="bottomPreviewItem"><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -508,6 +508,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { layerBottom:'Bottom Mask（透光）', tr
 Object.assign(TRANSLATIONS['zh-TW'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光閾值' });
 Object.assign(TRANSLATIONS.en, { layerBottom:'Bottom Mask (Backlight)', transThreshold:'Substrate Transparency Threshold' });
 Object.assign(TRANSLATIONS.ja, { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光しきい値' });
+Object.assign(TRANSLATIONS['zh-CN'], { noOutput:'无输出' });
+Object.assign(TRANSLATIONS['zh-TW'], { noOutput:'無輸出' });
+Object.assign(TRANSLATIONS.en, { noOutput:'No output' });
+Object.assign(TRANSLATIONS.ja, { noOutput:'出力なし' });
 /* 品牌名称与徽标独立翻译，语言切换时同步更新左上角和浏览器标题。 */
 Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版）', brandName:'PCB图片分层器', brandEdition:'便携版' });
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
@@ -1445,14 +1449,14 @@ function setProcessingMode(mode, shouldRender){
   if(isGray) state.light.pendingStart = null;
   el('#colorControls').hidden = isGray;
   el('#grayControls').hidden = !isGray;
-  // 背透层仅属于彩色识别链路；灰度模式保留原有叠加图与三层布局。
-  el('#bottomPreviewItem').hidden = isGray;
+  // 灰度模式保留第四个预览格，但明确显示为无输出，避免布局跳变。
+  el('#bottomPreviewItem').hidden = false;
   el('#exportBottomOption').hidden = isGray;
-  el('#colLayers .layers-grid').classList.toggle('has-bottom', !isGray);
   if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
   syncQuadPrimaryLabel();
   document.querySelectorAll('[data-processing-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
   if(shouldRender && state.origin) updateProcess();
+  schedulePreviewResize();
 }
 
 function setViewMode(mode){
@@ -1464,8 +1468,8 @@ function setViewMode(mode){
   document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
   updateQuadPlaceholders();
   syncPreviewImageMeta();
-  // 布局切换后容器尺寸才会稳定，延后一帧再重设画布像素尺寸。
-  requestAnimationFrame(resizeCanvases);
+  // 先同步当前尺寸，再在布局稳定后复核一次，避免隐藏画布被浏览器拉伸。
+  schedulePreviewResize();
 }
 
 function setGroupOpen(groupId, open, withMaster){
@@ -1539,6 +1543,16 @@ function renderPreviewCanvas(st, canvasEl, view, isComposite){
   view = view || st;
   const ctx = canvasEl.getContext('2d');
   const cw = canvasEl.width, ch = canvasEl.height;
+  const isGrayEmptyBottom = state.processingMode === 'gray' && st === previewStates.bottom && !st.img;
+  if(isGrayEmptyBottom){
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = '#9d9d9d';
+    ctx.font = '13px "Microsoft YaHei", "Segoe UI", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(t('noOutput'), cw * 0.5, ch * 0.5);
+    return;
+  }
   if(state.processingMode === 'gray' && !isComposite){
     // 透明生产层需要可见的底色；合成预览仍保持原有深色背景。
     const size = 12;
@@ -1587,6 +1601,7 @@ function renderAllPreviews(){
     }
   }
 }
+let pendingPreviewResize = 0;
 function resizeCanvases(){
   for(const k in previewStates){
     const st = previewStates[k];
@@ -1604,6 +1619,17 @@ function resizeCanvases(){
     }
   }
   renderAllPreviews();
+}
+function schedulePreviewResize(){
+  if(pendingPreviewResize) cancelAnimationFrame(pendingPreviewResize);
+  // display 切换后此刻已可读取可见容器的尺寸，立即重绘可避免旧位图被 CSS 拉伸。
+  resizeCanvases();
+  pendingPreviewResize = requestAnimationFrame(() => {
+    pendingPreviewResize = requestAnimationFrame(() => {
+      pendingPreviewResize = 0;
+      resizeCanvases();
+    });
+  });
 }
 
 /* ---------------- 预览交互 ---------------- */
