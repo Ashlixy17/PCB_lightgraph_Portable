@@ -7,13 +7,15 @@
   <br>
   <img alt="Runtime" src="https://img.shields.io/badge/Runtime-Browser-4285F4?logo=googlechrome&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/License-MIT-D22128">
+   <a href="https://github.com/Ashlixy17/PCB_lightgraph_Portable/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/Ashlixy17/PCB_lightgraph_Portable?style=social"></a>
 </p>
 
 <p align="center">
-  <strong>PCB_lightgraph_Portable</strong> 是 <a href="https://github.com/tomatorigid/PCB_lightgraph">PCB_lightgraph</a> 的HTML便携版<br>
-  <strong>把工具装进一个 HTML 文件，随时生成 PCB 图纸
-  </strong><br>
-  不用安装，不用编译，双击即可开始创作<br>
+  <strong>PCB_lightgraph_Portable</strong> 是 PCB_lightgraph 的HTML便携版
+  <br>
+  不用安装，不用编译，双击即可开始创作
+  <br>
+  <strong>已完全实现与安装版相同功能！ ^_−☆</strong>
 </p>
 
 <p align="center">
@@ -26,37 +28,37 @@
 
 ---
 - **单文件离线运行**：`PCB_lightgraph_portable.html` 内置全部界面与算法，支持双击直接打开。
-- **三层自动分图**：彩色识别与纯灰度三分两种模式，输出线路、阻焊和丝印图层。
-- **工艺与细节控制**：支持 ENIG 沉金、HASL 喷锡、OSP 玫瑰金、裸露基材绑定，以及拉普拉斯增强 / Canny 描边。
-- **大图也能顺手调参**：渐进式渲染，拖动时快速预览，松手后恢复清晰画面。
-- **工程可携带**：可导出 `.pcblg.json` 即可保存原图和参数；内置多语言界面。
+- **自动分图**：彩色识别输出线路、阻焊、丝印与背透光层；纯灰度三分模式保留三层输出。
+- **工艺与细节控制**：支持 ENIG 沉金、HASL 喷锡、OSP 玫瑰金、裸露基材绑定、灯条参考图，以及拉普拉斯增强 / Canny 描边等。
+- **大图也能顺手调参**：渐进式渲染，拖动时快速预览无卡顿；内置快捷裁剪与图纸快捷编辑，可直接回读笔画修改。
+- **工程可携带**：可导出安装版兼容的 `.pcblg` 工程包，保存原图、参数与灯条，工程压缩包已完全兼容安装版。
 
 ## 快速开始
 
 1. 双击 `PCB_lightgraph_portable.html`，推荐使用 Chrome 或 Edge。
-2. 在 `文件 → 导入图片` 中选择你想处理的图片。
-3. 调整基础参数、裸露基材或边缘处理，并在预览区查看效果。
-4. 使用 `文件 → 导出图纸` 导出铜层、阻焊和丝印 PNG。
+2. 在 `文件 → 导入图片` 中选择你想处理的图片；需要时可先在快捷裁剪窗口调整范围。
+3. 调整基础参数、裸露基材或边缘处理，并可通过 `编辑 → 图纸快捷编辑` 直接修图。
+4. 使用 `文件 → 导出图纸` 导出生产层 PNG；彩色模式还会导出背透光层与 LED 灯条参考图。
 
-支持滚轮缩放、右键平移
+支持滚轮缩放、右键平移；快捷裁剪与图纸快捷编辑同样支持缩放和平移。
 > [!WARNING]
-> 导入图像上限为 **1600 万像素**，超过时会自动等比缩小，并可能造成卡顿现象。
+> 导入图像上限为 **1600 万像素** ( 浏览器限制 )，超过时会自动 **等比缩小**，并可能造成卡顿现象。
 
 > [!TIP]
-> 当你遇到任何问题、任何新想法都可以直接在issue中提出，欢迎任何人提交Pull Request来参与贡献。
+> 当你遇到任何问题、任何新想法都可以直接在issue中提出，欢迎**任何人**提交Pull Request来参与贡献。
 
 ## 便携版说明
 
 | 项目 | HTML 的处理方式 |
 | --- | --- |
-| 文件 | 图纸和工程均通过浏览器下载／导入，不会静默写入磁盘。 |
+| 文件 | 图纸和 `.pcblg` 工程包均通过浏览器下载／导入，不会静默写入磁盘。 |
 | 偏好 | 界面设置存于当前浏览器的 `localStorage`；工程文件可跨设备携带。 |
-| 图层 | 专注铜层、阻焊、丝印三层，暂时不含背透光层和 LED 灯光设计。 |
+| 图层 | 彩色模式支持铜层、阻焊、丝印、背透光层与 LED 灯条参考图；灰度模式专注三层输出。 |
 
 ## 技术与许可
 
 - 基于 Canvas `ImageData` 在浏览器本地逐像素处理，不依赖外部运行时。
-- 移植桌面版的主要分层、边缘处理与渐进式渲染思路。
+- 移植桌面版的主要分层、边缘处理、工程包兼容与渐进式渲染思路。
 - 本项目采用 [MIT License](https://opensource.org/licenses/MIT) 开源；素材版权与后续制板合规性由使用者自行确认。
 
 ## 支持
@@ -66,13 +68,14 @@
 </p>
 
 **原安装版软件**：
-[@tomatorigid / PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>
+[PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>
 **PCB绘制交流群**(非群主)：<br>
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
 [[QQ]雷霆PCB的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi) <br>
 如果你有任何关于**嘉立创EDA**和**PCB打印**的问题，都可以进群询问。
 
-### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ
+### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ 
+
 
 ## 声明
 
