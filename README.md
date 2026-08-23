@@ -15,7 +15,7 @@
   <br>
   不用安装，不用编译，双击即可开始创作
   <br>
-  <strong>已完全实现与安装版相同功能！ ^_−☆</strong>
+  <strong>已完全实现与安装版相同功能！</strong>
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
   <a href="https://ashlixy17.github.io/PCB_lightgraph_Portable/">点击此处开始使用网页版</a>
 </p>
 
-## 界面&亮点功能
+## Web界面&完整功能
 ![PCB_lightgraph Portable 界面预览](assets/interface-preview.png)
 
 ---
@@ -68,18 +68,27 @@
 </p>
 
 **原安装版软件**：
-[PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>
+[PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph) 可以前去支持一下哦！<br>
 **PCB绘制交流群**(非群主)：<br>
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
 [[QQ]雷霆PCB的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi) <br>
 如果你有任何关于**嘉立创EDA**和**PCB打印**的问题，都可以进群询问。
 
 ### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ 
+## Star History
+
+<a href="https://www.star-history.com/?repos=Ashlixy17%2FPCB_lightgraph_Portable&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&theme=dark&legend=top-left&sealed_token=-vuOSmKl1mfmWZqRmQxaKV68_LdrKaxgbtP6ow5LTxZAqKXrFPuJlf_TLV4PEJHK8RSDoeqwlDO113NTfDH0C8MXbow6LaiplWBXvNFHThBPQ34uWYpCpBnDkML5nfM9pZXcG3kvY9zROVCHJ12Ppw9YuopEaY_C_0YhMctwgUDQSNdrnpCNsby8culz" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&legend=top-left&sealed_token=-vuOSmKl1mfmWZqRmQxaKV68_LdrKaxgbtP6ow5LTxZAqKXrFPuJlf_TLV4PEJHK8RSDoeqwlDO113NTfDH0C8MXbow6LaiplWBXvNFHThBPQ34uWYpCpBnDkML5nfM9pZXcG3kvY9zROVCHJ12Ppw9YuopEaY_C_0YhMctwgUDQSNdrnpCNsby8culz" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&legend=top-left&sealed_token=-vuOSmKl1mfmWZqRmQxaKV68_LdrKaxgbtP6ow5LTxZAqKXrFPuJlf_TLV4PEJHK8RSDoeqwlDO113NTfDH0C8MXbow6LaiplWBXvNFHThBPQ34uWYpCpBnDkML5nfM9pZXcG3kvY9zROVCHJ12Ppw9YuopEaY_C_0YhMctwgUDQSNdrnpCNsby8culz" />
+ </picture>
+</a>
 
 
 ## 声明
 
-本软件是一款将 2D 插画转换为 PCB 分层图纸的开源工具（以下简称“本工具”），**主要面向学习、研究与个人创作**。
+本网站是一款将 2D 插画转换为 PCB 分层图纸的开源HTML工具（以下简称“本工具”），**主要面向学习与个人创作**。
 
 1. **素材版权由使用者负责**：本工具不会为输入图像做版权审查。若您使用他人的原创作品（插画、角色形象、图片等）进行制作，请确保已获得相应授权；因素材侵权产生的纠纷与责任由使用者自行承担，与作者及本工具无关。
 2. **肖像与隐私**：请勿使用本工具处理涉及他人肖像、隐私或敏感内容的图像。
