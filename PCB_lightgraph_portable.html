@@ -204,6 +204,8 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .layers-grid{
   flex:1 1 auto;display:grid;grid-template-columns:repeat(3, 1fr);grid-template-rows:1fr;gap:8px;min-height:0;
 }
+/* 彩色识别模式显示四个生产层，布局与安装版的 2×2 层预览保持一致。 */
+.layers-grid.has-bottom{grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));}
 .layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
 .layers-grid .lp .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
 .layers-grid .lp .w{
@@ -315,7 +317,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <div class="placeholder" id="compositePlaceholder" data-i18n="importPlaceholder">请导入图片…</div>
       </div>
       <div class="quad-grid" id="quadGrid" hidden>
-        <div class="quad-cell"><div class="t" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadComposite"></canvas><div class="placeholder" data-quad-placeholder="composite" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" id="quadPrimaryTitle" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadPrimary"></canvas><div class="placeholder" data-quad-placeholder="primary" data-i18n="importPlaceholder">请导入图片…</div></div></div>
         <div class="quad-cell"><div class="t" data-i18n="layerSilk">Top Silk（丝印）</div><div class="w"><canvas id="canvasQuadSilk"></canvas><div class="placeholder" data-quad-placeholder="silk" data-i18n="importPlaceholder">请导入图片…</div></div></div>
         <div class="quad-cell"><div class="t" data-i18n="layerMask">Top Mask（阻焊）</div><div class="w"><canvas id="canvasQuadMask"></canvas><div class="placeholder" data-quad-placeholder="mask" data-i18n="importPlaceholder">请导入图片…</div></div></div>
         <div class="quad-cell"><div class="t" data-i18n="layerCopper">Top Copper（线路）</div><div class="w"><canvas id="canvasQuadCopper"></canvas><div class="placeholder" data-quad-placeholder="copper" data-i18n="importPlaceholder">请导入图片…</div></div></div>
@@ -351,6 +353,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         </label>
         <div id="sliderGold"></div>
         <div id="sliderSilk"></div>
+        <div id="sliderTrans"></div>
         <div id="sliderCopper"></div>
       </div></div>
     </div>
@@ -417,6 +420,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
             <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
             <option value="Top_Mask" data-i18n="layerMask">Top Mask（阻焊）</option>
             <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
+            <option value="Bottom_Mask" id="exportBottomOption" data-i18n="layerBottom" hidden>Bottom Mask（透光）</option>
           </select>
         </label>
         <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
@@ -429,6 +433,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
+      <div class="lp" id="bottomPreviewItem" hidden><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -499,6 +504,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { previewImageMeta:'总像素 {pixels} · {
 Object.assign(TRANSLATIONS['zh-TW'], { previewImageMeta:'總像素 {pixels} · {width} × {height} 像素 · 縮放 {zoom}%' });
 Object.assign(TRANSLATIONS.en, { previewImageMeta:'{pixels} pixels · {width} × {height} px · Zoom {zoom}%' });
 Object.assign(TRANSLATIONS.ja, { previewImageMeta:'総画素数 {pixels} · {width} × {height} px · ズーム {zoom}%' });
+Object.assign(TRANSLATIONS['zh-CN'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光阈值' });
+Object.assign(TRANSLATIONS['zh-TW'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光閾值' });
+Object.assign(TRANSLATIONS.en, { layerBottom:'Bottom Mask (Backlight)', transThreshold:'Substrate Transparency Threshold' });
+Object.assign(TRANSLATIONS.ja, { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光しきい値' });
 /* 品牌名称与徽标独立翻译，语言切换时同步更新左上角和浏览器标题。 */
 Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版）', brandName:'PCB图片分层器', brandEdition:'便携版' });
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
@@ -721,15 +730,16 @@ class ImageProcessor {
   constructor(){ this.cachedSource = null; this.cachedParams = null; this.cached = null; }
   paramsKey(src, p){
     return [src, p.finishType, p.maskColorName, p.isWhiteMask, p.goldThresh, p.silkThresh,
-      p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim].join('|');
+      p.transThresh, p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim].join('|');
   }
   processImage(src, p, mutable){
-    if(!src) return { copper:null, mask:null, silk:null, composite:null };
+    if(!src) return { copper:null, mask:null, silk:null, bottom:null, composite:null };
     const key = this.paramsKey(src, p);
     const makeOut = (base) => ({
       copper: mutable ? cloneImg(base.copper) : base.copper,
       mask: mutable ? cloneImg(base.mask) : base.mask,
       silk: mutable ? cloneImg(base.silk) : base.silk,
+      bottom: mutable ? cloneImg(base.bottom) : base.bottom,
       composite: mutable ? cloneImg(base.composite) : base.composite
     });
     if(this.cachedSource === src && this.cachedParams === key){
@@ -749,8 +759,8 @@ class ImageProcessor {
     const grayMaxPct = clamp(Math.max(p.bareGrayMin, p.bareGrayMax), 0, 100);
     const simThresh = clamp(p.bareSim, 0, 100);
     const effCopper = clamp(p.copperDepth, 0, 254);
-    const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), comp = makeImg(w,h);
-    const sd = src.data, cd = copper.data, md = mask.data, sid = silk.data, pd = comp.data;
+    const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), bottom = makeImg(w,h), comp = makeImg(w,h);
+    const sd = src.data, cd = copper.data, md = mask.data, sid = silk.data, bd = bottom.data, pd = comp.data;
     for(let y = 0; y < h; y++){
       const row = y*w;
       for(let x = 0; x < w; x++){
@@ -772,6 +782,8 @@ class ImageProcessor {
         cd[i] = cd[i+1] = cd[i+2] = (isMetalPx || copperUnderMask) ? 255 : 0; cd[i+3] = 255;
         md[i] = md[i+1] = md[i+2] = maskOpen ? 255 : 0; md[i+3] = 255;
         sid[i] = sid[i+1] = sid[i+2] = (silkPx && !barePx) ? 255 : 0; sid[i+3] = 255;
+        // 安装版语义：白色是开窗透光区，后续生产图会统一反色导出。
+        bd[i] = bd[i+1] = bd[i+2] = gray > p.transThresh ? 255 : 0; bd[i+3] = 255;
 
         let pr = { r:40, g:35, b:25 };
         if(isMetalPx) pr = metalColor;
@@ -791,7 +803,7 @@ class ImageProcessor {
         pd[i] = pr.r; pd[i+1] = pr.g; pd[i+2] = pr.b; pd[i+3] = 255;
       }
     }
-    return { copper, mask, silk, composite: comp };
+    return { copper, mask, silk, bottom, composite: comp };
   }
 }
 
@@ -1005,8 +1017,11 @@ function invertImg(img){
   }
   return out;
 }
-function generateLayers(copper, mask, silk){
-  return { Top_Copper: invertImg(copper), Top_Mask: invertImg(mask), Top_Silk: invertImg(silk) };
+function generateLayers(copper, mask, silk, bottom){
+  return {
+    Top_Copper:invertImg(copper), Top_Mask:invertImg(mask), Top_Silk:invertImg(silk),
+    Bottom_Mask:invertImg(bottom)
+  };
 }
 
 /* ---------------- 纯灰度三分分层（Processerv_2 语义） ---------------- */
@@ -1247,8 +1262,8 @@ function drawLightCapsules(composite, strips){
   }
   composite.data.set(ctx.getImageData(0, 0, composite.width, composite.height).data);
 }
-function renderLightsOnComposite(composite, copper, strips, intensity){
-  const cd = composite.data, copperData = copper.data, w = composite.width, h = composite.height;
+function renderLightsOnComposite(composite, copper, bottom, strips, intensity){
+  const cd = composite.data, copperData = copper.data, bottomData = bottom.data, w = composite.width, h = composite.height;
   for(const strip of strips){
     const radius = strip.radius;
     const minX = clamp(Math.floor(Math.min(strip.start.x, strip.end.x)-radius), 0, w-1);
@@ -1257,7 +1272,8 @@ function renderLightsOnComposite(composite, copper, strips, intensity){
     const maxY = clamp(Math.ceil(Math.max(strip.start.y, strip.end.y)+radius), 0, h-1);
     for(let y = minY; y <= maxY; y++) for(let x = minX; x <= maxX; x++){
       const pixel = (y*w+x)*4;
-      if(copperData[pixel] > 128) continue; // 与桌面版一致：敷铜区域阻挡灯光本体。
+      // 与安装版一致：敷铜或背透层的非开窗区域均阻挡灯光。
+      if(copperData[pixel] > 128 || bottomData[pixel] < 128) continue;
       const distance = pointToSegmentDistance(x, y, strip.start, strip.end);
       if(distance >= radius) continue;
       const alpha = clamp(Math.round(intensity*Math.pow(1-distance/radius, 1.8)), 0, 255) / 255;
@@ -1327,6 +1343,7 @@ function renderAtSize(tw, th, generation, authoritative){
 
   const goldThresh = sliderVal('#sliderGold');
   const silkThresh = sliderVal('#sliderSilk');
+  const transThresh = sliderVal('#sliderTrans');
   const copperDepth = sliderVal('#sliderCopper');
 
   let edgeMask = null;
@@ -1339,12 +1356,12 @@ function renderAtSize(tw, th, generation, authoritative){
 
   const p = {
     finishType, maskColorName, isWhiteMask,
-    goldThresh, silkThresh, copperDepth,
+    goldThresh, silkThresh, transThresh, copperDepth,
     enableBare, bareGrayMode,
     bareGrayMin: sliderVal('#sliderBareA'), bareGrayMax: sliderVal('#sliderBareB'), bareSim: sliderVal('#sliderBareSim')
   };
   const mutableLayers = !!edgeMask;
-  let { copper, mask, silk, composite } = imageProcessor.processImage(renderOrigin, p, mutableLayers);
+  let { copper, mask, silk, bottom, composite } = imageProcessor.processImage(renderOrigin, p, mutableLayers);
 
   if(edgeMask){
     const w = Math.min(edgeMask.w, copper.width), h = Math.min(edgeMask.h, copper.height);
@@ -1383,13 +1400,13 @@ function renderAtSize(tw, th, generation, authoritative){
     }
   }
 
-  const layers = generateLayers(copper, mask, silk);
+  const layers = generateLayers(copper, mask, silk, bottom);
 
   if(masterState.light && state.light.showOverlay && state.light.strips.length){
     // 灯光只叠加到合成预览；生产层保持干净，导出结果不受布灯影响。
     composite = cloneImg(composite);
     const strips = scaleLightStrips(state.light.strips, state.origin.width, state.origin.height, composite.width, composite.height);
-    renderLightsOnComposite(composite, copper, strips, state.light.intensity);
+    renderLightsOnComposite(composite, copper, bottom, strips, state.light.intensity);
   }
 
   state.composite = composite;
@@ -1428,6 +1445,12 @@ function setProcessingMode(mode, shouldRender){
   if(isGray) state.light.pendingStart = null;
   el('#colorControls').hidden = isGray;
   el('#grayControls').hidden = !isGray;
+  // 背透层仅属于彩色识别链路；灰度模式保留原有叠加图与三层布局。
+  el('#bottomPreviewItem').hidden = isGray;
+  el('#exportBottomOption').hidden = isGray;
+  el('#colLayers .layers-grid').classList.toggle('has-bottom', !isGray);
+  if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
+  syncQuadPrimaryLabel();
   document.querySelectorAll('[data-processing-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
   if(shouldRender && state.origin) updateProcess();
 }
@@ -1459,15 +1482,26 @@ const previewStates = {
   composite: { canvas:'#canvasComposite', img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
   copper:    { canvas:'#canvasCopper',   img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
   mask:      { canvas:'#canvasMask',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
-  silk:      { canvas:'#canvasSilk',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} }
+  silk:      { canvas:'#canvasSilk',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
+  bottom:    { canvas:'#canvasBottom',   img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} }
 };
 const quadPreviewCanvases = {
-  composite:'#canvasQuadComposite', silk:'#canvasQuadSilk', mask:'#canvasQuadMask', copper:'#canvasQuadCopper'
+  primary:'#canvasQuadPrimary', silk:'#canvasQuadSilk', mask:'#canvasQuadMask', copper:'#canvasQuadCopper'
 };
 // 四分视图共享相机，保证任意窗口操作后四张图保持同一观察位置。
 const quadCamera = { zoom:1, pan:{x:0,y:0} };
 // 分隔视图也复用同一相机，使主预览与三个生产层始终同步。
 const splitCamera = { zoom:1, pan:{x:0,y:0} };
+
+function quadPreviewKey(key){
+  return key === 'primary' ? (state.processingMode === 'color' ? 'bottom' : 'composite') : key;
+}
+function syncQuadPrimaryLabel(){
+  const title = el('#quadPrimaryTitle');
+  if(!title) return;
+  title.dataset.i18n = state.processingMode === 'color' ? 'layerBottom' : 'viewOverlay';
+  title.textContent = t(title.dataset.i18n);
+}
 
 function syncPreviewImageMeta(){
   const mainMeta = el('#previewImageMeta');
@@ -1525,9 +1559,9 @@ function renderPreviewCanvas(st, canvasEl, view, isComposite){
 }
 function refreshPreviews(){
   if(state.composite){ setPreviewImage(previewStates.composite, state.composite); el('#compositePlaceholder').style.display = 'none'; }
-  const keys = { copper:'Top_Copper', mask:'Top_Mask', silk:'Top_Silk' };
+  const keys = { copper:'Top_Copper', mask:'Top_Mask', silk:'Top_Silk', bottom:'Bottom_Mask' };
   if(state.previewLayers){
-    for(const k in keys) setPreviewImage(previewStates[k], state.previewLayers[keys[k]]);
+    for(const k in keys) setPreviewImage(previewStates[k], state.previewLayers[keys[k]] || null);
   }
   updateQuadPlaceholders();
   syncPreviewImageMeta();
@@ -1535,7 +1569,7 @@ function refreshPreviews(){
 }
 function updateQuadPlaceholders(){
   document.querySelectorAll('[data-quad-placeholder]').forEach(node => {
-    node.style.display = previewStates[node.dataset.quadPlaceholder].img ? 'none' : 'flex';
+    node.style.display = previewStates[quadPreviewKey(node.dataset.quadPlaceholder)].img ? 'none' : 'flex';
   });
 }
 function renderAllPreviews(){
@@ -1548,7 +1582,8 @@ function renderAllPreviews(){
   if(state.viewMode === 'quad'){
     for(const k in quadPreviewCanvases){
       const c = el(quadPreviewCanvases[k]);
-      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[k], c, quadCamera, k === 'composite');
+      const previewKey = quadPreviewKey(k);
+      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[previewKey], c, quadCamera, previewKey === 'composite');
     }
   }
 }
@@ -1625,10 +1660,12 @@ function attachPreviewInteraction(key){
 }
 
 function attachQuadPreviewInteraction(key){
-  const st = previewStates[key], c = el(quadPreviewCanvases[key]);
+  const c = el(quadPreviewCanvases[key]);
+  const getState = () => previewStates[quadPreviewKey(key)];
   let panning = false, lastX = 0, lastY = 0;
   c.addEventListener('wheel', function(e){
     e.preventDefault();
+    const st = getState();
     if(!st.img) return;
     const oldZoom = quadCamera.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, -e.deltaY/120), 0.2, 8.0);
     if(Math.abs(newZoom-oldZoom) < 1e-6) return;
@@ -1652,6 +1689,7 @@ function attachQuadPreviewInteraction(key){
   });
   window.addEventListener('pointermove', function(e){
     if(!panning) return;
+    const st = getState();
     quadCamera.pan.x += e.clientX - lastX; quadCamera.pan.y += e.clientY - lastY;
     lastX = e.clientX; lastY = e.clientY;
     clampPanForImage(quadCamera, st.img, c.width, c.height);
@@ -2055,7 +2093,9 @@ async function downloadLayerExport(key, settings){
 async function exportLayers(){
   const settings = getExportSettings();
   if(!settings) return;
-  const keys = ['Top_Copper', 'Top_Mask', 'Top_Silk'];
+  const keys = settings.grayscale
+    ? ['Top_Copper', 'Top_Mask', 'Top_Silk']
+    : ['Top_Copper', 'Top_Mask', 'Top_Silk', 'Bottom_Mask'];
   closeModal();
   toast(t('exporting'));
   for(const k of keys){
@@ -2080,6 +2120,7 @@ function gatherControls(){
     maskColorIndex: el('#selectMask').selectedIndex,
     goldThresh: sliderVal('#sliderGold'),
     silkThresh: sliderVal('#sliderSilk'),
+    transThresh: sliderVal('#sliderTrans'),
     copperDepth: sliderVal('#sliderCopper'),
     light: {
       enabled:masterState.light, showOverlay:state.light.showOverlay,
@@ -2102,7 +2143,7 @@ function gatherControls(){
 function saveProject(){
   if(!state.origin) return;
   const root = {
-    schemaVersion: 3,
+    schemaVersion: 4,
     controls: gatherControls(),
     experimental: { edgePrefilterEnabled:state.prefilter.enabled, edgePrefilterKernelSize:state.prefilter.kernel,
       edgePrefilterSigma:state.prefilter.sigma, dpEnabled:state.dp.enabled, dpTolerance:state.dp.tolerance, dpLineWidth:state.dp.lineWidth },
@@ -2119,6 +2160,8 @@ function restoreControls(c){
   setIdx('#selectMask', c.maskColorIndex || 0);
   setSlider('#sliderGold', c.goldThresh || 0);
   setSlider('#sliderSilk', c.silkThresh || 0);
+  // v3 及更早工程没有透光阈值，按安装版默认值恢复。
+  setSlider('#sliderTrans', Number.isFinite(c.transThresh) ? c.transThresh : 120);
   setSlider('#sliderCopper', c.copperDepth || 0);
   const light = c.light || {};
   state.light.showOverlay = light.showOverlay === true;
@@ -2351,6 +2394,7 @@ function resetAllSettings(){
   setSlider('#sliderLightSense', state.light.autoSense);
   setSlider('#sliderLightRadius', state.light.radius);
   setSlider('#sliderLightIntensity', state.light.intensity);
+  setSlider('#sliderTrans', 120);
   setSlider('#sliderGraySilk', state.gray.silkThreshold);
   setSlider('#sliderGrayMask', state.gray.maskThreshold);
   setSlider('#sliderGrayThick', state.gray.thickRadius);
@@ -2402,6 +2446,7 @@ function init(){
   // 创建滑块
   createSlider('sliderGold', 'goldThreshold', 0, 359, 45);
   createSlider('sliderSilk', 'silkThreshold', 0, 255, 180);
+  createSlider('sliderTrans', 'transThreshold', 0, 255, 120);
   createSlider('sliderCopper', 'copperThreshold', 0, 255, 150);
   createSlider('sliderBareA', 'bareGrayMin', 0, 100, 20);
   createSlider('sliderBareB', 'bareGrayMax', 0, 100, 65);
@@ -2455,9 +2500,9 @@ function init(){
   attachPreviewInteraction('copper');
   attachPreviewInteraction('mask');
   attachPreviewInteraction('silk');
+  attachPreviewInteraction('bottom');
   for(const key in quadPreviewCanvases) attachQuadPreviewInteraction(key);
   attachLightPlacement('#canvasComposite', false);
-  attachLightPlacement('#canvasQuadComposite', true);
 
   // 文件输入
   const fi = document.createElement('input');
