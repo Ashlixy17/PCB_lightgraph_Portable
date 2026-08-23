@@ -49,17 +49,17 @@ body{
   cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;
   animation:star-rainbow 3s linear infinite;transition:background 220ms ease;
 }
-/* 顶部彩色文本复用模式切换的描边与扫光，但不影响彩虹文字本身的动画。 */
-.star-link::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
-.star-link::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
+/* 三类操作控件共用描边与扫光；仅模式按钮额外保留过渡和选中态。 */
+.star-link::before,.drawing-action-btn::before,.mode-switch button::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
+.star-link::after,.drawing-action-btn::after,.mode-switch button::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
 @media (hover:hover){
   .star-link.is-hovered{background:rgba(76,194,255,.15);}
-  .star-link.is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .star-link.is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .star-link.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
+  .star-link.is-hovered::before,.drawing-action-btn:not(:disabled).is-hovered::before,.mode-switch button:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
+  .star-link.is-hovered::after,.drawing-action-btn:not(:disabled).is-hovered::after,.mode-switch button:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
+  .star-link.is-leaving::before,.drawing-action-btn:not(:disabled).is-leaving::before,.mode-switch button.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
 }
 .star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
-.star-link:focus-visible::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
+.star-link:focus-visible::before,.drawing-action-btn:focus-visible:not(:disabled)::before,.mode-switch button:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 @keyframes star-rainbow{from{color:#ff758f;}20%{color:#ffbc4b;}40%{color:#8ad45b;}60%{color:#55c7ff;}80%{color:#b38cff;}to{color:#ff758f;}}
 /* 窄窗口让 Star 提示独占下一行，避免与菜单的可点击区域重叠。 */
 @media (max-width:1120px){
@@ -159,20 +159,12 @@ button.btn:hover{border-color:var(--control-accent);}
 button.btn.accent{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
 button.btn.accent:hover{background:var(--control-accent);}
 button.btn:disabled{opacity:.4;cursor:not-allowed;}
-/* 图纸操作与模式切换共用同一套悬停描边和扫光，禁用按钮不参与交互动画。 */
+/* 图纸操作继承上方共用描边和扫光；禁用按钮不参与交互动画。 */
 button.drawing-action-btn{position:relative;border-radius:10px;transition:color 220ms ease,background 220ms ease,border-color 220ms ease;}
-.drawing-action-btn::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
-.drawing-action-btn::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
 /* 导出动作沿用模式切换的选中态配色，导入动作仍保持普通按钮层级。 */
 button.drawing-action-btn.action-selected{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
 button.drawing-action-btn.action-selected:hover{background:var(--control-accent);}
-@media (hover:hover){
-  .drawing-action-btn:not(:disabled).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .drawing-action-btn:not(:disabled).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .drawing-action-btn:not(:disabled).is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
-}
 .drawing-action-btn:focus-visible:not(:disabled){outline:none;}
-.drawing-action-btn:focus-visible:not(:disabled)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 .btn-row{display:flex;gap:6px;}
 .btn-row.centered{justify-content:center;}
 .flex-fill{flex:1;}
@@ -181,15 +173,9 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;margin-bottom:10px;}
 .mode-switch button{position:relative;flex:1;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
 /* 同一条描边先以细亮线出现，再向外扩为较暗的宽边；伪元素不会改变模式按钮布局。 */
-.mode-switch button::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
+.mode-switch button::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
 /* 扫光限制在按钮表面，避免裁切负责外扩描边的 ::before。 */
-.mode-switch button::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
-@media (hover:hover){
-  .mode-switch button:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}
-  .mode-switch button:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .mode-switch button:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .mode-switch button.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
-}
+@media (hover:hover){.mode-switch button:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
 /* 进入与退出均让宽度、颜色和透明度同步变化，避免边框突然亮起或出现阶段分界。 */
 @keyframes mode-switch-shine{
   0%{background-position:-130% -130%;opacity:0;}
@@ -206,7 +192,6 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
   100%{inset:-1px;border-width:2px;border-color:#f8fcff;box-shadow:0 0 3px rgb(237 248 255 / 88%);opacity:0;transform:scale(.98);}
 }
 .mode-switch button:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
-.mode-switch button:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 /* 当前算法的 active 状态由 setProcessingMode 统一维护，优先于悬停描边。 */
 .mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);font-weight:600;}
 .mode-switch button.active::before{opacity:0;}
