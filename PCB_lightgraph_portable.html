@@ -504,6 +504,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { previewImageMeta:'总像素 {pixels} · {
 Object.assign(TRANSLATIONS['zh-TW'], { previewImageMeta:'總像素 {pixels} · {width} × {height} 像素 · 縮放 {zoom}%' });
 Object.assign(TRANSLATIONS.en, { previewImageMeta:'{pixels} pixels · {width} × {height} px · Zoom {zoom}%' });
 Object.assign(TRANSLATIONS.ja, { previewImageMeta:'総画素数 {pixels} · {width} × {height} px · ズーム {zoom}%' });
+Object.assign(TRANSLATIONS['zh-CN'], { projectSaved:'工程已导出为 project.pcblg', projectArchiveUnsupported:'当前浏览器不支持原生 .pcblg 工程包', projectArchiveInvalid:'工程包无效或内容不完整', projectArchiveChecksumFailed:'工程包校验失败', projectArchiveTooLarge:'工程包解压后超过支持大小' });
+Object.assign(TRANSLATIONS['zh-TW'], { projectSaved:'工程已匯出為 project.pcblg', projectArchiveUnsupported:'目前瀏覽器不支援原生 .pcblg 工程包', projectArchiveInvalid:'工程包無效或內容不完整', projectArchiveChecksumFailed:'工程包校驗失敗', projectArchiveTooLarge:'工程包解壓縮後超過支援大小' });
+Object.assign(TRANSLATIONS.en, { projectSaved:'Project exported as project.pcblg', projectArchiveUnsupported:'This browser does not support native .pcblg projects', projectArchiveInvalid:'The project archive is invalid or incomplete', projectArchiveChecksumFailed:'Project archive checksum verification failed', projectArchiveTooLarge:'The extracted project archive exceeds the supported size' });
+Object.assign(TRANSLATIONS.ja, { projectSaved:'プロジェクトを project.pcblg として書き出しました', projectArchiveUnsupported:'このブラウザーはネイティブ .pcblg プロジェクトに対応していません', projectArchiveInvalid:'プロジェクトアーカイブが無効、または内容が不足しています', projectArchiveChecksumFailed:'プロジェクトアーカイブのチェックサム検証に失敗しました', projectArchiveTooLarge:'展開後のプロジェクトアーカイブが対応サイズを超えています' });
 Object.assign(TRANSLATIONS['zh-CN'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光阈值' });
 Object.assign(TRANSLATIONS['zh-TW'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光閾值' });
 Object.assign(TRANSLATIONS.en, { layerBottom:'Bottom Mask (Backlight)', transThreshold:'Substrate Transparency Threshold' });
@@ -2185,19 +2189,172 @@ function gatherControls(){
     exposeMetalEdge: el('#chkExposeMetal').checked
   };
 }
-function saveProject(){
+const PROJECT_ARCHIVE_MAX_BYTES = 128 * 1024 * 1024;
+const PROJECT_ARCHIVE_MAX_ENTRIES = 16;
+const PROJECT_ARCHIVE_IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp']);
+const CRC32_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for(let i=0; i<256; i++){
+    let value = i;
+    for(let bit=0; bit<8; bit++) value = (value & 1) ? (value >>> 1) ^ 0xedb88320 : value >>> 1;
+    table[i] = value >>> 0;
+  }
+  return table;
+})();
+class ProjectArchiveError extends Error {
+  constructor(code){ super(code); this.code = code; }
+}
+function projectExperimentalSettings(){
+  return { edgePrefilterEnabled:state.prefilter.enabled, edgePrefilterKernelSize:state.prefilter.kernel,
+    edgePrefilterSigma:state.prefilter.sigma, dpEnabled:state.dp.enabled, dpTolerance:state.dp.tolerance, dpLineWidth:state.dp.lineWidth };
+}
+function supportsNativeProjectArchive(){
+  return typeof CompressionStream === 'function' && typeof DecompressionStream === 'function';
+}
+function crc32(bytes){
+  let value = 0xffffffff;
+  for(let i=0; i<bytes.length; i++) value = (value >>> 8) ^ CRC32_TABLE[(value ^ bytes[i]) & 0xff];
+  return (value ^ 0xffffffff) >>> 0;
+}
+function writeZipU16(view, offset, value){ view.setUint16(offset, value, true); }
+function writeZipU32(view, offset, value){ view.setUint32(offset, value >>> 0, true); }
+function zipDosDateTime(date){
+  const year = clamp(date.getFullYear(), 1980, 2107);
+  return { time:((date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2)) >>> 0,
+    date:(((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()) >>> 0 };
+}
+async function streamToBytes(stream){ return new Uint8Array(await new Response(stream).arrayBuffer()); }
+async function deflateRaw(bytes){
+  return streamToBytes(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw')));
+}
+async function inflateRaw(bytes){
+  return streamToBytes(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')));
+}
+async function createProjectZip(entries){
+  if(!supportsNativeProjectArchive()) throw new ProjectArchiveError('projectArchiveUnsupported');
+  if(!Array.isArray(entries) || entries.length < 1 || entries.length > PROJECT_ARCHIVE_MAX_ENTRIES) throw new ProjectArchiveError('projectArchiveInvalid');
+  const encoder = new TextEncoder(), seen = new Set(), prepared = [];
+  let unpacked = 0;
+  for(const entry of entries){
+    const name = String(entry && entry.name || '');
+    if(!name || /[\\/]|\.\./.test(name) || seen.has(name.toLowerCase()) || !(entry.data instanceof Uint8Array)) throw new ProjectArchiveError('projectArchiveInvalid');
+    seen.add(name.toLowerCase()); unpacked += entry.data.length;
+    if(unpacked > PROJECT_ARCHIVE_MAX_BYTES) throw new ProjectArchiveError('projectArchiveTooLarge');
+    const nameBytes = encoder.encode(name), compressed = await deflateRaw(entry.data);
+    prepared.push({ nameBytes, data:entry.data, compressed, crc:crc32(entry.data) });
+  }
+  const stamp = zipDosDateTime(new Date()); let localSize = 0;
+  for(const entry of prepared) localSize += 30 + entry.nameBytes.length + entry.compressed.length;
+  let centralSize = 0;
+  for(const entry of prepared) centralSize += 46 + entry.nameBytes.length;
+  const output = new Uint8Array(localSize + centralSize + 22), view = new DataView(output.buffer);
+  let offset = 0;
+  for(const entry of prepared){
+    entry.localOffset = offset;
+    writeZipU32(view, offset, 0x04034b50); writeZipU16(view, offset+4, 20); writeZipU16(view, offset+6, 0); writeZipU16(view, offset+8, 8);
+    writeZipU16(view, offset+10, stamp.time); writeZipU16(view, offset+12, stamp.date); writeZipU32(view, offset+14, entry.crc);
+    writeZipU32(view, offset+18, entry.compressed.length); writeZipU32(view, offset+22, entry.data.length);
+    writeZipU16(view, offset+26, entry.nameBytes.length); writeZipU16(view, offset+28, 0); output.set(entry.nameBytes, offset+30);
+    output.set(entry.compressed, offset+30+entry.nameBytes.length); offset += 30 + entry.nameBytes.length + entry.compressed.length;
+  }
+  const centralOffset = offset;
+  for(const entry of prepared){
+    writeZipU32(view, offset, 0x02014b50); writeZipU16(view, offset+4, 20); writeZipU16(view, offset+6, 20); writeZipU16(view, offset+8, 0); writeZipU16(view, offset+10, 8);
+    writeZipU16(view, offset+12, stamp.time); writeZipU16(view, offset+14, stamp.date); writeZipU32(view, offset+16, entry.crc);
+    writeZipU32(view, offset+20, entry.compressed.length); writeZipU32(view, offset+24, entry.data.length);
+    writeZipU16(view, offset+28, entry.nameBytes.length); writeZipU16(view, offset+30, 0); writeZipU16(view, offset+32, 0); writeZipU16(view, offset+34, 0);
+    writeZipU16(view, offset+36, 0); writeZipU32(view, offset+38, 0); writeZipU32(view, offset+42, entry.localOffset); output.set(entry.nameBytes, offset+46);
+    offset += 46 + entry.nameBytes.length;
+  }
+  writeZipU32(view, offset, 0x06054b50); writeZipU16(view, offset+4, 0); writeZipU16(view, offset+6, 0); writeZipU16(view, offset+8, prepared.length); writeZipU16(view, offset+10, prepared.length);
+  writeZipU32(view, offset+12, centralSize); writeZipU32(view, offset+16, centralOffset); writeZipU16(view, offset+20, 0);
+  return new Blob([output], { type:'application/zip' });
+}
+function projectZipError(error){
+  return error instanceof ProjectArchiveError ? t(error.code) : t('projectArchiveInvalid');
+}
+function findZipEnd(bytes, view){
+  for(let offset=bytes.length-22, lower=Math.max(0, bytes.length-65557); offset>=lower; offset--){
+    if(view.getUint32(offset, true) === 0x06054b50 && offset + 22 + view.getUint16(offset+20, true) === bytes.length) return offset;
+  }
+  throw new ProjectArchiveError('projectArchiveInvalid');
+}
+async function readProjectZip(bytes){
+  if(!supportsNativeProjectArchive()) throw new ProjectArchiveError('projectArchiveUnsupported');
+  if(bytes.length < 22 || bytes.length > PROJECT_ARCHIVE_MAX_BYTES) throw new ProjectArchiveError(bytes.length > PROJECT_ARCHIVE_MAX_BYTES ? 'projectArchiveTooLarge' : 'projectArchiveInvalid');
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), end = findZipEnd(bytes, view);
+  const disk = view.getUint16(end+4, true), centralDisk = view.getUint16(end+6, true), count = view.getUint16(end+10, true), centralSize = view.getUint32(end+12, true), centralOffset = view.getUint32(end+16, true);
+  if(disk || centralDisk || view.getUint16(end+8, true) !== count || count > PROJECT_ARCHIVE_MAX_ENTRIES || centralOffset + centralSize > end) throw new ProjectArchiveError('projectArchiveInvalid');
+  const decoder = new TextDecoder(), files = new Map(); let offset = centralOffset, totalSize = 0;
+  for(let index=0; index<count; index++){
+    if(offset + 46 > end || view.getUint32(offset, true) !== 0x02014b50) throw new ProjectArchiveError('projectArchiveInvalid');
+    const flags = view.getUint16(offset+8, true), method = view.getUint16(offset+10, true), crc = view.getUint32(offset+16, true), compressedSize = view.getUint32(offset+20, true), rawSize = view.getUint32(offset+24, true);
+    const nameLength = view.getUint16(offset+28, true), extraLength = view.getUint16(offset+30, true), commentLength = view.getUint16(offset+32, true), diskStart = view.getUint16(offset+34, true), localOffset = view.getUint32(offset+42, true);
+    const next = offset + 46 + nameLength + extraLength + commentLength;
+    if(next > end || (flags & 1) || diskStart || (method !== 0 && method !== 8)) throw new ProjectArchiveError('projectArchiveInvalid');
+    const name = decoder.decode(bytes.subarray(offset+46, offset+46+nameLength));
+    const key = name.toLowerCase(); totalSize += rawSize;
+    if(!name || /[\\/]|\.\./.test(name) || files.has(key) || totalSize > PROJECT_ARCHIVE_MAX_BYTES || localOffset + 30 > bytes.length || view.getUint32(localOffset, true) !== 0x04034b50) throw new ProjectArchiveError(totalSize > PROJECT_ARCHIVE_MAX_BYTES ? 'projectArchiveTooLarge' : 'projectArchiveInvalid');
+    const localFlags = view.getUint16(localOffset+6, true), localMethod = view.getUint16(localOffset+8, true), localNameLength = view.getUint16(localOffset+26, true), localExtraLength = view.getUint16(localOffset+28, true), dataOffset = localOffset + 30 + localNameLength + localExtraLength;
+    if(localFlags !== flags || localMethod !== method || dataOffset + compressedSize > bytes.length || decoder.decode(bytes.subarray(localOffset+30, localOffset+30+localNameLength)) !== name) throw new ProjectArchiveError('projectArchiveInvalid');
+    const compressed = bytes.slice(dataOffset, dataOffset + compressedSize); let data;
+    try { data = method === 0 ? compressed : await inflateRaw(compressed); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
+    if(data.length !== rawSize) throw new ProjectArchiveError('projectArchiveInvalid');
+    if(crc32(data) !== crc) throw new ProjectArchiveError('projectArchiveChecksumFailed');
+    files.set(key, {name, data}); offset = next;
+  }
+  if(offset !== centralOffset + centralSize) throw new ProjectArchiveError('projectArchiveInvalid');
+  return files;
+}
+function portableStripsToDesktop(strips){
+  return (Array.isArray(strips) ? strips : []).filter(strip => strip && strip.start && strip.end && strip.color).map(strip => ({
+    startX:strip.start.x, startY:strip.start.y, endX:strip.end.x, endY:strip.end.y, radius:strip.radius,
+    r:strip.color.r, g:strip.color.g, b:strip.color.b, a:255
+  }));
+}
+function desktopStripsToPortable(strips){
+  return (Array.isArray(strips) ? strips : []).map(strip => ({
+    start:{x:strip.startX, y:strip.startY}, end:{x:strip.endX, y:strip.endY}, radius:strip.radius,
+    color:{r:strip.r, g:strip.g, b:strip.b}
+  }));
+}
+function portableControlsToDesktop(controls){
+  const light = controls.light || {};
+  return { surfaceFinishIndex:controls.surfaceFinishIndex, maskColorIndex:controls.maskColorIndex, goldThresh:controls.goldThresh, silkThresh:controls.silkThresh,
+    transThresh:controls.transThresh, copperDepth:controls.copperDepth, lightEnable:!!light.enabled, showLEDOverlay:!!light.showOverlay,
+    autoSense:light.autoSense, ledRadius:light.radius, ledIntensity:light.intensity, bareSubstrateEnable:!!controls.bareSubstrateEnable,
+    bareSubstrateGrayMode:controls.bareSubstrateGrayMode !== false, bareSubstrateGrayA:controls.bareSubstrateGrayA, bareSubstrateGrayB:controls.bareSubstrateGrayB,
+    bareSubstrateColorSimilarity:controls.bareSubstrateColorSimilarity, edgeEnable:!!controls.edgeEnable, edgeMode:controls.edgeMode === 'stroke' ? 'stroke' : 'enhance',
+    edgeThreshMin:controls.edgeThreshMin, edgeThreshMax:controls.edgeThreshMax, autoInvert:controls.autoInvert, useMetalEdge:!!controls.useMetalEdge,
+    exposeMetalEdge:controls.exposeMetalEdge !== false };
+}
+function desktopControlsToPortable(controls){
+  const c = controls || {};
+  return { processingMode:'color', gray:{...GRAY_DEFAULTS}, surfaceFinishIndex:c.surfaceFinishIndex, maskColorIndex:c.maskColorIndex, goldThresh:c.goldThresh,
+    silkThresh:c.silkThresh, transThresh:c.transThresh, copperDepth:c.copperDepth,
+    light:{enabled:!!c.lightEnable, showOverlay:!!c.showLEDOverlay, autoSense:c.autoSense, radius:c.ledRadius, intensity:c.ledIntensity},
+    bareSubstrateEnable:!!c.bareSubstrateEnable, bareSubstrateGrayMode:c.bareSubstrateGrayMode !== false, bareSubstrateGrayA:c.bareSubstrateGrayA,
+    bareSubstrateGrayB:c.bareSubstrateGrayB, bareSubstrateColorSimilarity:c.bareSubstrateColorSimilarity, edgeEnable:!!c.edgeEnable,
+    edgeMode:c.edgeMode === 'stroke' ? 'stroke' : 'enhance', edgeThreshMin:c.edgeThreshMin, edgeThreshMax:c.edgeThreshMax,
+    autoInvert:c.autoInvert, useMetalEdge:!!c.useMetalEdge, exposeMetalEdge:c.exposeMetalEdge !== false };
+}
+function buildNativeProjectArgs(){
+  const controls = gatherControls(), experimental = projectExperimentalSettings(), strips = state.light.strips;
+  return { schemaVersion:1, controls:portableControlsToDesktop(controls), experimental, ledStrips:portableStripsToDesktop(strips), imageFileName:'source.png',
+    portable:{ schemaVersion:4, controls, experimental, ledStrips:strips } };
+}
+async function canvasPngBlob(canvas){
+  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new ProjectArchiveError('projectArchiveInvalid')), 'image/png'));
+}
+async function saveProject(){
   if(!state.origin) return;
-  const root = {
-    schemaVersion: 4,
-    controls: gatherControls(),
-    experimental: { edgePrefilterEnabled:state.prefilter.enabled, edgePrefilterKernelSize:state.prefilter.kernel,
-      edgePrefilterSigma:state.prefilter.sigma, dpEnabled:state.dp.enabled, dpTolerance:state.dp.tolerance, dpLineWidth:state.dp.lineWidth },
-    image: state.originCanvas.toDataURL('image/png'),
-    ledStrips: state.light.strips
-  };
-  const blob = new Blob([JSON.stringify(root)], { type:'application/json' });
-  downloadBlob(blob, 'project.pcblg.json');
-  toast(t('projectSaved'));
+  try {
+    if(!supportsNativeProjectArchive()) throw new ProjectArchiveError('projectArchiveUnsupported');
+    const source = new Uint8Array(await (await canvasPngBlob(state.originCanvas)).arrayBuffer());
+    const args = new TextEncoder().encode(JSON.stringify(buildNativeProjectArgs()));
+    const blob = await createProjectZip([{name:'source.png', data:source}, {name:'args.json', data:args}]);
+    downloadBlob(blob, 'project.pcblg'); toast(t('projectSaved'));
+  } catch(error){ toast(projectZipError(error)); }
 }
 function restoreControls(c){
   const setIdx = (sel, i) => { const e = el(sel); if(i >= 0 && i < e.options.length) e.selectedIndex = i; };
@@ -2275,46 +2432,89 @@ function restoreLightStrips(raw){
     });
   }
 }
-function importProjectFile(file){
-  const reader = new FileReader();
-  reader.onload = function(){
-    try {
-      const root = JSON.parse(reader.result);
-      const c = root.controls || {};
-      restoreControls(c);
-      const exp = root.experimental || {};
-      state.prefilter.enabled = exp.edgePrefilterEnabled !== false;
-      state.prefilter.kernel = clampOddKernelSize(exp.edgePrefilterKernelSize || 5);
-      state.prefilter.sigma = Math.max(0.001, exp.edgePrefilterSigma || 1.1);
-      state.dp.enabled = !!exp.dpEnabled;
-      state.dp.tolerance = Math.max(0.001, exp.dpTolerance || 1.0);
-      state.dp.lineWidth = clamp(exp.dpLineWidth || 2, 1, 50);
-      const img = new Image();
-      img.onload = function(){
-        const w = img.naturalWidth, h = img.naturalHeight;
-        const lim = scaleDownToPixelLimit(w, h, MAX_IMPORT_PIXELS);
-        const cv = document.createElement('canvas'); cv.width = lim.w; cv.height = lim.h;
-        const ctx = cv.getContext('2d');
-        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, lim.w, lim.h);
-        state.origin = ctx.getImageData(0, 0, lim.w, lim.h);
-        state.originCanvas = cv;
-        state.fullResGeneration = -1; state._roCache = null;
-        imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
-        edgeSharpener.reset();
-        restoreLightStrips(root.ledStrips);
-        setExportControlsEnabled(true);
-        syncImportDrawingButton();
-        syncPreviewImageMeta();
-        updateProcess();
-        toast(t('projectImported'));
-      };
-      img.src = root.image;
-    } catch(e){
-      toast(t('projectParseFailed'));
-    }
-  };
-  reader.readAsText(file);
+function applyExperimentalSettings(exp){
+  const settings = exp || {};
+  state.prefilter.enabled = settings.edgePrefilterEnabled !== false;
+  state.prefilter.kernel = clampOddKernelSize(settings.edgePrefilterKernelSize || 5);
+  state.prefilter.sigma = Math.max(0.001, settings.edgePrefilterSigma || 1.1);
+  state.dp.enabled = !!settings.dpEnabled;
+  state.dp.tolerance = Math.max(0.001, settings.dpTolerance || 1.0);
+  state.dp.lineWidth = clamp(settings.dpLineWidth || 2, 1, 50);
+}
+function decodeProjectImage(source){
+  return new Promise((resolve, reject) => {
+    const objectUrl = source instanceof Blob ? URL.createObjectURL(source) : null;
+    const img = new Image();
+    const cleanup = () => { if(objectUrl) URL.revokeObjectURL(objectUrl); };
+    img.onload = () => {
+      try {
+        const width = img.naturalWidth, height = img.naturalHeight;
+        if(!width || !height) throw new ProjectArchiveError('projectArchiveInvalid');
+        const limited = scaleDownToPixelLimit(width, height, MAX_IMPORT_PIXELS);
+        const canvas = document.createElement('canvas'); canvas.width = limited.w; canvas.height = limited.h;
+        const context = canvas.getContext('2d'); context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high';
+        context.drawImage(img, 0, 0, limited.w, limited.h);
+        const origin = context.getImageData(0, 0, limited.w, limited.h); cleanup(); resolve({origin, canvas});
+      } catch(error){ cleanup(); reject(error); }
+    };
+    img.onerror = () => { cleanup(); reject(new ProjectArchiveError('projectArchiveInvalid')); };
+    img.src = objectUrl || source;
+  });
+}
+function applyImportedProject(project){
+  // 图片和全部参数已在此之前完成校验，以下一次性替换当前工程状态。
+  state.origin = project.image.origin; state.originCanvas = project.image.canvas;
+  state.fullResGeneration = -1; state._roCache = null;
+  imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
+  edgeSharpener.reset();
+  restoreControls(project.controls || {});
+  applyExperimentalSettings(project.experimental);
+  restoreLightStrips(project.ledStrips);
+  setExportControlsEnabled(true); syncImportDrawingButton(); syncPreviewImageMeta(); updateProcess();
+}
+function archiveImageEntry(files, imageFileName){
+  const requested = String(imageFileName || '').toLowerCase();
+  if(requested && files.has(requested)){
+    const requestedEntry = files.get(requested);
+    if(PROJECT_ARCHIVE_IMAGE_EXTENSIONS.has(requestedEntry.name.split('.').pop().toLowerCase())) return requestedEntry;
+  }
+  for(const entry of files.values()){
+    const extension = entry.name.split('.').pop().toLowerCase();
+    if(PROJECT_ARCHIVE_IMAGE_EXTENSIONS.has(extension)) return entry;
+  }
+  throw new ProjectArchiveError('projectArchiveInvalid');
+}
+async function importNativeProjectFile(file){
+  const files = await readProjectZip(new Uint8Array(await file.arrayBuffer()));
+  const argsEntry = files.get('args.json');
+  if(!argsEntry) throw new ProjectArchiveError('projectArchiveInvalid');
+  let args;
+  try { args = JSON.parse(new TextDecoder().decode(argsEntry.data)); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
+  if(!args || typeof args !== 'object' || !args.controls || typeof args.controls !== 'object') throw new ProjectArchiveError('projectArchiveInvalid');
+  const imageEntry = archiveImageEntry(files, args.imageFileName);
+  const extension = imageEntry.name.split('.').pop().toLowerCase();
+  const type = extension === 'jpg' ? 'image/jpeg' : `image/${extension}`;
+  const image = await decodeProjectImage(new Blob([imageEntry.data], {type}));
+  const portable = args.portable && typeof args.portable === 'object' ? args.portable : null;
+  applyImportedProject({ image, controls:portable && portable.controls ? portable.controls : desktopControlsToPortable(args.controls),
+    experimental:portable && portable.experimental ? portable.experimental : args.experimental, ledStrips:portable && Array.isArray(portable.ledStrips) ? portable.ledStrips : desktopStripsToPortable(args.ledStrips) });
+}
+async function importLegacyProjectFile(file){
+  let root;
+  try { root = JSON.parse(await file.text()); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
+  if(!root || typeof root !== 'object' || !root.controls || typeof root.image !== 'string') throw new ProjectArchiveError('projectArchiveInvalid');
+  const image = await decodeProjectImage(root.image);
+  applyImportedProject({image, controls:root.controls, experimental:root.experimental, ledStrips:root.ledStrips});
+}
+async function importProjectFile(file){
+  try {
+    const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    const isArchive = file.name.toLowerCase().endsWith('.pcblg') || (header.length === 4 && header[0] === 0x50 && header[1] === 0x4b);
+    if(isArchive) await importNativeProjectFile(file); else await importLegacyProjectFile(file);
+    toast(t('projectImported'));
+  } catch(error){
+    toast(error instanceof ProjectArchiveError ? projectZipError(error) : t('projectParseFailed'));
+  }
 }
 
 /* ---------------- 边缘 UI 联动 ---------------- */
@@ -2556,7 +2756,7 @@ function init(){
   document.body.appendChild(fi);
 
   const pi = document.createElement('input');
-  pi.type = 'file'; pi.accept = '.pcblg.json,.json'; pi.id = 'projInput'; pi.style.display = 'none';
+  pi.type = 'file'; pi.accept = '.pcblg,.pcblg.json,.json'; pi.id = 'projInput'; pi.style.display = 'none';
   pi.addEventListener('change', function(){ if(this.files[0]) importProjectFile(this.files[0]); this.value = ''; });
   document.body.appendChild(pi);
 
