@@ -68,7 +68,9 @@
 </p>
 
 **原安装版软件**：
-[PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph) 可以前去支持一下哦！<br>
+[PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>
+**此便捷版的EDA插件**：
+[PCB_lightgraph_Extension](https://github.com/G100wasd/PCB_lightgraph_Extension)<br>
 **PCB绘制交流群**(非群主)：<br>
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
 [[QQ]雷霆PCB的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi) <br>
