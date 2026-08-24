@@ -81,6 +81,12 @@ body{
 .dropdown button.active::after{content:'✓';float:right;color:var(--accent);}
 .dropdown button.disabled,.dropdown button:disabled{color:#666;cursor:not-allowed;}
 .dropdown button:disabled:hover{background:transparent;}
+.dropdown .menu-check{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13.5px;
+}
+.dropdown .menu-check:hover{background:rgba(76,194,255,.15);}
+.dropdown .menu-check input{accent-color:var(--control-accent);width:16px;height:16px;cursor:pointer;}
 .dropdown .sep{height:1px;background:var(--border);margin:4px 6px;}
 .submenu{position:relative;}
 .submenu>.dropdown{left:100%;top:0;}
@@ -313,6 +319,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
             <button type="button" data-language="ja">日本語</button>
           </div>
         </div>
+        <label class="menu-check"><span data-i18n="edaImportProtection">EDA导入保护</span><input type="checkbox" id="chkEdaImportProtection" checked></label>
         <button type="button" id="mColor" data-i18n="colorSettings">颜色设置…</button>
         <button type="button" id="mReset" data-i18n="resetAll">重置所有设置…</button>
       </div>
@@ -548,6 +555,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { noOutput:'无输出' });
 Object.assign(TRANSLATIONS['zh-TW'], { noOutput:'無輸出' });
 Object.assign(TRANSLATIONS.en, { noOutput:'No output' });
 Object.assign(TRANSLATIONS.ja, { noOutput:'出力なし' });
+Object.assign(TRANSLATIONS['zh-CN'], { edaImportProtection:'EDA导入保护' });
+Object.assign(TRANSLATIONS['zh-TW'], { edaImportProtection:'EDA 匯入保護' });
+Object.assign(TRANSLATIONS.en, { edaImportProtection:'EDA Import Protection' });
+Object.assign(TRANSLATIONS.ja, { edaImportProtection:'EDA 読み込み保護' });
 Object.assign(TRANSLATIONS['zh-CN'], { menuEdit:'编辑', liveEdit:'图纸快捷编辑', liveEditNeedImage:'请先导入图片', paintBrush:'画笔', paintEraser:'橡皮擦', paintSize:'粗细', paintBrushMode:'画笔模式', paintWhite:'白色覆盖', paintTransparent:'透明擦除', paintSolderMask:'阻焊颜色', paintUndo:'撤销', paintRollback:'回退撤销', paintRedo:'重做', paintCancelEdit:'取消编辑', paintSaveEdit:'保存编辑' });
 Object.assign(TRANSLATIONS['zh-TW'], { menuEdit:'編輯', liveEdit:'圖紙快速編輯', liveEditNeedImage:'請先匯入圖片', paintBrush:'畫筆', paintEraser:'橡皮擦', paintSize:'粗細', paintBrushMode:'畫筆模式', paintWhite:'白色覆蓋', paintTransparent:'透明擦除', paintSolderMask:'阻焊顏色', paintUndo:'復原', paintRollback:'回退復原', paintRedo:'重做', paintCancelEdit:'取消編輯', paintSaveEdit:'儲存編輯' });
 Object.assign(TRANSLATIONS.en, { menuEdit:'Edit', liveEdit:'Quick Drawing Edit', liveEditNeedImage:'Import an image first', paintBrush:'Brush', paintEraser:'Eraser', paintSize:'Size', paintBrushMode:'Brush mode', paintWhite:'Paint white', paintTransparent:'Erase to transparent', paintSolderMask:'Solder mask color', paintUndo:'Undo', paintRollback:'Redo Undo', paintRedo:'Reset Drawing', paintCancelEdit:'Cancel Edit', paintSaveEdit:'Save Edit' });
@@ -1174,6 +1185,8 @@ const state = {
   dp: { enabled:false, tolerance:1.0, lineWidth:2 },
   light: { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null }
 };
+// 导出兼容性属于本机偏好；默认开启以兼容会误判空白 PNG 的 EDA 软件。
+const exportCompatibility = { edaImportProtection:true };
 
 const prc = {
   sourceSize: {w:0, h:0},
@@ -2451,17 +2464,28 @@ function loadImageFile(file){
 
 /* ---------------- 导出 ---------------- */
 function blobToPng(blob){ return blob; }
-function layerToPngBlob(layer, forceOpaqueMono){
+function addEdaImportProtectionMarkers(data, w, h){
+  if(w <= 0 || h <= 0) return;
+  const setPx = function(x, y, v){
+    if(x < 0 || x >= w || y < 0 || y >= h) return;
+    const i = (y*w + x)*4; data[i]=data[i+1]=data[i+2]=v; data[i+3]=255;
+  };
+  const markCorner = function(x, y, dx, dy){
+    setPx(x, y, 255); setPx(x+dx, y, 0); setPx(x, y+dy, 0);
+  };
+  markCorner(0, 0, 1, 1);
+  markCorner(w-1, 0, -1, 1);
+  markCorner(0, h-1, 1, -1);
+  markCorner(w-1, h-1, -1, -1);
+}
+function layerToPngBlob(layer, forceOpaqueMono, addEdaImportProtection){
   const w = layer.width, h = layer.height;
   const d = new Uint8ClampedArray(layer.data);
   if(forceOpaqueMono){
     for(let i = 0; i < d.length; i += 4){ const v = d[i] >= 128 ? 255 : 0; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255; }
-    const setPx = function(x, y, v){ const i = (y*w + x)*4; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255; };
-    setPx(0, 0, 255);
-    if(h > 1) setPx(0, 1, 0);
-    if(w > 1) setPx(1, 0, 0);
-    if(w > 1 && h > 1){ setPx(w-1, h-1, 255); setPx(w-1, h-2, 0); setPx(w-2, h-1, 0); }
   }
+  // 兼容标记独立于分层模式；关闭后必须保持图层像素原样导出。
+  if(addEdaImportProtection) addEdaImportProtectionMarkers(d, w, h);
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   c.getContext('2d').putImageData(new ImageData(d, w, h), 0, 0);
   return new Promise(res => c.toBlob(res, 'image/png'));
@@ -2522,7 +2546,7 @@ function getExportSettings(){
 }
 async function downloadLayerExport(key, settings){
   if(!state.layers || !state.layers[key]) return false;
-  const blob = await layerToPngBlob(state.layers[key], !settings.grayscale);
+  const blob = await layerToPngBlob(state.layers[key], !settings.grayscale, exportCompatibility.edaImportProtection);
   downloadBlob(blob, settings.grayscale ? settings.grayNames[key] : key + '_' + settings.finishName + '_Inverted.png');
   return true;
 }
@@ -2920,6 +2944,11 @@ function syncEdgeUI(){
   el('#exposeMetalWrap').style.display = useMetal ? 'flex' : 'none';
 }
 
+function syncEdaImportProtectionMenu(){
+  const checkbox = el('#chkEdaImportProtection');
+  if(checkbox) checkbox.checked = exportCompatibility.edaImportProtection;
+}
+
 /* ---------------- 菜单 / 弹窗 ---------------- */
 function setupMenus(){
   // 下拉菜单由悬浮控制；focus-within 规则让键盘聚焦时也能访问同一菜单。
@@ -2934,6 +2963,10 @@ function setupMenus(){
   el('#mPaint').onclick = openPaintEditor;
   el('#mFilter').onclick = openFilterDialog;
   el('#mDP').onclick = openDPDialog;
+  el('#chkEdaImportProtection').addEventListener('change', function(){
+    exportCompatibility.edaImportProtection = this.checked;
+    saveLocalPrefs();
+  });
   el('#mColor').onclick = openColorDialog;
   el('#mReset').onclick = resetAllSettings;
   el('#mCheckUpdates').onclick = checkForUpdates;
@@ -3033,6 +3066,8 @@ function resetAllSettings(){
   state.dp = { enabled:false, tolerance:1.0, lineWidth:2 };
   state.light = { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null };
   state.gray = { ...GRAY_DEFAULTS };
+  exportCompatibility.edaImportProtection = true;
+  syncEdaImportProtectionMenu();
   setGroupOpen('groupLight', false, true);
   el('#chkLightOverlay').checked = false;
   setSlider('#sliderLightSense', state.light.autoSense);
@@ -3052,7 +3087,7 @@ function resetAllSettings(){
 
 /* ---------------- 本地偏好 ---------------- */
 function saveLocalPrefs(){
-  localStorage.setItem('pcblg_prefs', JSON.stringify({ custom, prefilter:state.prefilter, dp:state.dp }));
+  localStorage.setItem('pcblg_prefs', JSON.stringify({ custom, prefilter:state.prefilter, dp:state.dp, edaImportProtection:exportCompatibility.edaImportProtection }));
 }
 function loadLocalPrefs(){
   setLanguage(localStorage.getItem('pcblg_language'), false);
@@ -3065,8 +3100,10 @@ function loadLocalPrefs(){
       if(o.custom){ for(const k of ['enig','osp','hasl','bare']) if(o.custom[k]) custom[k] = o.custom[k]; }
       if(o.prefilter) state.prefilter = o.prefilter;
       if(o.dp) state.dp = o.dp;
+      if(typeof o.edaImportProtection === 'boolean') exportCompatibility.edaImportProtection = o.edaImportProtection;
     } catch(e){}
   }
+  syncEdaImportProtectionMenu();
 }
 
 /* ---------------- 初始化 ---------------- */
