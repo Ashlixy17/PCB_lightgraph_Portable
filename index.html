@@ -49,17 +49,17 @@ body{
   cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;
   animation:star-rainbow 3s linear infinite;transition:background 220ms ease;
 }
-/* 顶部彩色文本复用模式切换的描边与扫光，但不影响彩虹文字本身的动画。 */
-.star-link::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
-.star-link::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
+/* 三类操作控件共用描边与扫光；仅模式按钮额外保留过渡和选中态。 */
+.star-link::before,.drawing-action-btn::before,.mode-switch button::before,.paint-tool::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
+.star-link::after,.drawing-action-btn::after,.mode-switch button::after,.paint-tool::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
 @media (hover:hover){
   .star-link.is-hovered{background:rgba(76,194,255,.15);}
-  .star-link.is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .star-link.is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .star-link.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
+  .star-link.is-hovered::before,.drawing-action-btn:not(:disabled).is-hovered::before,.mode-switch button:not(.active).is-hovered::before,.paint-tool:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
+  .star-link.is-hovered::after,.drawing-action-btn:not(:disabled).is-hovered::after,.mode-switch button:not(.active).is-hovered::after,.paint-tool:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
+  .star-link.is-leaving::before,.drawing-action-btn:not(:disabled).is-leaving::before,.mode-switch button.is-leaving::before,.paint-tool.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
 }
 .star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
-.star-link:focus-visible::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
+.star-link:focus-visible::before,.drawing-action-btn:focus-visible:not(:disabled)::before,.mode-switch button:focus-visible:not(.active)::before,.paint-tool:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 @keyframes star-rainbow{from{color:#ff758f;}20%{color:#ffbc4b;}40%{color:#8ad45b;}60%{color:#55c7ff;}80%{color:#b38cff;}to{color:#ff758f;}}
 /* 窄窗口让 Star 提示独占下一行，避免与菜单的可点击区域重叠。 */
 @media (max-width:1120px){
@@ -79,7 +79,8 @@ body{
 }
 .dropdown button:hover{background:rgba(76,194,255,.15);}
 .dropdown button.active::after{content:'✓';float:right;color:var(--accent);}
-.dropdown button.disabled{color:#666;cursor:not-allowed;}
+.dropdown button.disabled,.dropdown button:disabled{color:#666;cursor:not-allowed;}
+.dropdown button:disabled:hover{background:transparent;}
 .dropdown .sep{height:1px;background:var(--border);margin:4px 6px;}
 .submenu{position:relative;}
 .submenu>.dropdown{left:100%;top:0;}
@@ -159,20 +160,12 @@ button.btn:hover{border-color:var(--control-accent);}
 button.btn.accent{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
 button.btn.accent:hover{background:var(--control-accent);}
 button.btn:disabled{opacity:.4;cursor:not-allowed;}
-/* 图纸操作与模式切换共用同一套悬停描边和扫光，禁用按钮不参与交互动画。 */
+/* 图纸操作继承上方共用描边和扫光；禁用按钮不参与交互动画。 */
 button.drawing-action-btn{position:relative;border-radius:10px;transition:color 220ms ease,background 220ms ease,border-color 220ms ease;}
-.drawing-action-btn::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
-.drawing-action-btn::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
 /* 导出动作沿用模式切换的选中态配色，导入动作仍保持普通按钮层级。 */
 button.drawing-action-btn.action-selected{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
 button.drawing-action-btn.action-selected:hover{background:var(--control-accent);}
-@media (hover:hover){
-  .drawing-action-btn:not(:disabled).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .drawing-action-btn:not(:disabled).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .drawing-action-btn:not(:disabled).is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
-}
 .drawing-action-btn:focus-visible:not(:disabled){outline:none;}
-.drawing-action-btn:focus-visible:not(:disabled)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 .btn-row{display:flex;gap:6px;}
 .btn-row.centered{justify-content:center;}
 .flex-fill{flex:1;}
@@ -181,15 +174,9 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;margin-bottom:10px;}
 .mode-switch button{position:relative;flex:1;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
 /* 同一条描边先以细亮线出现，再向外扩为较暗的宽边；伪元素不会改变模式按钮布局。 */
-.mode-switch button::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
+.mode-switch button::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
 /* 扫光限制在按钮表面，避免裁切负责外扩描边的 ::before。 */
-.mode-switch button::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
-@media (hover:hover){
-  .mode-switch button:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}
-  .mode-switch button:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .mode-switch button:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .mode-switch button.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
-}
+@media (hover:hover){.mode-switch button:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
 /* 进入与退出均让宽度、颜色和透明度同步变化，避免边框突然亮起或出现阶段分界。 */
 @keyframes mode-switch-shine{
   0%{background-position:-130% -130%;opacity:0;}
@@ -206,19 +193,21 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
   100%{inset:-1px;border-width:2px;border-color:#f8fcff;box-shadow:0 0 3px rgb(237 248 255 / 88%);opacity:0;transform:scale(.98);}
 }
 .mode-switch button:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
-.mode-switch button:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
 /* 当前算法的 active 状态由 setProcessingMode 统一维护，优先于悬停描边。 */
-.mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);font-weight:600;}
+.mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);}
 .mode-switch button.active::before{opacity:0;}
-@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before,.drawing-action-btn,.drawing-action-btn::before{transition-duration:0ms;transition-delay:0ms;}}
+.mode-switch button.is-switching-in,.paint-tool.is-switching-in{animation:mode-switch-selected-enter 220ms ease both;}
+.mode-switch button.is-switching-out,.paint-tool.is-switching-out{pointer-events:none;animation:mode-switch-selected-leave 220ms ease both;}
+@keyframes mode-switch-selected-enter{from{background:rgb(185 197 232 / 0%);color:var(--text-dim);}to{background:var(--control-accent);color:var(--control-accent-text);}}
+@keyframes mode-switch-selected-leave{from{background:var(--control-accent);color:var(--control-accent-text);}to{background:rgb(185 197 232 / 0%);color:var(--text-dim);}}
+@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before,.paint-tool,.paint-tool::before,.drawing-action-btn,.drawing-action-btn::before{transition-duration:0ms;transition-delay:0ms;}}
 .mode-specific[hidden]{display:none;}
-.gray-color{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;font-size:13px;}
-.gray-color .lab{color:var(--text-dim);font-size:12.5px;}
-.gray-color input{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 /* layer previews grid */
 .layers-grid{
-  flex:1 1 auto;display:grid;grid-template-columns:repeat(3, 1fr);grid-template-rows:1fr;gap:8px;min-height:0;
+  flex:1 1 auto;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));gap:8px;min-height:0;
 }
+/* 两种算法共用 2×2 预览格；灰度模式的第四格明确标为无输出。 */
+.layers-grid .lp[hidden]{display:none;}
 .layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
 .layers-grid .lp .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
 .layers-grid .lp .w{
@@ -241,11 +230,33 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .modal input[type=number]{width:90px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;}
 .modal input[type=color]{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 .modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+/* 内置画板直接编辑原图像素；显示尺寸仅用于适配窗口，不改变源图分辨率。 */
+.paint-modal{width:min(1120px,94vw);max-width:1120px;height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;}
+.paint-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.paint-toolbar label{display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12.5px;}
+.paint-toolbar input[type=color]{width:34px;height:28px;}
+.paint-toolbar input[type=range]{width:120px;}
+.paint-tool-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;}
+/* 画笔和橡皮擦直接沿用主页模式切换的外观与动画，不叠加普通按钮边框。 */
+.paint-tool{position:relative;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 12px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
+.paint-tool::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
+@media (hover:hover){.paint-tool:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
+.paint-tool.active{background:var(--control-accent);color:var(--control-accent-text);}
+.paint-tool.active::before{opacity:0;}
+.paint-tool:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
+#paintBrushModeWrap{flex:0 0 auto;flex-wrap:nowrap;white-space:nowrap;}
+.paint-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;margin-top:10px;}
+.paint-stage canvas{display:block;flex:none;touch-action:none;cursor:crosshair;box-shadow:0 0 0 1px rgb(255 255 255 / 10%);will-change:transform;}
+.paint-size-indicator{position:absolute;border:1.5px solid var(--control-accent);border-radius:50%;box-sizing:border-box;pointer-events:none;z-index:1;opacity:0;transition:opacity .15s ease;box-shadow:0 0 3px rgb(0 0 0 / 82%);}
+.paint-size-indicator.show{opacity:1;}
+.paint-image-meta{margin-left:auto;color:var(--text-dim);font-size:12px;white-space:nowrap;}
+@media (max-width:680px){.paint-modal{width:98vw;height:94vh;padding:12px;}.paint-toolbar{gap:5px;}.paint-toolbar input[type=range]{width:86px;}}
 /* 裁剪画布按图片实际比例绘制，坐标直接映射回原图，避免预览缩放带来裁切偏差。 */
-.crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;}
+.crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;height:min(82vh,720px);max-height:calc(100vh - 32px);overflow:hidden;}
+.crop-modal>div{display:flex;flex-direction:column;min-height:0;height:100%;}
 .crop-hint{margin:0 0 12px;color:var(--text-dim);font-size:12.5px;line-height:1.5;}
-.crop-stage{display:flex;align-items:center;justify-content:center;max-height:60vh;overflow:auto;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
-.crop-stage canvas{display:block;max-width:100%;touch-action:none;cursor:default;}
+.crop-stage{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
+.crop-stage canvas{display:block;flex:none;max-width:none;touch-action:none;cursor:default;will-change:transform;}
 /* toast */
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);
@@ -266,6 +277,12 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <button type="button" id="mExport" class="disabled" data-i18n="exportDrawing">导出全部图纸</button>
         <button type="button" id="mSave" data-i18n="saveProject">保存工程…</button>
         <button type="button" id="mLoad" data-i18n="loadProject">导入工程…</button>
+      </div>
+    </div>
+    <div class="menu" id="menuEdit">
+      <button type="button" data-i18n="menuEdit">编辑</button>
+      <div class="dropdown">
+        <button type="button" id="mPaint" data-i18n="liveEdit" disabled>图纸快捷编辑</button>
       </div>
     </div>
     <div class="menu" id="menuOption">
@@ -322,7 +339,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <div class="placeholder" id="compositePlaceholder" data-i18n="importPlaceholder">请导入图片…</div>
       </div>
       <div class="quad-grid" id="quadGrid" hidden>
-        <div class="quad-cell"><div class="t" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadComposite"></canvas><div class="placeholder" data-quad-placeholder="composite" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" id="quadPrimaryTitle" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadPrimary"></canvas><div class="placeholder" data-quad-placeholder="primary" data-i18n="importPlaceholder">请导入图片…</div></div></div>
         <div class="quad-cell"><div class="t" data-i18n="layerSilk">Top Silk（丝印）</div><div class="w"><canvas id="canvasQuadSilk"></canvas><div class="placeholder" data-quad-placeholder="silk" data-i18n="importPlaceholder">请导入图片…</div></div></div>
         <div class="quad-cell"><div class="t" data-i18n="layerMask">Top Mask（阻焊）</div><div class="w"><canvas id="canvasQuadMask"></canvas><div class="placeholder" data-quad-placeholder="mask" data-i18n="importPlaceholder">请导入图片…</div></div></div>
         <div class="quad-cell"><div class="t" data-i18n="layerCopper">Top Copper（线路）</div><div class="w"><canvas id="canvasQuadCopper"></canvas><div class="placeholder" data-quad-placeholder="copper" data-i18n="importPlaceholder">请导入图片…</div></div></div>
@@ -358,6 +375,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         </label>
         <div id="sliderGold"></div>
         <div id="sliderSilk"></div>
+        <div id="sliderTrans"></div>
         <div id="sliderCopper"></div>
       </div></div>
     </div>
@@ -401,13 +419,15 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 
     <div class="mode-specific" id="grayControls">
       <div class="group open" id="groupGray">
-        <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="grayParameters">纯灰度三分参数</span></button>
+        <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="basicParameters">基础参数</span></button>
         <div class="content"><div class="inner">
+          <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
+            <select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option></select>
+          </label>
           <div id="sliderGraySilk"></div>
           <div id="sliderGrayMask"></div>
           <div id="sliderGrayThick"></div>
           <div id="sliderGrayBlur"></div>
-          <label class="gray-color"><span class="lab" data-i18n="grayPreviewMaskColor">合成预览阻焊颜色</span><select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option></select></label>
         </div></div>
       </div>
     </div>
@@ -424,6 +444,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
             <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
             <option value="Top_Mask" data-i18n="layerMask">Top Mask（阻焊）</option>
             <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
+            <option value="Bottom_Mask" id="exportBottomOption" data-i18n="layerBottom" hidden>Bottom Mask（透光）</option>
           </select>
         </label>
         <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
@@ -436,6 +457,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
+      <div class="lp" id="bottomPreviewItem"><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -470,10 +492,10 @@ const TRANSLATIONS = {
 };
 Object.assign(TRANSLATIONS.en, { canvasContextFailed:'Unable to create a drawing context', unknownError:'Unknown error' });
 Object.assign(TRANSLATIONS.ja, { canvasContextFailed:'描画コンテキストを作成できません', unknownError:'不明なエラー' });
-Object.assign(TRANSLATIONS['zh-CN'], { cropTitle:'快捷裁剪', cropHint:'拖动裁剪框移动；拖动边或四角调整范围。', cropSkip:'取消并导入原图', cropConfirm:'裁剪并导入' });
-Object.assign(TRANSLATIONS['zh-TW'], { cropTitle:'快速裁切', cropHint:'拖曳裁切框移動；拖曳邊或四角調整範圍。', cropSkip:'取消並匯入原圖', cropConfirm:'裁切並匯入' });
-Object.assign(TRANSLATIONS.en, { cropTitle:'Quick Crop', cropHint:'Drag the crop area to move it; drag edges or corners to resize.', cropSkip:'Skip and Import Original', cropConfirm:'Crop and Import' });
-Object.assign(TRANSLATIONS.ja, { cropTitle:'クイックトリミング', cropHint:'枠内をドラッグして移動し、辺または角をドラッグして範囲を調整します。', cropSkip:'キャンセルして元画像を読み込む', cropConfirm:'トリミングして読み込む' });
+Object.assign(TRANSLATIONS['zh-CN'], { cropTitle:'快捷裁剪', cropHint:'拖动裁剪框移动；拖动边或四角调整范围。滚轮缩放，右键拖动画面。', cropSkip:'取消并导入原图', cropConfirm:'裁剪并导入' });
+Object.assign(TRANSLATIONS['zh-TW'], { cropTitle:'快速裁切', cropHint:'拖曳裁切框移動；拖曳邊或四角調整範圍。滾輪縮放，右鍵拖曳畫面。', cropSkip:'取消並匯入原圖', cropConfirm:'裁切並匯入' });
+Object.assign(TRANSLATIONS.en, { cropTitle:'Quick Crop', cropHint:'Drag the crop area to move it; drag edges or corners to resize. Wheel to zoom; right-drag to pan.', cropSkip:'Skip and Import Original', cropConfirm:'Crop and Import' });
+Object.assign(TRANSLATIONS.ja, { cropTitle:'クイックトリミング', cropHint:'枠内をドラッグして移動し、辺または角をドラッグして範囲を調整します。ホイールで拡大縮小、右ドラッグで移動できます。', cropSkip:'キャンセルして元画像を読み込む', cropConfirm:'トリミングして読み込む' });
 Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', githubLink:'跳转至 GitHub', issueFeedback:'问题反馈' });
 Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', githubLink:'前往 GitHub', issueFeedback:'問題回饋' });
 Object.assign(TRANSLATIONS.en, { menuHelp:'About', githubLink:'Open GitHub', issueFeedback:'Report an Issue' });
@@ -506,6 +528,22 @@ Object.assign(TRANSLATIONS['zh-CN'], { previewImageMeta:'总像素 {pixels} · {
 Object.assign(TRANSLATIONS['zh-TW'], { previewImageMeta:'總像素 {pixels} · {width} × {height} 像素 · 縮放 {zoom}%' });
 Object.assign(TRANSLATIONS.en, { previewImageMeta:'{pixels} pixels · {width} × {height} px · Zoom {zoom}%' });
 Object.assign(TRANSLATIONS.ja, { previewImageMeta:'総画素数 {pixels} · {width} × {height} px · ズーム {zoom}%' });
+Object.assign(TRANSLATIONS['zh-CN'], { projectSaved:'工程已导出为 project.pcblg', projectArchiveUnsupported:'当前浏览器不支持原生 .pcblg 工程包', projectArchiveInvalid:'工程包无效或内容不完整', projectArchiveChecksumFailed:'工程包校验失败', projectArchiveTooLarge:'工程包解压后超过支持大小' });
+Object.assign(TRANSLATIONS['zh-TW'], { projectSaved:'工程已匯出為 project.pcblg', projectArchiveUnsupported:'目前瀏覽器不支援原生 .pcblg 工程包', projectArchiveInvalid:'工程包無效或內容不完整', projectArchiveChecksumFailed:'工程包校驗失敗', projectArchiveTooLarge:'工程包解壓縮後超過支援大小' });
+Object.assign(TRANSLATIONS.en, { projectSaved:'Project exported as project.pcblg', projectArchiveUnsupported:'This browser does not support native .pcblg projects', projectArchiveInvalid:'The project archive is invalid or incomplete', projectArchiveChecksumFailed:'Project archive checksum verification failed', projectArchiveTooLarge:'The extracted project archive exceeds the supported size' });
+Object.assign(TRANSLATIONS.ja, { projectSaved:'プロジェクトを project.pcblg として書き出しました', projectArchiveUnsupported:'このブラウザーはネイティブ .pcblg プロジェクトに対応していません', projectArchiveInvalid:'プロジェクトアーカイブが無効、または内容が不足しています', projectArchiveChecksumFailed:'プロジェクトアーカイブのチェックサム検証に失敗しました', projectArchiveTooLarge:'展開後のプロジェクトアーカイブが対応サイズを超えています' });
+Object.assign(TRANSLATIONS['zh-CN'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光阈值' });
+Object.assign(TRANSLATIONS['zh-TW'], { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光閾值' });
+Object.assign(TRANSLATIONS.en, { layerBottom:'Bottom Mask (Backlight)', transThreshold:'Substrate Transparency Threshold' });
+Object.assign(TRANSLATIONS.ja, { layerBottom:'Bottom Mask（透光）', transThreshold:'基材透光しきい値' });
+Object.assign(TRANSLATIONS['zh-CN'], { noOutput:'无输出' });
+Object.assign(TRANSLATIONS['zh-TW'], { noOutput:'無輸出' });
+Object.assign(TRANSLATIONS.en, { noOutput:'No output' });
+Object.assign(TRANSLATIONS.ja, { noOutput:'出力なし' });
+Object.assign(TRANSLATIONS['zh-CN'], { menuEdit:'编辑', liveEdit:'图纸快捷编辑', liveEditNeedImage:'请先导入图片', paintBrush:'画笔', paintEraser:'橡皮擦', paintSize:'粗细', paintBrushMode:'画笔模式', paintWhite:'白色覆盖', paintTransparent:'透明擦除', paintSolderMask:'阻焊颜色', paintUndo:'撤销', paintRollback:'回退撤销', paintRedo:'重做', paintCancelEdit:'取消编辑', paintSaveEdit:'保存编辑' });
+Object.assign(TRANSLATIONS['zh-TW'], { menuEdit:'編輯', liveEdit:'圖紙快速編輯', liveEditNeedImage:'請先匯入圖片', paintBrush:'畫筆', paintEraser:'橡皮擦', paintSize:'粗細', paintBrushMode:'畫筆模式', paintWhite:'白色覆蓋', paintTransparent:'透明擦除', paintSolderMask:'阻焊顏色', paintUndo:'復原', paintRollback:'回退復原', paintRedo:'重做', paintCancelEdit:'取消編輯', paintSaveEdit:'儲存編輯' });
+Object.assign(TRANSLATIONS.en, { menuEdit:'Edit', liveEdit:'Quick Drawing Edit', liveEditNeedImage:'Import an image first', paintBrush:'Brush', paintEraser:'Eraser', paintSize:'Size', paintBrushMode:'Brush mode', paintWhite:'Paint white', paintTransparent:'Erase to transparent', paintSolderMask:'Solder mask color', paintUndo:'Undo', paintRollback:'Redo Undo', paintRedo:'Reset Drawing', paintCancelEdit:'Cancel Edit', paintSaveEdit:'Save Edit' });
+Object.assign(TRANSLATIONS.ja, { menuEdit:'編集', liveEdit:'図面クイック編集', liveEditNeedImage:'先に画像を読み込んでください', paintBrush:'ブラシ', paintEraser:'消しゴム', paintSize:'太さ', paintBrushMode:'ブラシの方式', paintWhite:'白で塗る', paintTransparent:'透明に消去', paintSolderMask:'レジスト色', paintUndo:'元に戻す', paintRollback:'取り消しを戻す', paintRedo:'描画をリセット', paintCancelEdit:'編集を取り消す', paintSaveEdit:'編集を保存' });
 /* 品牌名称与徽标独立翻译，语言切换时同步更新左上角和浏览器标题。 */
 Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版）', brandName:'PCB图片分层器', brandEdition:'便携版' });
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
@@ -728,15 +766,16 @@ class ImageProcessor {
   constructor(){ this.cachedSource = null; this.cachedParams = null; this.cached = null; }
   paramsKey(src, p){
     return [src, p.finishType, p.maskColorName, p.isWhiteMask, p.goldThresh, p.silkThresh,
-      p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim].join('|');
+      p.transThresh, p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim].join('|');
   }
   processImage(src, p, mutable){
-    if(!src) return { copper:null, mask:null, silk:null, composite:null };
+    if(!src) return { copper:null, mask:null, silk:null, bottom:null, composite:null };
     const key = this.paramsKey(src, p);
     const makeOut = (base) => ({
       copper: mutable ? cloneImg(base.copper) : base.copper,
       mask: mutable ? cloneImg(base.mask) : base.mask,
       silk: mutable ? cloneImg(base.silk) : base.silk,
+      bottom: mutable ? cloneImg(base.bottom) : base.bottom,
       composite: mutable ? cloneImg(base.composite) : base.composite
     });
     if(this.cachedSource === src && this.cachedParams === key){
@@ -756,8 +795,8 @@ class ImageProcessor {
     const grayMaxPct = clamp(Math.max(p.bareGrayMin, p.bareGrayMax), 0, 100);
     const simThresh = clamp(p.bareSim, 0, 100);
     const effCopper = clamp(p.copperDepth, 0, 254);
-    const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), comp = makeImg(w,h);
-    const sd = src.data, cd = copper.data, md = mask.data, sid = silk.data, pd = comp.data;
+    const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), bottom = makeImg(w,h), comp = makeImg(w,h);
+    const sd = src.data, cd = copper.data, md = mask.data, sid = silk.data, bd = bottom.data, pd = comp.data;
     for(let y = 0; y < h; y++){
       const row = y*w;
       for(let x = 0; x < w; x++){
@@ -779,6 +818,8 @@ class ImageProcessor {
         cd[i] = cd[i+1] = cd[i+2] = (isMetalPx || copperUnderMask) ? 255 : 0; cd[i+3] = 255;
         md[i] = md[i+1] = md[i+2] = maskOpen ? 255 : 0; md[i+3] = 255;
         sid[i] = sid[i+1] = sid[i+2] = (silkPx && !barePx) ? 255 : 0; sid[i+3] = 255;
+        // 安装版语义：白色是开窗透光区，后续生产图会统一反色导出。
+        bd[i] = bd[i+1] = bd[i+2] = gray > p.transThresh ? 255 : 0; bd[i+3] = 255;
 
         let pr = { r:40, g:35, b:25 };
         if(isMetalPx) pr = metalColor;
@@ -798,7 +839,7 @@ class ImageProcessor {
         pd[i] = pr.r; pd[i+1] = pr.g; pd[i+2] = pr.b; pd[i+3] = 255;
       }
     }
-    return { copper, mask, silk, composite: comp };
+    return { copper, mask, silk, bottom, composite: comp };
   }
 }
 
@@ -1012,8 +1053,11 @@ function invertImg(img){
   }
   return out;
 }
-function generateLayers(copper, mask, silk){
-  return { Top_Copper: invertImg(copper), Top_Mask: invertImg(mask), Top_Silk: invertImg(silk) };
+function generateLayers(copper, mask, silk, bottom){
+  return {
+    Top_Copper:invertImg(copper), Top_Mask:invertImg(mask), Top_Silk:invertImg(silk),
+    Bottom_Mask:invertImg(bottom)
+  };
 }
 
 /* ---------------- 纯灰度三分分层（Processerv_2 语义） ---------------- */
@@ -1254,8 +1298,8 @@ function drawLightCapsules(composite, strips){
   }
   composite.data.set(ctx.getImageData(0, 0, composite.width, composite.height).data);
 }
-function renderLightsOnComposite(composite, copper, strips, intensity){
-  const cd = composite.data, copperData = copper.data, w = composite.width, h = composite.height;
+function renderLightsOnComposite(composite, copper, bottom, strips, intensity){
+  const cd = composite.data, copperData = copper.data, bottomData = bottom.data, w = composite.width, h = composite.height;
   for(const strip of strips){
     const radius = strip.radius;
     const minX = clamp(Math.floor(Math.min(strip.start.x, strip.end.x)-radius), 0, w-1);
@@ -1264,7 +1308,8 @@ function renderLightsOnComposite(composite, copper, strips, intensity){
     const maxY = clamp(Math.ceil(Math.max(strip.start.y, strip.end.y)+radius), 0, h-1);
     for(let y = minY; y <= maxY; y++) for(let x = minX; x <= maxX; x++){
       const pixel = (y*w+x)*4;
-      if(copperData[pixel] > 128) continue; // 与桌面版一致：敷铜区域阻挡灯光本体。
+      // 与安装版一致：敷铜或背透层的非开窗区域均阻挡灯光。
+      if(copperData[pixel] > 128 || bottomData[pixel] < 128) continue;
       const distance = pointToSegmentDistance(x, y, strip.start, strip.end);
       if(distance >= radius) continue;
       const alpha = clamp(Math.round(intensity*Math.pow(1-distance/radius, 1.8)), 0, 255) / 255;
@@ -1334,6 +1379,7 @@ function renderAtSize(tw, th, generation, authoritative){
 
   const goldThresh = sliderVal('#sliderGold');
   const silkThresh = sliderVal('#sliderSilk');
+  const transThresh = sliderVal('#sliderTrans');
   const copperDepth = sliderVal('#sliderCopper');
 
   let edgeMask = null;
@@ -1346,12 +1392,12 @@ function renderAtSize(tw, th, generation, authoritative){
 
   const p = {
     finishType, maskColorName, isWhiteMask,
-    goldThresh, silkThresh, copperDepth,
+    goldThresh, silkThresh, transThresh, copperDepth,
     enableBare, bareGrayMode,
     bareGrayMin: sliderVal('#sliderBareA'), bareGrayMax: sliderVal('#sliderBareB'), bareSim: sliderVal('#sliderBareSim')
   };
   const mutableLayers = !!edgeMask;
-  let { copper, mask, silk, composite } = imageProcessor.processImage(renderOrigin, p, mutableLayers);
+  let { copper, mask, silk, bottom, composite } = imageProcessor.processImage(renderOrigin, p, mutableLayers);
 
   if(edgeMask){
     const w = Math.min(edgeMask.w, copper.width), h = Math.min(edgeMask.h, copper.height);
@@ -1390,13 +1436,13 @@ function renderAtSize(tw, th, generation, authoritative){
     }
   }
 
-  const layers = generateLayers(copper, mask, silk);
+  const layers = generateLayers(copper, mask, silk, bottom);
 
   if(masterState.light && state.light.showOverlay && state.light.strips.length){
     // 灯光只叠加到合成预览；生产层保持干净，导出结果不受布灯影响。
     composite = cloneImg(composite);
     const strips = scaleLightStrips(state.light.strips, state.origin.width, state.origin.height, composite.width, composite.height);
-    renderLightsOnComposite(composite, copper, strips, state.light.intensity);
+    renderLightsOnComposite(composite, copper, bottom, strips, state.light.intensity);
   }
 
   state.composite = composite;
@@ -1429,14 +1475,41 @@ function sliderVal(sel){
 /* 折叠组：master 状态（bare/edge 展开=启用） */
 const masterState = { light:false, bare:false, edge:false };
 
+function transitionSegmentedSelection(buttons, nextButton){
+  const list = Array.from(buttons);
+  const previous = list.find(button => button.classList.contains('active'));
+  if(previous === nextButton) return;
+  list.forEach(button => {
+    if(button._selectionTimer) clearTimeout(button._selectionTimer);
+    button.classList.remove('is-switching-in', 'is-switching-out');
+  });
+  if(previous){
+    previous.classList.remove('active');
+    previous.classList.add('is-switching-out');
+  }
+  nextButton.classList.add('active', 'is-switching-in');
+  [previous, nextButton].filter(Boolean).forEach(button => {
+    button._selectionTimer = setTimeout(() => button.classList.remove('is-switching-in', 'is-switching-out'), 220);
+  });
+}
+
 function setProcessingMode(mode, shouldRender){
   state.processingMode = mode === 'gray' ? 'gray' : 'color';
   const isGray = state.processingMode === 'gray';
   if(isGray) state.light.pendingStart = null;
   el('#colorControls').hidden = isGray;
   el('#grayControls').hidden = !isGray;
-  document.querySelectorAll('[data-processing-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
+  // 灰度模式保留第四个预览格，但明确显示为无输出，避免布局跳变。
+  el('#bottomPreviewItem').hidden = false;
+  el('#exportBottomOption').hidden = isGray;
+  if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
+  syncQuadPrimaryLabel();
+  const modeButtons = document.querySelectorAll('[data-processing-mode]');
+  const nextButton = Array.from(modeButtons).find(btn => btn.dataset.processingMode === state.processingMode);
+  if(shouldRender && nextButton) transitionSegmentedSelection(modeButtons, nextButton);
+  else modeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
   if(shouldRender && state.origin) updateProcess();
+  schedulePreviewResize();
 }
 
 function setViewMode(mode){
@@ -1448,8 +1521,8 @@ function setViewMode(mode){
   document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
   updateQuadPlaceholders();
   syncPreviewImageMeta();
-  // 布局切换后容器尺寸才会稳定，延后一帧再重设画布像素尺寸。
-  requestAnimationFrame(resizeCanvases);
+  // 先同步当前尺寸，再在布局稳定后复核一次，避免隐藏画布被浏览器拉伸。
+  schedulePreviewResize();
 }
 
 function setGroupOpen(groupId, open, withMaster){
@@ -1466,15 +1539,26 @@ const previewStates = {
   composite: { canvas:'#canvasComposite', img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
   copper:    { canvas:'#canvasCopper',   img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
   mask:      { canvas:'#canvasMask',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
-  silk:      { canvas:'#canvasSilk',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} }
+  silk:      { canvas:'#canvasSilk',     img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} },
+  bottom:    { canvas:'#canvasBottom',   img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} }
 };
 const quadPreviewCanvases = {
-  composite:'#canvasQuadComposite', silk:'#canvasQuadSilk', mask:'#canvasQuadMask', copper:'#canvasQuadCopper'
+  primary:'#canvasQuadPrimary', silk:'#canvasQuadSilk', mask:'#canvasQuadMask', copper:'#canvasQuadCopper'
 };
 // 四分视图共享相机，保证任意窗口操作后四张图保持同一观察位置。
 const quadCamera = { zoom:1, pan:{x:0,y:0} };
 // 分隔视图也复用同一相机，使主预览与三个生产层始终同步。
 const splitCamera = { zoom:1, pan:{x:0,y:0} };
+
+function quadPreviewKey(key){
+  return key === 'primary' ? (state.processingMode === 'color' ? 'bottom' : 'composite') : key;
+}
+function syncQuadPrimaryLabel(){
+  const title = el('#quadPrimaryTitle');
+  if(!title) return;
+  title.dataset.i18n = state.processingMode === 'color' ? 'layerBottom' : 'viewOverlay';
+  title.textContent = t(title.dataset.i18n);
+}
 
 function syncPreviewImageMeta(){
   const mainMeta = el('#previewImageMeta');
@@ -1512,6 +1596,16 @@ function renderPreviewCanvas(st, canvasEl, view, isComposite){
   view = view || st;
   const ctx = canvasEl.getContext('2d');
   const cw = canvasEl.width, ch = canvasEl.height;
+  const isGrayEmptyBottom = state.processingMode === 'gray' && st === previewStates.bottom && !st.img;
+  if(isGrayEmptyBottom){
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = '#9d9d9d';
+    ctx.font = '13px "Microsoft YaHei", "Segoe UI", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(t('noOutput'), cw * 0.5, ch * 0.5);
+    return;
+  }
   if(state.processingMode === 'gray' && !isComposite){
     // 透明生产层需要可见的底色；合成预览仍保持原有深色背景。
     const size = 12;
@@ -1532,9 +1626,9 @@ function renderPreviewCanvas(st, canvasEl, view, isComposite){
 }
 function refreshPreviews(){
   if(state.composite){ setPreviewImage(previewStates.composite, state.composite); el('#compositePlaceholder').style.display = 'none'; }
-  const keys = { copper:'Top_Copper', mask:'Top_Mask', silk:'Top_Silk' };
+  const keys = { copper:'Top_Copper', mask:'Top_Mask', silk:'Top_Silk', bottom:'Bottom_Mask' };
   if(state.previewLayers){
-    for(const k in keys) setPreviewImage(previewStates[k], state.previewLayers[keys[k]]);
+    for(const k in keys) setPreviewImage(previewStates[k], state.previewLayers[keys[k]] || null);
   }
   updateQuadPlaceholders();
   syncPreviewImageMeta();
@@ -1542,7 +1636,7 @@ function refreshPreviews(){
 }
 function updateQuadPlaceholders(){
   document.querySelectorAll('[data-quad-placeholder]').forEach(node => {
-    node.style.display = previewStates[node.dataset.quadPlaceholder].img ? 'none' : 'flex';
+    node.style.display = previewStates[quadPreviewKey(node.dataset.quadPlaceholder)].img ? 'none' : 'flex';
   });
 }
 function renderAllPreviews(){
@@ -1555,10 +1649,12 @@ function renderAllPreviews(){
   if(state.viewMode === 'quad'){
     for(const k in quadPreviewCanvases){
       const c = el(quadPreviewCanvases[k]);
-      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[k], c, quadCamera, k === 'composite');
+      const previewKey = quadPreviewKey(k);
+      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[previewKey], c, quadCamera, previewKey === 'composite');
     }
   }
 }
+let pendingPreviewResize = 0;
 function resizeCanvases(){
   for(const k in previewStates){
     const st = previewStates[k];
@@ -1576,6 +1672,17 @@ function resizeCanvases(){
     }
   }
   renderAllPreviews();
+}
+function schedulePreviewResize(){
+  if(pendingPreviewResize) cancelAnimationFrame(pendingPreviewResize);
+  // display 切换后此刻已可读取可见容器的尺寸，立即重绘可避免旧位图被 CSS 拉伸。
+  resizeCanvases();
+  pendingPreviewResize = requestAnimationFrame(() => {
+    pendingPreviewResize = requestAnimationFrame(() => {
+      pendingPreviewResize = 0;
+      resizeCanvases();
+    });
+  });
 }
 
 /* ---------------- 预览交互 ---------------- */
@@ -1632,10 +1739,12 @@ function attachPreviewInteraction(key){
 }
 
 function attachQuadPreviewInteraction(key){
-  const st = previewStates[key], c = el(quadPreviewCanvases[key]);
+  const c = el(quadPreviewCanvases[key]);
+  const getState = () => previewStates[quadPreviewKey(key)];
   let panning = false, lastX = 0, lastY = 0;
   c.addEventListener('wheel', function(e){
     e.preventDefault();
+    const st = getState();
     if(!st.img) return;
     const oldZoom = quadCamera.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, -e.deltaY/120), 0.2, 8.0);
     if(Math.abs(newZoom-oldZoom) < 1e-6) return;
@@ -1659,6 +1768,7 @@ function attachQuadPreviewInteraction(key){
   });
   window.addEventListener('pointermove', function(e){
     if(!panning) return;
+    const st = getState();
     quadCamera.pan.x += e.clientX - lastX; quadCamera.pan.y += e.clientY - lastY;
     lastX = e.clientX; lastY = e.clientY;
     clampPanForImage(quadCamera, st.img, c.width, c.height);
@@ -1744,7 +1854,11 @@ function showModal(html, modalClass){
   body.innerHTML = html;
   el('#modalBack').classList.add('show');
 }
-function closeModal(){ el('#modalBack').classList.remove('show'); }
+function closeModal(){
+  if(paintSession && paintSession.cleanup) paintSession.cleanup();
+  paintSession = null;
+  el('#modalBack').classList.remove('show');
+}
 let toastTimer = null;
 function toast(msg){
   const t = el('#toast');
@@ -1752,6 +1866,286 @@ function toast(msg){
   t.style.display = 'block';
   if(toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2600);
+}
+
+/* ---------------- 内置画板：笔画结束后自动回读并重新分层 ---------------- */
+const PAINT_HISTORY_LIMIT = 50;
+let paintSession = null;
+function paintPointFromEvent(canvas, event){
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x:clamp((event.clientX-rect.left)*canvas.width/rect.width, 0, canvas.width-1),
+    y:clamp((event.clientY-rect.top)*canvas.height/rect.height, 0, canvas.height-1)
+  };
+}
+function paintConfigureContext(ctx, stroke){
+  ctx.globalCompositeOperation = stroke.action === 'transparent' ? 'destination-out' : 'source-over';
+  ctx.strokeStyle = stroke.action === 'mask' ? stroke.color : '#ffffff';
+  ctx.fillStyle = stroke.action === 'mask' ? stroke.color : '#ffffff';
+  ctx.lineWidth = stroke.size;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+}
+function paintCurrentMaskColor(){
+  const id = state.processingMode === 'gray' ? state.gray.previewMaskId : el('#selectMask').value;
+  const color = getSolderMaskColor(id);
+  return 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+}
+function paintRestoreSegment(ctx, sourceCanvas, stroke, from, to){
+  const radius = stroke.size * 0.5;
+  ctx.save(); ctx.beginPath();
+  if(from === to){
+    ctx.arc(to.x, to.y, radius, 0, Math.PI*2);
+  } else {
+    const dx = to.x-from.x, dy = to.y-from.y, length = Math.hypot(dx, dy) || 1;
+    const nx = -dy/length*radius, ny = dx/length*radius;
+    ctx.arc(from.x, from.y, radius, 0, Math.PI*2);
+    ctx.arc(to.x, to.y, radius, 0, Math.PI*2);
+    ctx.moveTo(from.x+nx, from.y+ny); ctx.lineTo(to.x+nx, to.y+ny);
+    ctx.lineTo(to.x-nx, to.y-ny); ctx.lineTo(from.x-nx, from.y-ny); ctx.closePath();
+  }
+  ctx.clip(); ctx.drawImage(sourceCanvas, 0, 0);
+  ctx.restore();
+}
+function paintDrawSegment(ctx, stroke, from, to, sourceCanvas){
+  if(stroke.action === 'restore') return paintRestoreSegment(ctx, sourceCanvas, stroke, from, to);
+  ctx.save(); paintConfigureContext(ctx, stroke);
+  if(from === to){ ctx.beginPath(); ctx.arc(to.x, to.y, stroke.size*0.5, 0, Math.PI*2); ctx.fill(); }
+  else { ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke(); }
+  ctx.restore();
+}
+function paintDrawStroke(ctx, stroke, sourceCanvas){
+  if(!stroke || !stroke.points || !stroke.points.length) return;
+  paintDrawSegment(ctx, stroke, stroke.points[0], stroke.points[0], sourceCanvas);
+  for(let i=1; i<stroke.points.length; i++) paintDrawSegment(ctx, stroke, stroke.points[i-1], stroke.points[i], sourceCanvas);
+}
+function paintReplay(){
+  const session = paintSession;
+  if(!session) return;
+  session.ctx.globalCompositeOperation = 'source-over';
+  session.ctx.putImageData(session.base, 0, 0);
+  for(const stroke of session.strokes) paintDrawStroke(session.ctx, stroke, session.sourceCanvas);
+  paintApplyToProject();
+}
+function paintResetAllStrokes(){
+  const session = paintSession;
+  if(!session || (!session.strokes.length && !session.redo.length)) return;
+  // 超过历史上限而折叠进 base 的笔画也要一并移除，恢复打开编辑器时的原图。
+  session.base = session.initialImage; session.strokes = []; session.redo = [];
+  session.ctx.globalCompositeOperation = 'source-over';
+  session.ctx.putImageData(session.initialImage, 0, 0);
+  paintApplyToProject(); paintRefreshControls();
+}
+function paintFoldOldestStroke(){
+  const session = paintSession;
+  const dropped = session && session.strokes.shift();
+  if(!dropped) return;
+  const canvas = document.createElement('canvas'); canvas.width = session.canvas.width; canvas.height = session.canvas.height;
+  const ctx = canvas.getContext('2d'); ctx.putImageData(session.base, 0, 0); paintDrawStroke(ctx, dropped, session.sourceCanvas);
+  session.base = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+function replaceProjectOrigin(imageData, sourceCanvas){
+  // 仅替换原图与相关缓存，分层参数、视图相机和灯条坐标保持不变。
+  state.origin = imageData; state.originCanvas = sourceCanvas;
+  state.fullResGeneration = -1; state._roCache = null;
+  imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
+  edgeSharpener.reset();
+  syncPreviewImageMeta();
+  updateProcess();
+}
+function paintApplyToProject(){
+  const session = paintSession;
+  if(!session) return;
+  replaceProjectOrigin(session.ctx.getImageData(0, 0, session.canvas.width, session.canvas.height), session.canvas);
+}
+function paintRefreshControls(){
+  const session = paintSession;
+  if(!session) return;
+  el('#paintBrush').classList.toggle('active', session.tool === 'brush');
+  el('#paintEraser').classList.toggle('active', session.tool === 'eraser');
+  el('#paintUndo').disabled = session.strokes.length === 0;
+  // 首笔完成后两个历史操作保持同等可见状态；只有撤销产生的笔画才会实际重做。
+  el('#paintRedo').disabled = session.strokes.length === 0 && session.redo.length === 0;
+  el('#paintReset').disabled = session.strokes.length === 0 && session.redo.length === 0;
+}
+function syncPaintImageMeta(){
+  const session = paintSession, meta = el('#paintImageMeta');
+  if(!session || !meta) return;
+  const pixels = new Intl.NumberFormat(document.documentElement.lang || currentLanguage).format(session.canvas.width * session.canvas.height);
+  meta.textContent = t('previewImageMeta', { pixels, width:session.canvas.width, height:session.canvas.height, zoom:Math.round(session.zoom * 100) });
+}
+function fitPaintCanvas(){
+  const session = paintSession, stage = el('#paintStage');
+  if(!session || !stage) return;
+  const fit = Math.min((stage.clientWidth-24)/session.canvas.width, (stage.clientHeight-24)/session.canvas.height, 1);
+  const scale = Math.max(0.01, fit) * session.zoom;
+  session.canvas.style.width = Math.max(1, Math.floor(session.canvas.width*scale)) + 'px';
+  session.canvas.style.height = Math.max(1, Math.floor(session.canvas.height*scale)) + 'px';
+  clampPaintPan();
+  if(el('#paintSizeIndicator')?.classList.contains('show')) updatePaintSizeIndicator(null, false);
+  syncPaintImageMeta();
+}
+function clampPaintPan(){
+  const session = paintSession, stage = el('#paintStage');
+  if(!session || !stage) return;
+  // 画板不设平移边界：未放大时也能横向、纵向自由移动图片。
+  session.canvas.style.transform = 'translate(' + session.pan.x + 'px,' + session.pan.y + 'px)';
+}
+function updatePaintSizeIndicator(point, keepVisible){
+  const session = paintSession, stage = el('#paintStage'), indicator = el('#paintSizeIndicator');
+  if(!session || !stage || !indicator) return;
+  const canvasRect = session.canvas.getBoundingClientRect(), stageRect = stage.getBoundingClientRect();
+  const diameter = Math.max(2, session.size * canvasRect.width / session.canvas.width);
+  indicator.style.width = diameter + 'px'; indicator.style.height = diameter + 'px';
+  // 粗细提示固定在画布中心，不随指针移动而遮挡待绘制区域。
+  indicator.style.left = (canvasRect.left-stageRect.left + canvasRect.width*0.5-diameter*0.5) + 'px';
+  indicator.style.top = (canvasRect.top-stageRect.top + canvasRect.height*0.5-diameter*0.5) + 'px';
+  if(!keepVisible) return;
+  indicator.classList.add('show');
+  if(session.indicatorTimer) clearTimeout(session.indicatorTimer);
+  session.indicatorTimer = setTimeout(() => { if(paintSession === session) indicator.classList.remove('show'); }, 850);
+}
+function zoomPaintCanvas(event){
+  const session = paintSession, stage = el('#paintStage');
+  if(!session || !stage) return;
+  event.preventDefault();
+  const point = paintPointFromEvent(session.canvas, event);
+  const oldZoom = session.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, -event.deltaY/120), 0.2, 8.0);
+  if(Math.abs(newZoom-oldZoom) < 1e-6) return;
+  session.zoom = newZoom; fitPaintCanvas();
+  const nextRect = session.canvas.getBoundingClientRect();
+  const targetX = nextRect.left + point.x/session.canvas.width*nextRect.width;
+  const targetY = nextRect.top + point.y/session.canvas.height*nextRect.height;
+  session.pan.x += event.clientX-targetX; session.pan.y += event.clientY-targetY;
+  clampPaintPan(); updatePaintSizeIndicator(null, false);
+}
+function createPaintSourceCanvas(imageData){
+  const canvas = document.createElement('canvas'); canvas.width = imageData.width; canvas.height = imageData.height;
+  canvas.getContext('2d').putImageData(imageData, 0, 0);
+  return canvas;
+}
+function cancelPaintEditor(){
+  const session = paintSession;
+  if(!session) return closeModal();
+  // 画板会实时回读，所以取消时必须显式恢复打开画板前的原图。
+  replaceProjectOrigin(session.initialImage, session.sourceCanvas);
+  closeModal();
+}
+function openPaintEditor(){
+  if(!state.origin){ toast(t('liveEditNeedImage')); return; }
+  showModal(
+    '<h3>' + t('liveEdit') + '</h3>' +
+    '<div class="paint-toolbar">' +
+      '<div class="paint-tool-switch"><button type="button" class="paint-tool active" id="paintBrush">' + t('paintBrush') + '</button>' +
+      '<button type="button" class="paint-tool" id="paintEraser">' + t('paintEraser') + '</button></div>' +
+      '<label>' + t('paintSize') + '<input type="range" id="paintSize" min="1" max="160" value="12"><span id="paintSizeValue">12</span></label>' +
+      '<label id="paintBrushModeWrap">' + t('paintBrushMode') + '<select id="paintBrushMode"><option value="white">' + t('paintWhite') + '</option><option value="transparent">' + t('paintTransparent') + '</option><option value="mask">' + t('paintSolderMask') + '</option></select></label>' +
+      '<button type="button" class="btn drawing-action-btn" id="paintUndo">' + t('paintUndo') + '</button>' +
+      '<button type="button" class="btn drawing-action-btn" id="paintRedo">' + t('paintRollback') + '</button>' +
+      '<button type="button" class="btn drawing-action-btn" id="paintReset">' + t('paintRedo') + '</button>' +
+      '<span class="paint-image-meta" id="paintImageMeta"></span>' +
+    '</div><div class="paint-stage" id="paintStage"><canvas id="paintCanvas"></canvas><span class="paint-size-indicator" id="paintSizeIndicator"></span></div>' +
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="paintCancel">' + t('paintCancelEdit') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="paintSave">' + t('paintSaveEdit') + '</button></div>',
+    'paint-modal'
+  );
+  const canvas = el('#paintCanvas'), stage = el('#paintStage'); canvas.width = state.origin.width; canvas.height = state.origin.height;
+  const context = canvas.getContext('2d');
+  paintSession = { initialImage:state.origin, base:state.origin, sourceCanvas:createPaintSourceCanvas(state.origin), strokes:[], redo:[], canvas, ctx:context, tool:'brush', brushMode:'white', size:12, zoom:1, pan:{x:0,y:0}, activeStroke:null, panDrag:null, indicatorTimer:0, cleanup:null };
+  context.putImageData(state.origin, 0, 0);
+  const resize = () => fitPaintCanvas();
+  const finishStroke = event => {
+    const session = paintSession;
+    if(!session || !session.activeStroke || (event && event.pointerId !== session.activeStroke.pointerId)) return;
+    try { canvas.releasePointerCapture(session.activeStroke.pointerId); } catch(error) {}
+    delete session.activeStroke.pointerId;
+    session.strokes.push(session.activeStroke); session.activeStroke = null; session.redo = [];
+    while(session.strokes.length > PAINT_HISTORY_LIMIT) paintFoldOldestStroke();
+    paintApplyToProject(); paintRefreshControls();
+  };
+  const finishPaintPointer = event => {
+    const session = paintSession;
+    if(session?.panDrag && event.pointerId === session.panDrag.pointerId){
+      try { session.panDrag.target.releasePointerCapture(event.pointerId); } catch(error) {}
+      session.panDrag.target.style.cursor = ''; session.panDrag = null; canvas.style.cursor = 'crosshair'; return;
+    }
+    finishStroke(event);
+  };
+  const onKeyDown = event => {
+    if(!paintSession || !event.ctrlKey) return;
+    if(event.key.toLowerCase() === 'z'){ event.preventDefault(); el('#paintUndo').click(); }
+    if(event.key.toLowerCase() === 'y'){ event.preventDefault(); el('#paintRedo').click(); }
+  };
+  paintSession.cleanup = () => { if(paintSession?.indicatorTimer) clearTimeout(paintSession.indicatorTimer); window.removeEventListener('resize', resize); window.removeEventListener('keydown', onKeyDown); };
+  window.addEventListener('resize', resize); window.addEventListener('keydown', onKeyDown);
+  canvas.addEventListener('wheel', zoomPaintCanvas, { passive:false });
+  canvas.addEventListener('pointerdown', event => {
+    const session = paintSession;
+    if(!session) return;
+    if(event.button === 2){
+      session.panDrag = { pointerId:event.pointerId, x:event.clientX, y:event.clientY, target:canvas };
+      canvas.setPointerCapture(event.pointerId); canvas.style.cursor = 'grabbing'; event.preventDefault(); return;
+    }
+    if(event.button !== 0) return;
+    const point = paintPointFromEvent(canvas, event);
+    const action = session.tool === 'eraser' ? 'restore' : session.brushMode;
+    session.activeStroke = { action, color:action === 'mask' ? paintCurrentMaskColor() : '#ffffff', size:session.size, points:[point], pointerId:event.pointerId };
+    canvas.setPointerCapture(event.pointerId); paintDrawSegment(session.ctx, session.activeStroke, point, point, session.sourceCanvas); event.preventDefault();
+  });
+  canvas.addEventListener('pointermove', event => {
+    const session = paintSession; if(!session) return;
+    if(session.panDrag && session.panDrag.target === canvas && event.pointerId === session.panDrag.pointerId){
+      session.pan.x += event.clientX-session.panDrag.x; session.pan.y += event.clientY-session.panDrag.y;
+      session.panDrag.x = event.clientX; session.panDrag.y = event.clientY;
+      clampPaintPan(); updatePaintSizeIndicator(null, false); event.preventDefault(); return;
+    }
+    const point = paintPointFromEvent(canvas, event);
+    if(el('#paintSizeIndicator')?.classList.contains('show')) updatePaintSizeIndicator(point, false);
+    const stroke = session.activeStroke;
+    if(!stroke || stroke.pointerId !== event.pointerId) return;
+    const previous = stroke.points[stroke.points.length-1];
+    if(Math.hypot(point.x-previous.x, point.y-previous.y) < 0.25) return;
+    stroke.points.push(point); paintDrawSegment(session.ctx, stroke, previous, point, session.sourceCanvas); event.preventDefault();
+  });
+  canvas.addEventListener('pointerup', finishPaintPointer); canvas.addEventListener('pointercancel', finishPaintPointer);
+  canvas.addEventListener('contextmenu', event => event.preventDefault());
+  // 黑色留白同样可以开始右键平移，不再依赖指针必须落在图片上。
+  stage.addEventListener('pointerdown', event => {
+    if(event.target !== stage || event.button !== 2 || !paintSession) return;
+    paintSession.panDrag = { pointerId:event.pointerId, x:event.clientX, y:event.clientY, target:stage };
+    stage.setPointerCapture(event.pointerId); stage.style.cursor = 'grabbing'; event.preventDefault();
+  });
+  stage.addEventListener('pointermove', event => {
+    const session = paintSession;
+    if(!session?.panDrag || session.panDrag.target !== stage || event.pointerId !== session.panDrag.pointerId) return;
+    session.pan.x += event.clientX-session.panDrag.x; session.pan.y += event.clientY-session.panDrag.y;
+    session.panDrag.x = event.clientX; session.panDrag.y = event.clientY;
+    clampPaintPan(); updatePaintSizeIndicator(null, false); event.preventDefault();
+  });
+  stage.addEventListener('pointerup', finishPaintPointer); stage.addEventListener('pointercancel', finishPaintPointer);
+  stage.addEventListener('contextmenu', event => event.preventDefault());
+  const setPaintTool = tool => {
+    if(!paintSession) return;
+    const target = tool === 'brush' ? el('#paintBrush') : el('#paintEraser');
+    transitionSegmentedSelection([el('#paintBrush'), el('#paintEraser')], target);
+    paintSession.tool = tool; el('#paintBrushModeWrap').hidden = tool === 'eraser'; paintRefreshControls();
+  };
+  el('#paintBrush').onclick = () => setPaintTool('brush');
+  el('#paintEraser').onclick = () => setPaintTool('eraser');
+  el('#paintSize').oninput = function(){ if(paintSession){ paintSession.size = Number(this.value); el('#paintSizeValue').textContent = this.value; updatePaintSizeIndicator(null, true); } };
+  el('#paintBrushMode').onchange = function(){ if(paintSession) paintSession.brushMode = this.value; };
+  el('#paintUndo').onclick = () => {
+    const session = paintSession; if(!session || !session.strokes.length) return;
+    session.redo.push(session.strokes.pop()); paintReplay(); paintRefreshControls();
+  };
+  el('#paintRedo').onclick = () => {
+    const session = paintSession; if(!session || !session.redo.length) return;
+    session.strokes.push(session.redo.pop()); paintReplay(); paintRefreshControls();
+  };
+  el('#paintReset').onclick = paintResetAllStrokes;
+  el('#paintCancel').onclick = cancelPaintEditor;
+  el('#paintSave').onclick = closeModal;
+  document.querySelectorAll('#modalBody .drawing-action-btn').forEach(attachFortniteHoverEffect);
+  document.querySelectorAll('#paintBrush,#paintEraser').forEach(attachFortniteHoverEffect);
+  paintRefreshControls(); requestAnimationFrame(fitPaintCanvas);
 }
 
 /* ---------------- 检查更新 ---------------- */
@@ -1840,16 +2234,17 @@ function openCropDialog(img, onComplete){
   const cw = Math.max(1, Math.round(nw*scale)), ch = Math.max(1, Math.round(nh*scale));
   const minSize = Math.min(24, cw, ch), handleSize = 10;
   let crop = { x:0, y:0, w:cw, h:ch };
-  let drag = null, done = false;
+  let drag = null, panDrag = null, done = false;
+  const cropView = { zoom:1, pan:{x:0,y:0} };
 
   showModal(
     '<div><h3>' + t('cropTitle') + '</h3>' +
     '<p class="crop-hint">' + t('cropHint') + '</p>' +
-    '<div class="crop-stage"><canvas id="cropCanvas" width="' + cw + '" height="' + ch + '"></canvas></div>' +
+    '<div class="crop-stage" id="cropStage"><canvas id="cropCanvas" width="' + cw + '" height="' + ch + '"></canvas></div>' +
     '<div class="btns"><button type="button" class="btn drawing-action-btn" id="cropSkip">' + t('cropSkip') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="cropConfirm">' + t('cropConfirm') + '</button></div></div>',
     'crop-modal'
   );
-  const canvas = el('#cropCanvas'), ctx = canvas.getContext('2d'), back = el('#modalBack');
+  const canvas = el('#cropCanvas'), ctx = canvas.getContext('2d'), stage = el('#cropStage'), back = el('#modalBack');
 
   function finish(rect){
     if(done) return;
@@ -1879,6 +2274,22 @@ function openCropDialog(img, onComplete){
   function pointFromEvent(e){
     const r = canvas.getBoundingClientRect();
     return { x:(e.clientX-r.left)*cw/r.width, y:(e.clientY-r.top)*ch/r.height };
+  }
+  function applyCropTransform(){
+    canvas.style.width = Math.max(1, Math.round(cw*cropView.zoom)) + 'px';
+    canvas.style.height = Math.max(1, Math.round(ch*cropView.zoom)) + 'px';
+    canvas.style.transform = 'translate(' + cropView.pan.x + 'px,' + cropView.pan.y + 'px)';
+  }
+  function zoomCropCanvas(e){
+    e.preventDefault();
+    const point = pointFromEvent(e);
+    const nextZoom = clamp(cropView.zoom * Math.pow(1.12, -e.deltaY/120), 0.2, 8.0);
+    if(Math.abs(nextZoom-cropView.zoom) < 1e-6) return;
+    cropView.zoom = nextZoom; applyCropTransform();
+    const r = canvas.getBoundingClientRect();
+    cropView.pan.x += e.clientX-(r.left + point.x/cw*r.width);
+    cropView.pan.y += e.clientY-(r.top + point.y/ch*r.height);
+    applyCropTransform();
   }
   function hitTest(p){
     const x = crop.x, y = crop.y, right = x+crop.w, bottom = y+crop.h, near = handleSize;
@@ -1919,6 +2330,11 @@ function openCropDialog(img, onComplete){
   }
 
   canvas.addEventListener('pointerdown', function(e){
+    if(e.button === 2){
+      panDrag = { pointerId:e.pointerId, x:e.clientX, y:e.clientY, target:canvas };
+      canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; e.preventDefault(); return;
+    }
+    if(e.button !== 0) return;
     const p = pointFromEvent(e), kind = hitTest(p);
     if(!kind) return;
     drag = { kind, startX:p.x, startY:p.y, rect:{ ...crop } };
@@ -1927,14 +2343,43 @@ function openCropDialog(img, onComplete){
     e.preventDefault();
   });
   canvas.addEventListener('pointermove', function(e){
+    if(panDrag && panDrag.target === canvas && panDrag.pointerId === e.pointerId){
+      cropView.pan.x += e.clientX-panDrag.x; cropView.pan.y += e.clientY-panDrag.y;
+      panDrag.x = e.clientX; panDrag.y = e.clientY;
+      applyCropTransform(); e.preventDefault(); return;
+    }
     const p = pointFromEvent(e);
     if(!drag){ canvas.style.cursor = cursorFor(hitTest(p)); return; }
     crop = resizeFromDrag(p); draw(); e.preventDefault();
   });
   canvas.addEventListener('pointerup', function(e){
+    if(panDrag && panDrag.target === canvas && panDrag.pointerId === e.pointerId){
+      panDrag = null; canvas.style.cursor = cursorFor(hitTest(pointFromEvent(e))); return;
+    }
     if(drag){ drag = null; canvas.style.cursor = cursorFor(hitTest(pointFromEvent(e))); }
   });
-  canvas.addEventListener('pointercancel', function(){ drag = null; canvas.style.cursor = 'default'; });
+  canvas.addEventListener('pointercancel', function(){ drag = null; panDrag = null; canvas.style.cursor = 'default'; });
+  canvas.addEventListener('wheel', zoomCropCanvas, { passive:false });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+  // 裁剪画布外的黑色留白也可开始右键平移。
+  stage.addEventListener('pointerdown', function(e){
+    if(e.target !== stage || e.button !== 2) return;
+    panDrag = { pointerId:e.pointerId, x:e.clientX, y:e.clientY, target:stage };
+    stage.setPointerCapture(e.pointerId); stage.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!panDrag || panDrag.target !== stage || panDrag.pointerId !== e.pointerId) return;
+    cropView.pan.x += e.clientX-panDrag.x; cropView.pan.y += e.clientY-panDrag.y;
+    panDrag.x = e.clientX; panDrag.y = e.clientY;
+    applyCropTransform(); e.preventDefault();
+  });
+  stage.addEventListener('pointerup', function(e){
+    if(!panDrag || panDrag.target !== stage || panDrag.pointerId !== e.pointerId) return;
+    try { stage.releasePointerCapture(e.pointerId); } catch(error) {}
+    panDrag = null; stage.style.cursor = ''; e.preventDefault();
+  });
+  stage.addEventListener('pointercancel', function(){ if(panDrag?.target === stage){ panDrag = null; stage.style.cursor = ''; } });
+  stage.addEventListener('contextmenu', e => e.preventDefault());
   back.addEventListener('click', onBackdropClick);
   window.addEventListener('keydown', onKeyDown);
   // 裁剪弹窗按钮在运行时创建，需要在插入弹窗后绑定悬停动画。
@@ -1942,7 +2387,7 @@ function openCropDialog(img, onComplete){
   attachFortniteHoverEffect(el('#cropConfirm'));
   el('#cropSkip').onclick = () => finish(null);
   el('#cropConfirm').onclick = () => finish(crop);
-  draw();
+  draw(); applyCropTransform();
 }
 
 function importDecodedImage(img, rect){
@@ -2013,6 +2458,18 @@ function layerToPngBlob(layer, forceOpaqueMono){
   c.getContext('2d').putImageData(new ImageData(d, w, h), 0, 0);
   return new Promise(res => c.toBlob(res, 'image/png'));
 }
+function ledReferenceToPngBlob(width, height, strips){
+  const c = document.createElement('canvas'); c.width = width; c.height = height;
+  const ctx = c.getContext('2d');
+  // 安装版参考图为透明背景，只保留与原始图等比例的圆头灯条轨迹。
+  ctx.lineCap = 'round';
+  ctx.lineWidth = Math.max(1, Math.floor(width / 60));
+  for(const strip of strips){
+    ctx.strokeStyle = 'rgb(' + strip.color.r + ',' + strip.color.g + ',' + strip.color.b + ')';
+    ctx.beginPath(); ctx.moveTo(strip.start.x, strip.start.y); ctx.lineTo(strip.end.x, strip.end.y); ctx.stroke();
+  }
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
 function downloadBlob(blob, name){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2041,6 +2498,8 @@ function syncImportDrawingButton(){
     label.dataset.i18n = hasSourceImage ? 'importDrawingReplace' : 'importDrawing';
     label.textContent = t(label.dataset.i18n);
   }
+  const quickEdit = el('#mPaint');
+  if(quickEdit){ quickEdit.disabled = !hasSourceImage; quickEdit.classList.toggle('disabled', !hasSourceImage); }
 }
 function getExportSettings(){
   if(!state.origin) return;
@@ -2059,17 +2518,26 @@ async function downloadLayerExport(key, settings){
   downloadBlob(blob, settings.grayscale ? settings.grayNames[key] : key + '_' + settings.finishName + '_Inverted.png');
   return true;
 }
+async function downloadLedReferenceExport(){
+  const blob = await ledReferenceToPngBlob(state.origin.width, state.origin.height, state.light.strips);
+  if(!blob) return false;
+  downloadBlob(blob, 'LED_Placement_Reference.png');
+  return true;
+}
 async function exportLayers(){
   const settings = getExportSettings();
   if(!settings) return;
-  const keys = ['Top_Copper', 'Top_Mask', 'Top_Silk'];
+  const keys = settings.grayscale
+    ? ['Top_Copper', 'Top_Mask', 'Top_Silk']
+    : ['Top_Copper', 'Top_Mask', 'Top_Silk', 'Bottom_Mask'];
   closeModal();
   toast(t('exporting'));
   for(const k of keys){
     await downloadLayerExport(k, settings);
     await sleep(120);
   }
-  toast(t('exportSuccess', {count:keys.length}));
+  const referenceExported = !settings.grayscale && await downloadLedReferenceExport();
+  toast(t('exportSuccess', {count:keys.length + (referenceExported ? 1 : 0)}));
 }
 async function exportSelectedLayer(){
   const settings = getExportSettings(), key = el('#selectExportLayer').value;
@@ -2087,6 +2555,7 @@ function gatherControls(){
     maskColorIndex: el('#selectMask').selectedIndex,
     goldThresh: sliderVal('#sliderGold'),
     silkThresh: sliderVal('#sliderSilk'),
+    transThresh: sliderVal('#sliderTrans'),
     copperDepth: sliderVal('#sliderCopper'),
     light: {
       enabled:masterState.light, showOverlay:state.light.showOverlay,
@@ -2106,19 +2575,172 @@ function gatherControls(){
     exposeMetalEdge: el('#chkExposeMetal').checked
   };
 }
-function saveProject(){
+const PROJECT_ARCHIVE_MAX_BYTES = 128 * 1024 * 1024;
+const PROJECT_ARCHIVE_MAX_ENTRIES = 16;
+const PROJECT_ARCHIVE_IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp']);
+const CRC32_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for(let i=0; i<256; i++){
+    let value = i;
+    for(let bit=0; bit<8; bit++) value = (value & 1) ? (value >>> 1) ^ 0xedb88320 : value >>> 1;
+    table[i] = value >>> 0;
+  }
+  return table;
+})();
+class ProjectArchiveError extends Error {
+  constructor(code){ super(code); this.code = code; }
+}
+function projectExperimentalSettings(){
+  return { edgePrefilterEnabled:state.prefilter.enabled, edgePrefilterKernelSize:state.prefilter.kernel,
+    edgePrefilterSigma:state.prefilter.sigma, dpEnabled:state.dp.enabled, dpTolerance:state.dp.tolerance, dpLineWidth:state.dp.lineWidth };
+}
+function supportsNativeProjectArchive(){
+  return typeof CompressionStream === 'function' && typeof DecompressionStream === 'function';
+}
+function crc32(bytes){
+  let value = 0xffffffff;
+  for(let i=0; i<bytes.length; i++) value = (value >>> 8) ^ CRC32_TABLE[(value ^ bytes[i]) & 0xff];
+  return (value ^ 0xffffffff) >>> 0;
+}
+function writeZipU16(view, offset, value){ view.setUint16(offset, value, true); }
+function writeZipU32(view, offset, value){ view.setUint32(offset, value >>> 0, true); }
+function zipDosDateTime(date){
+  const year = clamp(date.getFullYear(), 1980, 2107);
+  return { time:((date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2)) >>> 0,
+    date:(((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()) >>> 0 };
+}
+async function streamToBytes(stream){ return new Uint8Array(await new Response(stream).arrayBuffer()); }
+async function deflateRaw(bytes){
+  return streamToBytes(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw')));
+}
+async function inflateRaw(bytes){
+  return streamToBytes(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')));
+}
+async function createProjectZip(entries){
+  if(!supportsNativeProjectArchive()) throw new ProjectArchiveError('projectArchiveUnsupported');
+  if(!Array.isArray(entries) || entries.length < 1 || entries.length > PROJECT_ARCHIVE_MAX_ENTRIES) throw new ProjectArchiveError('projectArchiveInvalid');
+  const encoder = new TextEncoder(), seen = new Set(), prepared = [];
+  let unpacked = 0;
+  for(const entry of entries){
+    const name = String(entry && entry.name || '');
+    if(!name || /[\\/]|\.\./.test(name) || seen.has(name.toLowerCase()) || !(entry.data instanceof Uint8Array)) throw new ProjectArchiveError('projectArchiveInvalid');
+    seen.add(name.toLowerCase()); unpacked += entry.data.length;
+    if(unpacked > PROJECT_ARCHIVE_MAX_BYTES) throw new ProjectArchiveError('projectArchiveTooLarge');
+    const nameBytes = encoder.encode(name), compressed = await deflateRaw(entry.data);
+    prepared.push({ nameBytes, data:entry.data, compressed, crc:crc32(entry.data) });
+  }
+  const stamp = zipDosDateTime(new Date()); let localSize = 0;
+  for(const entry of prepared) localSize += 30 + entry.nameBytes.length + entry.compressed.length;
+  let centralSize = 0;
+  for(const entry of prepared) centralSize += 46 + entry.nameBytes.length;
+  const output = new Uint8Array(localSize + centralSize + 22), view = new DataView(output.buffer);
+  let offset = 0;
+  for(const entry of prepared){
+    entry.localOffset = offset;
+    writeZipU32(view, offset, 0x04034b50); writeZipU16(view, offset+4, 20); writeZipU16(view, offset+6, 0); writeZipU16(view, offset+8, 8);
+    writeZipU16(view, offset+10, stamp.time); writeZipU16(view, offset+12, stamp.date); writeZipU32(view, offset+14, entry.crc);
+    writeZipU32(view, offset+18, entry.compressed.length); writeZipU32(view, offset+22, entry.data.length);
+    writeZipU16(view, offset+26, entry.nameBytes.length); writeZipU16(view, offset+28, 0); output.set(entry.nameBytes, offset+30);
+    output.set(entry.compressed, offset+30+entry.nameBytes.length); offset += 30 + entry.nameBytes.length + entry.compressed.length;
+  }
+  const centralOffset = offset;
+  for(const entry of prepared){
+    writeZipU32(view, offset, 0x02014b50); writeZipU16(view, offset+4, 20); writeZipU16(view, offset+6, 20); writeZipU16(view, offset+8, 0); writeZipU16(view, offset+10, 8);
+    writeZipU16(view, offset+12, stamp.time); writeZipU16(view, offset+14, stamp.date); writeZipU32(view, offset+16, entry.crc);
+    writeZipU32(view, offset+20, entry.compressed.length); writeZipU32(view, offset+24, entry.data.length);
+    writeZipU16(view, offset+28, entry.nameBytes.length); writeZipU16(view, offset+30, 0); writeZipU16(view, offset+32, 0); writeZipU16(view, offset+34, 0);
+    writeZipU16(view, offset+36, 0); writeZipU32(view, offset+38, 0); writeZipU32(view, offset+42, entry.localOffset); output.set(entry.nameBytes, offset+46);
+    offset += 46 + entry.nameBytes.length;
+  }
+  writeZipU32(view, offset, 0x06054b50); writeZipU16(view, offset+4, 0); writeZipU16(view, offset+6, 0); writeZipU16(view, offset+8, prepared.length); writeZipU16(view, offset+10, prepared.length);
+  writeZipU32(view, offset+12, centralSize); writeZipU32(view, offset+16, centralOffset); writeZipU16(view, offset+20, 0);
+  return new Blob([output], { type:'application/zip' });
+}
+function projectZipError(error){
+  return error instanceof ProjectArchiveError ? t(error.code) : t('projectArchiveInvalid');
+}
+function findZipEnd(bytes, view){
+  for(let offset=bytes.length-22, lower=Math.max(0, bytes.length-65557); offset>=lower; offset--){
+    if(view.getUint32(offset, true) === 0x06054b50 && offset + 22 + view.getUint16(offset+20, true) === bytes.length) return offset;
+  }
+  throw new ProjectArchiveError('projectArchiveInvalid');
+}
+async function readProjectZip(bytes){
+  if(!supportsNativeProjectArchive()) throw new ProjectArchiveError('projectArchiveUnsupported');
+  if(bytes.length < 22 || bytes.length > PROJECT_ARCHIVE_MAX_BYTES) throw new ProjectArchiveError(bytes.length > PROJECT_ARCHIVE_MAX_BYTES ? 'projectArchiveTooLarge' : 'projectArchiveInvalid');
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), end = findZipEnd(bytes, view);
+  const disk = view.getUint16(end+4, true), centralDisk = view.getUint16(end+6, true), count = view.getUint16(end+10, true), centralSize = view.getUint32(end+12, true), centralOffset = view.getUint32(end+16, true);
+  if(disk || centralDisk || view.getUint16(end+8, true) !== count || count > PROJECT_ARCHIVE_MAX_ENTRIES || centralOffset + centralSize > end) throw new ProjectArchiveError('projectArchiveInvalid');
+  const decoder = new TextDecoder(), files = new Map(); let offset = centralOffset, totalSize = 0;
+  for(let index=0; index<count; index++){
+    if(offset + 46 > end || view.getUint32(offset, true) !== 0x02014b50) throw new ProjectArchiveError('projectArchiveInvalid');
+    const flags = view.getUint16(offset+8, true), method = view.getUint16(offset+10, true), crc = view.getUint32(offset+16, true), compressedSize = view.getUint32(offset+20, true), rawSize = view.getUint32(offset+24, true);
+    const nameLength = view.getUint16(offset+28, true), extraLength = view.getUint16(offset+30, true), commentLength = view.getUint16(offset+32, true), diskStart = view.getUint16(offset+34, true), localOffset = view.getUint32(offset+42, true);
+    const next = offset + 46 + nameLength + extraLength + commentLength;
+    if(next > end || (flags & 1) || diskStart || (method !== 0 && method !== 8)) throw new ProjectArchiveError('projectArchiveInvalid');
+    const name = decoder.decode(bytes.subarray(offset+46, offset+46+nameLength));
+    const key = name.toLowerCase(); totalSize += rawSize;
+    if(!name || /[\\/]|\.\./.test(name) || files.has(key) || totalSize > PROJECT_ARCHIVE_MAX_BYTES || localOffset + 30 > bytes.length || view.getUint32(localOffset, true) !== 0x04034b50) throw new ProjectArchiveError(totalSize > PROJECT_ARCHIVE_MAX_BYTES ? 'projectArchiveTooLarge' : 'projectArchiveInvalid');
+    const localFlags = view.getUint16(localOffset+6, true), localMethod = view.getUint16(localOffset+8, true), localNameLength = view.getUint16(localOffset+26, true), localExtraLength = view.getUint16(localOffset+28, true), dataOffset = localOffset + 30 + localNameLength + localExtraLength;
+    if(localFlags !== flags || localMethod !== method || dataOffset + compressedSize > bytes.length || decoder.decode(bytes.subarray(localOffset+30, localOffset+30+localNameLength)) !== name) throw new ProjectArchiveError('projectArchiveInvalid');
+    const compressed = bytes.slice(dataOffset, dataOffset + compressedSize); let data;
+    try { data = method === 0 ? compressed : await inflateRaw(compressed); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
+    if(data.length !== rawSize) throw new ProjectArchiveError('projectArchiveInvalid');
+    if(crc32(data) !== crc) throw new ProjectArchiveError('projectArchiveChecksumFailed');
+    files.set(key, {name, data}); offset = next;
+  }
+  if(offset !== centralOffset + centralSize) throw new ProjectArchiveError('projectArchiveInvalid');
+  return files;
+}
+function portableStripsToDesktop(strips){
+  return (Array.isArray(strips) ? strips : []).filter(strip => strip && strip.start && strip.end && strip.color).map(strip => ({
+    startX:strip.start.x, startY:strip.start.y, endX:strip.end.x, endY:strip.end.y, radius:strip.radius,
+    r:strip.color.r, g:strip.color.g, b:strip.color.b, a:255
+  }));
+}
+function desktopStripsToPortable(strips){
+  return (Array.isArray(strips) ? strips : []).map(strip => ({
+    start:{x:strip.startX, y:strip.startY}, end:{x:strip.endX, y:strip.endY}, radius:strip.radius,
+    color:{r:strip.r, g:strip.g, b:strip.b}
+  }));
+}
+function portableControlsToDesktop(controls){
+  const light = controls.light || {};
+  return { surfaceFinishIndex:controls.surfaceFinishIndex, maskColorIndex:controls.maskColorIndex, goldThresh:controls.goldThresh, silkThresh:controls.silkThresh,
+    transThresh:controls.transThresh, copperDepth:controls.copperDepth, lightEnable:!!light.enabled, showLEDOverlay:!!light.showOverlay,
+    autoSense:light.autoSense, ledRadius:light.radius, ledIntensity:light.intensity, bareSubstrateEnable:!!controls.bareSubstrateEnable,
+    bareSubstrateGrayMode:controls.bareSubstrateGrayMode !== false, bareSubstrateGrayA:controls.bareSubstrateGrayA, bareSubstrateGrayB:controls.bareSubstrateGrayB,
+    bareSubstrateColorSimilarity:controls.bareSubstrateColorSimilarity, edgeEnable:!!controls.edgeEnable, edgeMode:controls.edgeMode === 'stroke' ? 'stroke' : 'enhance',
+    edgeThreshMin:controls.edgeThreshMin, edgeThreshMax:controls.edgeThreshMax, autoInvert:controls.autoInvert, useMetalEdge:!!controls.useMetalEdge,
+    exposeMetalEdge:controls.exposeMetalEdge !== false };
+}
+function desktopControlsToPortable(controls){
+  const c = controls || {};
+  return { processingMode:'color', gray:{...GRAY_DEFAULTS}, surfaceFinishIndex:c.surfaceFinishIndex, maskColorIndex:c.maskColorIndex, goldThresh:c.goldThresh,
+    silkThresh:c.silkThresh, transThresh:c.transThresh, copperDepth:c.copperDepth,
+    light:{enabled:!!c.lightEnable, showOverlay:!!c.showLEDOverlay, autoSense:c.autoSense, radius:c.ledRadius, intensity:c.ledIntensity},
+    bareSubstrateEnable:!!c.bareSubstrateEnable, bareSubstrateGrayMode:c.bareSubstrateGrayMode !== false, bareSubstrateGrayA:c.bareSubstrateGrayA,
+    bareSubstrateGrayB:c.bareSubstrateGrayB, bareSubstrateColorSimilarity:c.bareSubstrateColorSimilarity, edgeEnable:!!c.edgeEnable,
+    edgeMode:c.edgeMode === 'stroke' ? 'stroke' : 'enhance', edgeThreshMin:c.edgeThreshMin, edgeThreshMax:c.edgeThreshMax,
+    autoInvert:c.autoInvert, useMetalEdge:!!c.useMetalEdge, exposeMetalEdge:c.exposeMetalEdge !== false };
+}
+function buildNativeProjectArgs(){
+  const controls = gatherControls(), experimental = projectExperimentalSettings(), strips = state.light.strips;
+  return { schemaVersion:1, controls:portableControlsToDesktop(controls), experimental, ledStrips:portableStripsToDesktop(strips), imageFileName:'source.png',
+    portable:{ schemaVersion:4, controls, experimental, ledStrips:strips } };
+}
+async function canvasPngBlob(canvas){
+  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new ProjectArchiveError('projectArchiveInvalid')), 'image/png'));
+}
+async function saveProject(){
   if(!state.origin) return;
-  const root = {
-    schemaVersion: 3,
-    controls: gatherControls(),
-    experimental: { edgePrefilterEnabled:state.prefilter.enabled, edgePrefilterKernelSize:state.prefilter.kernel,
-      edgePrefilterSigma:state.prefilter.sigma, dpEnabled:state.dp.enabled, dpTolerance:state.dp.tolerance, dpLineWidth:state.dp.lineWidth },
-    image: state.originCanvas.toDataURL('image/png'),
-    ledStrips: state.light.strips
-  };
-  const blob = new Blob([JSON.stringify(root)], { type:'application/json' });
-  downloadBlob(blob, 'project.pcblg.json');
-  toast(t('projectSaved'));
+  try {
+    if(!supportsNativeProjectArchive()) throw new ProjectArchiveError('projectArchiveUnsupported');
+    const source = new Uint8Array(await (await canvasPngBlob(state.originCanvas)).arrayBuffer());
+    const args = new TextEncoder().encode(JSON.stringify(buildNativeProjectArgs()));
+    const blob = await createProjectZip([{name:'source.png', data:source}, {name:'args.json', data:args}]);
+    downloadBlob(blob, 'project.pcblg'); toast(t('projectSaved'));
+  } catch(error){ toast(projectZipError(error)); }
 }
 function restoreControls(c){
   const setIdx = (sel, i) => { const e = el(sel); if(i >= 0 && i < e.options.length) e.selectedIndex = i; };
@@ -2126,6 +2748,8 @@ function restoreControls(c){
   setIdx('#selectMask', c.maskColorIndex || 0);
   setSlider('#sliderGold', c.goldThresh || 0);
   setSlider('#sliderSilk', c.silkThresh || 0);
+  // v3 及更早工程没有透光阈值，按安装版默认值恢复。
+  setSlider('#sliderTrans', Number.isFinite(c.transThresh) ? c.transThresh : 120);
   setSlider('#sliderCopper', c.copperDepth || 0);
   const light = c.light || {};
   state.light.showOverlay = light.showOverlay === true;
@@ -2194,46 +2818,89 @@ function restoreLightStrips(raw){
     });
   }
 }
-function importProjectFile(file){
-  const reader = new FileReader();
-  reader.onload = function(){
-    try {
-      const root = JSON.parse(reader.result);
-      const c = root.controls || {};
-      restoreControls(c);
-      const exp = root.experimental || {};
-      state.prefilter.enabled = exp.edgePrefilterEnabled !== false;
-      state.prefilter.kernel = clampOddKernelSize(exp.edgePrefilterKernelSize || 5);
-      state.prefilter.sigma = Math.max(0.001, exp.edgePrefilterSigma || 1.1);
-      state.dp.enabled = !!exp.dpEnabled;
-      state.dp.tolerance = Math.max(0.001, exp.dpTolerance || 1.0);
-      state.dp.lineWidth = clamp(exp.dpLineWidth || 2, 1, 50);
-      const img = new Image();
-      img.onload = function(){
-        const w = img.naturalWidth, h = img.naturalHeight;
-        const lim = scaleDownToPixelLimit(w, h, MAX_IMPORT_PIXELS);
-        const cv = document.createElement('canvas'); cv.width = lim.w; cv.height = lim.h;
-        const ctx = cv.getContext('2d');
-        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, lim.w, lim.h);
-        state.origin = ctx.getImageData(0, 0, lim.w, lim.h);
-        state.originCanvas = cv;
-        state.fullResGeneration = -1; state._roCache = null;
-        imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
-        edgeSharpener.reset();
-        restoreLightStrips(root.ledStrips);
-        setExportControlsEnabled(true);
-        syncImportDrawingButton();
-        syncPreviewImageMeta();
-        updateProcess();
-        toast(t('projectImported'));
-      };
-      img.src = root.image;
-    } catch(e){
-      toast(t('projectParseFailed'));
-    }
-  };
-  reader.readAsText(file);
+function applyExperimentalSettings(exp){
+  const settings = exp || {};
+  state.prefilter.enabled = settings.edgePrefilterEnabled !== false;
+  state.prefilter.kernel = clampOddKernelSize(settings.edgePrefilterKernelSize || 5);
+  state.prefilter.sigma = Math.max(0.001, settings.edgePrefilterSigma || 1.1);
+  state.dp.enabled = !!settings.dpEnabled;
+  state.dp.tolerance = Math.max(0.001, settings.dpTolerance || 1.0);
+  state.dp.lineWidth = clamp(settings.dpLineWidth || 2, 1, 50);
+}
+function decodeProjectImage(source){
+  return new Promise((resolve, reject) => {
+    const objectUrl = source instanceof Blob ? URL.createObjectURL(source) : null;
+    const img = new Image();
+    const cleanup = () => { if(objectUrl) URL.revokeObjectURL(objectUrl); };
+    img.onload = () => {
+      try {
+        const width = img.naturalWidth, height = img.naturalHeight;
+        if(!width || !height) throw new ProjectArchiveError('projectArchiveInvalid');
+        const limited = scaleDownToPixelLimit(width, height, MAX_IMPORT_PIXELS);
+        const canvas = document.createElement('canvas'); canvas.width = limited.w; canvas.height = limited.h;
+        const context = canvas.getContext('2d'); context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high';
+        context.drawImage(img, 0, 0, limited.w, limited.h);
+        const origin = context.getImageData(0, 0, limited.w, limited.h); cleanup(); resolve({origin, canvas});
+      } catch(error){ cleanup(); reject(error); }
+    };
+    img.onerror = () => { cleanup(); reject(new ProjectArchiveError('projectArchiveInvalid')); };
+    img.src = objectUrl || source;
+  });
+}
+function applyImportedProject(project){
+  // 图片和全部参数已在此之前完成校验，以下一次性替换当前工程状态。
+  state.origin = project.image.origin; state.originCanvas = project.image.canvas;
+  state.fullResGeneration = -1; state._roCache = null;
+  imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
+  edgeSharpener.reset();
+  restoreControls(project.controls || {});
+  applyExperimentalSettings(project.experimental);
+  restoreLightStrips(project.ledStrips);
+  setExportControlsEnabled(true); syncImportDrawingButton(); syncPreviewImageMeta(); updateProcess();
+}
+function archiveImageEntry(files, imageFileName){
+  const requested = String(imageFileName || '').toLowerCase();
+  if(requested && files.has(requested)){
+    const requestedEntry = files.get(requested);
+    if(PROJECT_ARCHIVE_IMAGE_EXTENSIONS.has(requestedEntry.name.split('.').pop().toLowerCase())) return requestedEntry;
+  }
+  for(const entry of files.values()){
+    const extension = entry.name.split('.').pop().toLowerCase();
+    if(PROJECT_ARCHIVE_IMAGE_EXTENSIONS.has(extension)) return entry;
+  }
+  throw new ProjectArchiveError('projectArchiveInvalid');
+}
+async function importNativeProjectFile(file){
+  const files = await readProjectZip(new Uint8Array(await file.arrayBuffer()));
+  const argsEntry = files.get('args.json');
+  if(!argsEntry) throw new ProjectArchiveError('projectArchiveInvalid');
+  let args;
+  try { args = JSON.parse(new TextDecoder().decode(argsEntry.data)); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
+  if(!args || typeof args !== 'object' || !args.controls || typeof args.controls !== 'object') throw new ProjectArchiveError('projectArchiveInvalid');
+  const imageEntry = archiveImageEntry(files, args.imageFileName);
+  const extension = imageEntry.name.split('.').pop().toLowerCase();
+  const type = extension === 'jpg' ? 'image/jpeg' : `image/${extension}`;
+  const image = await decodeProjectImage(new Blob([imageEntry.data], {type}));
+  const portable = args.portable && typeof args.portable === 'object' ? args.portable : null;
+  applyImportedProject({ image, controls:portable && portable.controls ? portable.controls : desktopControlsToPortable(args.controls),
+    experimental:portable && portable.experimental ? portable.experimental : args.experimental, ledStrips:portable && Array.isArray(portable.ledStrips) ? portable.ledStrips : desktopStripsToPortable(args.ledStrips) });
+}
+async function importLegacyProjectFile(file){
+  let root;
+  try { root = JSON.parse(await file.text()); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
+  if(!root || typeof root !== 'object' || !root.controls || typeof root.image !== 'string') throw new ProjectArchiveError('projectArchiveInvalid');
+  const image = await decodeProjectImage(root.image);
+  applyImportedProject({image, controls:root.controls, experimental:root.experimental, ledStrips:root.ledStrips});
+}
+async function importProjectFile(file){
+  try {
+    const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    const isArchive = file.name.toLowerCase().endsWith('.pcblg') || (header.length === 4 && header[0] === 0x50 && header[1] === 0x4b);
+    if(isArchive) await importNativeProjectFile(file); else await importLegacyProjectFile(file);
+    toast(t('projectImported'));
+  } catch(error){
+    toast(error instanceof ProjectArchiveError ? projectZipError(error) : t('projectParseFailed'));
+  }
 }
 
 /* ---------------- 边缘 UI 联动 ---------------- */
@@ -2256,6 +2923,7 @@ function setupMenus(){
   el('#btnExportSelected').onclick = exportSelectedLayer;
   el('#mSave').onclick = saveProject;
   el('#mLoad').onclick = () => el('#projInput').click();
+  el('#mPaint').onclick = openPaintEditor;
   el('#mFilter').onclick = openFilterDialog;
   el('#mDP').onclick = openDPDialog;
   el('#mColor').onclick = openColorDialog;
@@ -2288,7 +2956,7 @@ function openFilterDialog(){
     '<label class="check"><input type="checkbox" id="dlgFilterOn"' + (state.prefilter.enabled?' checked':'') + '>' + t('enableGaussian') + '</label>' +
     '<div class="mrow"><label>' + t('gaussianKernel') + '</label><input type="number" id="dlgKernel" min="3" max="7" step="2" value="' + state.prefilter.kernel + '"></div>' +
     '<div class="mrow"><label>' + t('sigma') + '</label><input type="number" id="dlgSigma" min="0.1" step="0.1" value="' + state.prefilter.sigma + '"></div>' +
-    '<div class="btns"><button type="button" class="btn" id="dlgFilterCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgFilterOk">' + t('confirm') + '</button></div>'
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="dlgFilterCancel">' + t('cancel') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="dlgFilterOk">' + t('confirm') + '</button></div>'
   );
   el('#dlgFilterOk').onclick = function(){
     state.prefilter.enabled = el('#dlgFilterOn').checked;
@@ -2297,6 +2965,8 @@ function openFilterDialog(){
     closeModal(); updateProcess();
   };
   el('#dlgFilterCancel').onclick = closeModal;
+  attachFortniteHoverEffect(el('#dlgFilterCancel'));
+  attachFortniteHoverEffect(el('#dlgFilterOk'));
 }
 function openDPDialog(){
   showModal(
@@ -2305,7 +2975,7 @@ function openDPDialog(){
     '<div class="mrow"><label>' + t('tolerance') + '</label><input type="number" id="dlgDPTol" min="0.001" step="0.1" value="' + state.dp.tolerance + '"></div>' +
     '<div class="mrow"><label>' + t('lineWidth') + '</label><input type="number" id="dlgDPLW" min="1" max="50" step="1" value="' + state.dp.lineWidth + '"></div>' +
     '<p style="color:var(--text-dim);font-size:12.5px">' + t('dpNote') + '</p>' +
-    '<div class="btns"><button type="button" class="btn" id="dlgDPCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgDPOk">' + t('confirm') + '</button></div>'
+    '<div class="btns"><button type="button" class="btn drawing-action-btn" id="dlgDPCancel">' + t('cancel') + '</button><button type="button" class="btn drawing-action-btn action-selected" id="dlgDPOk">' + t('confirm') + '</button></div>'
   );
   el('#dlgDPOk').onclick = function(){
     state.dp.enabled = el('#dlgDPOn').checked;
@@ -2314,6 +2984,8 @@ function openDPDialog(){
     closeModal();
   };
   el('#dlgDPCancel').onclick = closeModal;
+  attachFortniteHoverEffect(el('#dlgDPCancel'));
+  attachFortniteHoverEffect(el('#dlgDPOk'));
 }
 function colorRow(nameKey, key){
   return '<div class="mrow"><label>' + t(nameKey) + '</label><input type="color" id="col_' + key + '" value="' + toHex(custom[key]) + '"></div>';
@@ -2355,6 +3027,7 @@ function resetAllSettings(){
   setSlider('#sliderLightSense', state.light.autoSense);
   setSlider('#sliderLightRadius', state.light.radius);
   setSlider('#sliderLightIntensity', state.light.intensity);
+  setSlider('#sliderTrans', 120);
   setSlider('#sliderGraySilk', state.gray.silkThreshold);
   setSlider('#sliderGrayMask', state.gray.maskThreshold);
   setSlider('#sliderGrayThick', state.gray.thickRadius);
@@ -2406,6 +3079,7 @@ function init(){
   // 创建滑块
   createSlider('sliderGold', 'goldThreshold', 0, 359, 45);
   createSlider('sliderSilk', 'silkThreshold', 0, 255, 180);
+  createSlider('sliderTrans', 'transThreshold', 0, 255, 120);
   createSlider('sliderCopper', 'copperThreshold', 0, 255, 150);
   createSlider('sliderBareA', 'bareGrayMin', 0, 100, 20);
   createSlider('sliderBareB', 'bareGrayMax', 0, 100, 65);
@@ -2459,9 +3133,9 @@ function init(){
   attachPreviewInteraction('copper');
   attachPreviewInteraction('mask');
   attachPreviewInteraction('silk');
+  attachPreviewInteraction('bottom');
   for(const key in quadPreviewCanvases) attachQuadPreviewInteraction(key);
   attachLightPlacement('#canvasComposite', false);
-  attachLightPlacement('#canvasQuadComposite', true);
 
   // 文件输入
   const fi = document.createElement('input');
@@ -2470,7 +3144,7 @@ function init(){
   document.body.appendChild(fi);
 
   const pi = document.createElement('input');
-  pi.type = 'file'; pi.accept = '.pcblg.json,.json'; pi.id = 'projInput'; pi.style.display = 'none';
+  pi.type = 'file'; pi.accept = '.pcblg,.pcblg.json,.json'; pi.id = 'projInput'; pi.style.display = 'none';
   pi.addEventListener('change', function(){ if(this.files[0]) importProjectFile(this.files[0]); this.value = ''; });
   document.body.appendChild(pi);
 
