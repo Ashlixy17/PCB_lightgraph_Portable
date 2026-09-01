@@ -386,6 +386,8 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
             <option value="red" data-i18n="maskRed">红色</option>
             <option value="green" data-i18n="maskGreen">绿色</option>
             <option value="white" data-i18n="maskWhite">白色</option>
+            <option value="yellow" data-i18n="maskYellow">黄色</option>
+            <option value="purple" data-i18n="maskPurple">紫色</option>
           </select>
         </label>
         <div id="sliderGold"></div>
@@ -421,8 +423,8 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
     <div class="group" id="groupEdge" data-master="edge">
       <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edgeOperations">边缘操作</span></button>
       <div class="content"><div class="inner">
-        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeStroke"><span data-i18n="edgeStroke">描边</span></label>
-        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeEnhance" checked><span data-i18n="edgeEnhance">边缘增强</span></label>
+        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeStroke" checked><span data-i18n="edgeStroke">描边</span></label>
+        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeEnhance"><span data-i18n="edgeEnhance">边缘增强</span></label>
         <div id="sliderEdgeThresh"></div>
         <div id="sliderEdgeThreshMax"></div>
         <label class="check"><input type="checkbox" id="chkUseMetal"><span data-i18n="useMetal">使用金属</span></label>
@@ -437,7 +439,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="basicParameters">基础参数</span></button>
         <div class="content"><div class="inner">
           <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
-            <select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option></select>
+            <select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option><option value="yellow" data-i18n="maskYellow">黄色</option><option value="purple" data-i18n="maskPurple">紫色</option></select>
           </label>
           <div id="sliderGraySilk"></div>
           <div id="sliderGrayMask"></div>
@@ -563,6 +565,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { menuEdit:'编辑', liveEdit:'图纸快捷
 Object.assign(TRANSLATIONS['zh-TW'], { menuEdit:'編輯', liveEdit:'圖紙快速編輯', liveEditNeedImage:'請先匯入圖片', paintBrush:'畫筆', paintEraser:'橡皮擦', paintSize:'粗細', paintBrushMode:'畫筆模式', paintWhite:'白色覆蓋', paintTransparent:'透明擦除', paintSolderMask:'阻焊顏色', paintUndo:'復原', paintRollback:'回退復原', paintRedo:'重做', paintCancelEdit:'取消編輯', paintSaveEdit:'儲存編輯' });
 Object.assign(TRANSLATIONS.en, { menuEdit:'Edit', liveEdit:'Quick Drawing Edit', liveEditNeedImage:'Import an image first', paintBrush:'Brush', paintEraser:'Eraser', paintSize:'Size', paintBrushMode:'Brush mode', paintWhite:'Paint white', paintTransparent:'Erase to transparent', paintSolderMask:'Solder mask color', paintUndo:'Undo', paintRollback:'Redo Undo', paintRedo:'Reset Drawing', paintCancelEdit:'Cancel Edit', paintSaveEdit:'Save Edit' });
 Object.assign(TRANSLATIONS.ja, { menuEdit:'編集', liveEdit:'図面クイック編集', liveEditNeedImage:'先に画像を読み込んでください', paintBrush:'ブラシ', paintEraser:'消しゴム', paintSize:'太さ', paintBrushMode:'ブラシの方式', paintWhite:'白で塗る', paintTransparent:'透明に消去', paintSolderMask:'レジスト色', paintUndo:'元に戻す', paintRollback:'取り消しを戻す', paintRedo:'描画をリセット', paintCancelEdit:'編集を取り消す', paintSaveEdit:'編集を保存' });
+Object.assign(TRANSLATIONS['zh-CN'], { maskYellow:'黄色', maskPurple:'紫色', colorMaskBlue:'蓝色阻焊', colorMaskBlack:'黑色阻焊', colorMaskRed:'红色阻焊', colorMaskGreen:'绿色阻焊', colorMaskWhite:'白色阻焊', colorMaskYellow:'黄色阻焊', colorMaskPurple:'紫色阻焊' });
+Object.assign(TRANSLATIONS['zh-TW'], { maskYellow:'黃色', maskPurple:'紫色', colorMaskBlue:'藍色阻焊', colorMaskBlack:'黑色阻焊', colorMaskRed:'紅色阻焊', colorMaskGreen:'綠色阻焊', colorMaskWhite:'白色阻焊', colorMaskYellow:'黃色阻焊', colorMaskPurple:'紫色阻焊' });
+Object.assign(TRANSLATIONS.en, { maskYellow:'Yellow', maskPurple:'Purple', colorMaskBlue:'Blue Solder Mask', colorMaskBlack:'Black Solder Mask', colorMaskRed:'Red Solder Mask', colorMaskGreen:'Green Solder Mask', colorMaskWhite:'White Solder Mask', colorMaskYellow:'Yellow Solder Mask', colorMaskPurple:'Purple Solder Mask' });
+Object.assign(TRANSLATIONS.ja, { maskYellow:'黄', maskPurple:'紫', colorMaskBlue:'青色レジスト', colorMaskBlack:'黒色レジスト', colorMaskRed:'赤色レジスト', colorMaskGreen:'緑色レジスト', colorMaskWhite:'白色レジスト', colorMaskYellow:'黄色レジスト', colorMaskPurple:'紫色レジスト' });
 /* 品牌名称与徽标独立翻译，语言切换时同步更新左上角和浏览器标题。 */
 Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版）', brandName:'PCB图片分层器', brandEdition:'便携版' });
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
@@ -688,15 +694,20 @@ const DEFAULTS = {
   enig:{r:240,g:217,b:140},
   osp:{r:240,g:170,b:147},
   hasl:{r:200,g:200,b:215},
-  bare:{r:153,g:187,b:119}
+  bare:{r:153,g:187,b:119},
+  maskBlue:{r:0,g:50,b:150},
+  maskBlack:{r:10,g:10,b:10},
+  maskRed:{r:150,g:0,b:0},
+  maskGreen:{r:0,g:100,b:50},
+  maskWhite:{r:240,g:240,b:240},
+  maskYellow:{r:192,g:167,b:13},
+  maskPurple:{r:26,g:0,b:31}
 };
-const custom = { enig:{...DEFAULTS.enig}, osp:{...DEFAULTS.osp}, hasl:{...DEFAULTS.hasl}, bare:{...DEFAULTS.bare} };
+// 与安装版 v1.5.1 使用同一套阻焊色名与默认 RGB，旧偏好缺失的字段自动保留默认值。
+const custom = Object.fromEntries(Object.entries(DEFAULTS).map(([key, value]) => [key, {...value}]));
 function getSolderMaskColor(id){
-  if(id === 'blue') return {r:0,g:50,b:150};
-  if(id === 'red') return {r:150,g:0,b:0};
-  if(id === 'black') return {r:10,g:10,b:10};
-  if(id === 'green') return {r:0,g:100,b:50};
-  return {r:240,g:240,b:240}; // white
+  const key = 'mask' + String(id || 'white').slice(0, 1).toUpperCase() + String(id || 'white').slice(1);
+  return custom[key] || custom.maskWhite;
 }
 function getSilkColor(maskId){
   if(maskId === 'white') return {r:20,g:20,b:20};
@@ -1080,7 +1091,7 @@ function generateLayers(copper, mask, silk, bottom){
 }
 
 /* ---------------- 纯灰度三分分层（Processerv_2 语义） ---------------- */
-const MASK_COLOR_IDS = ['blue', 'black', 'red', 'green', 'white'];
+const MASK_COLOR_IDS = ['blue', 'black', 'red', 'green', 'white', 'yellow', 'purple'];
 const GRAY_DEFAULTS = { silkThreshold:100, maskThreshold:150, thickRadius:0, blurRadius:0, previewMaskId:'blue' };
 function grayPreviewColor(maskId){
   return getSolderMaskColor(MASK_COLOR_IDS.includes(maskId) ? maskId : GRAY_DEFAULTS.previewMaskId);
@@ -3042,10 +3053,17 @@ function openColorDialog(){
     colorRow('colorOsp', 'osp') +
     colorRow('colorHasl', 'hasl') +
     colorRow('colorBare', 'bare') +
+    colorRow('colorMaskBlue', 'maskBlue') +
+    colorRow('colorMaskBlack', 'maskBlack') +
+    colorRow('colorMaskRed', 'maskRed') +
+    colorRow('colorMaskGreen', 'maskGreen') +
+    colorRow('colorMaskWhite', 'maskWhite') +
+    colorRow('colorMaskYellow', 'maskYellow') +
+    colorRow('colorMaskPurple', 'maskPurple') +
     '<div class="btns"><button type="button" class="btn" id="dlgColorCancel">' + t('cancel') + '</button><button type="button" class="btn accent" id="dlgColorOk">' + t('confirm') + '</button></div>'
   );
   el('#dlgColorOk').onclick = function(){
-    for(const k of ['enig','osp','hasl','bare']){
+    for(const k of Object.keys(DEFAULTS)){
       const hex = el('#col_' + k).value;
       const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
       if(!isNaN(r)){ custom[k] = {r,g,b}; }
@@ -3061,7 +3079,7 @@ function resetAllSettings(){
   localStorage.removeItem('pcblg_prefs');
   localStorage.removeItem('pcblg_language');
   document.body.style.zoom = 1;
-  custom.enig = {...DEFAULTS.enig}; custom.osp = {...DEFAULTS.osp}; custom.hasl = {...DEFAULTS.hasl}; custom.bare = {...DEFAULTS.bare};
+  for(const [key, value] of Object.entries(DEFAULTS)) custom[key] = {...value};
   state.prefilter = { enabled:true, kernel:5, sigma:1.1 };
   state.dp = { enabled:false, tolerance:1.0, lineWidth:2 };
   state.light = { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null };
@@ -3079,6 +3097,8 @@ function resetAllSettings(){
   setSlider('#sliderGrayThick', state.gray.thickRadius);
   setSlider('#sliderGrayBlur', state.gray.blurRadius);
   el('#grayPreviewMask').value = state.gray.previewMaskId;
+  // 安装版 v1.5.1 的默认边缘处理为描边；重置后同样回到该默认行为。
+  el('#radioEdgeStroke').checked = true; el('#radioEdgeEnhance').checked = false;
   setProcessingMode('gray', false);
   if(state.origin) updateProcess();
   setLanguage('zh-CN', false);
@@ -3097,7 +3117,7 @@ function loadLocalPrefs(){
   if(p){
     try {
       const o = JSON.parse(p);
-      if(o.custom){ for(const k of ['enig','osp','hasl','bare']) if(o.custom[k]) custom[k] = o.custom[k]; }
+      if(o.custom){ for(const k of Object.keys(DEFAULTS)) if(o.custom[k]) custom[k] = o.custom[k]; }
       if(o.prefilter) state.prefilter = o.prefilter;
       if(o.dp) state.dp = o.dp;
       if(typeof o.edaImportProtection === 'boolean') exportCompatibility.edaImportProtection = o.edaImportProtection;
