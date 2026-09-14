@@ -15,7 +15,7 @@
   <br>
   不用安装，不用编译，双击即可开始创作
   <br>
-  <strong>已完全实现与安装版相同功能！</strong>
+  <strong>已实现与安装版相同功能</strong>
 </p>
 
 <p align="center">
@@ -67,9 +67,9 @@
   <img src="assets/support-star.gif" alt="感谢支持" width="180">
 </p>
 
-**原安装版软件**：
+**原版软件仓库**：
 [PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>
-**此便捷版的EDA插件**：
+**EDA插件仓库**：
 [PCB_lightgraph_Extension](https://github.com/G100wasd/PCB_lightgraph_Extension)<br>
 **PCB绘制交流群**(非群主)：<br>
 [[QQ]雷霆PCB的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW) <br>
@@ -77,13 +77,14 @@
 如果你有任何关于**嘉立创EDA**和**PCB打印**的问题，都可以进群询问。
 
 ### 如果觉得软件对你有帮助，求求你点个 Star 吧！(ﾉ>ω<)ﾉ 
+
 ## Star History
 
-<a href="https://www.star-history.com/?repos=Ashlixy17%2FPCB_lightgraph_Portable&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=Ashlixy17%2FPCB_lightgraph_Portable&type=date&legend=bottom-right">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&theme=dark&legend=top-left&sealed_token=-vuOSmKl1mfmWZqRmQxaKV68_LdrKaxgbtP6ow5LTxZAqKXrFPuJlf_TLV4PEJHK8RSDoeqwlDO113NTfDH0C8MXbow6LaiplWBXvNFHThBPQ34uWYpCpBnDkML5nfM9pZXcG3kvY9zROVCHJ12Ppw9YuopEaY_C_0YhMctwgUDQSNdrnpCNsby8culz" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&legend=top-left&sealed_token=-vuOSmKl1mfmWZqRmQxaKV68_LdrKaxgbtP6ow5LTxZAqKXrFPuJlf_TLV4PEJHK8RSDoeqwlDO113NTfDH0C8MXbow6LaiplWBXvNFHThBPQ34uWYpCpBnDkML5nfM9pZXcG3kvY9zROVCHJ12Ppw9YuopEaY_C_0YhMctwgUDQSNdrnpCNsby8culz" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&legend=top-left&sealed_token=-vuOSmKl1mfmWZqRmQxaKV68_LdrKaxgbtP6ow5LTxZAqKXrFPuJlf_TLV4PEJHK8RSDoeqwlDO113NTfDH0C8MXbow6LaiplWBXvNFHThBPQ34uWYpCpBnDkML5nfM9pZXcG3kvY9zROVCHJ12Ppw9YuopEaY_C_0YhMctwgUDQSNdrnpCNsby8culz" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Ashlixy17/PCB_lightgraph_Portable&type=date&legend=bottom-right" />
  </picture>
 </a>
 
