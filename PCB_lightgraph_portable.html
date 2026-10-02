@@ -584,10 +584,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { lightingSettings:'灯光 / 显示 / 布�
 Object.assign(TRANSLATIONS['zh-TW'], { lightingSettings:'燈光 / 顯示 / 佈燈', showLightOverlay:'在預覽中疊加顯示燈光與範圍', autoLightSensitivity:'自動佈燈敏感度（0 關閉）', autoSuggestLights:'自動重心佈燈', lightRadius:'燈光散射半徑', lightIntensity:'中心不透明度', lightPlacementHint:'在合成預覽中連續左鍵兩次，即可手動放置一條燈光。', lightPlacementStart:'已記錄起點，請左鍵選擇終點。' });
 Object.assign(TRANSLATIONS.en, { lightingSettings:'Lighting / Display / Placement', showLightOverlay:'Show lights and range in preview', autoLightSensitivity:'Auto-light Sensitivity (0 Off)', autoSuggestLights:'Auto Centroid Placement', lightRadius:'Light Diffusion Radius', lightIntensity:'Light Center Opacity', lightPlacementHint:'Left-click twice in the composite preview to place a light strip.', lightPlacementStart:'Start recorded. Left-click to choose the end.' });
 Object.assign(TRANSLATIONS.ja, { lightingSettings:'照明 / 表示 / 配置', showLightOverlay:'プレビューに照明と範囲を重ねて表示', autoLightSensitivity:'自動配置の感度（0 でオフ）', autoSuggestLights:'重心に自動配置', lightRadius:'照明の拡散半径', lightIntensity:'中心の不透明度', lightPlacementHint:'合成プレビューを左クリック 2 回でライトバーを手動配置できます。', lightPlacementStart:'始点を記録しました。左クリックで終点を選択してください。' });
-Object.assign(TRANSLATIONS['zh-CN'], { previewImageMeta:'总像素 {pixels} · {width} × {height} 像素 · 缩放 {zoom}%' });
-Object.assign(TRANSLATIONS['zh-TW'], { previewImageMeta:'總像素 {pixels} · {width} × {height} 像素 · 縮放 {zoom}%' });
-Object.assign(TRANSLATIONS.en, { previewImageMeta:'{pixels} pixels · {width} × {height} px · Zoom {zoom}%' });
-Object.assign(TRANSLATIONS.ja, { previewImageMeta:'総画素数 {pixels} · {width} × {height} px · ズーム {zoom}%' });
+Object.assign(TRANSLATIONS['zh-CN'], { previewImageMeta:'总像素 {pixels} · {width} × {height} 像素 · 缩放 {zoom}% · 图片大小 {fileSize}' });
+Object.assign(TRANSLATIONS['zh-TW'], { previewImageMeta:'總像素 {pixels} · {width} × {height} 像素 · 縮放 {zoom}% · 圖片大小 {fileSize}' });
+Object.assign(TRANSLATIONS.en, { previewImageMeta:'{pixels} pixels · {width} × {height} px · Zoom {zoom}% · Image size {fileSize}' });
+Object.assign(TRANSLATIONS.ja, { previewImageMeta:'総画素数 {pixels} · {width} × {height} px · ズーム {zoom}% · 画像サイズ {fileSize}' });
 Object.assign(TRANSLATIONS['zh-CN'], { projectSaved:'工程已导出为 project.pcblg', projectArchiveUnsupported:'当前浏览器不支持原生 .pcblg 工程包', projectArchiveInvalid:'工程包无效或内容不完整', projectArchiveChecksumFailed:'工程包校验失败', projectArchiveTooLarge:'工程包解压后超过支持大小' });
 Object.assign(TRANSLATIONS['zh-TW'], { projectSaved:'工程已匯出為 project.pcblg', projectArchiveUnsupported:'目前瀏覽器不支援原生 .pcblg 工程包', projectArchiveInvalid:'工程包無效或內容不完整', projectArchiveChecksumFailed:'工程包校驗失敗', projectArchiveTooLarge:'工程包解壓縮後超過支援大小' });
 Object.assign(TRANSLATIONS.en, { projectSaved:'Project exported as project.pcblg', projectArchiveUnsupported:'This browser does not support native .pcblg projects', projectArchiveInvalid:'The project archive is invalid or incomplete', projectArchiveChecksumFailed:'Project archive checksum verification failed', projectArchiveTooLarge:'The extracted project archive exceeds the supported size' });
@@ -1243,6 +1243,7 @@ function refinementSizes(src){
 const state = {
   origin: null,          // 原图 ImageData
   originCanvas: null,    // 原图 canvas（导出/工程用）
+  imageFileSize: null,   // 导入图片的实际文件字节数，裁切与调参不改变这个数值。
   processingMode: 'gray', // color: 现有彩色识别；gray: 纯灰度三分
   viewMode: 'overlay',   // 仅控制预览布局，不影响分层、导出或工程数据
   gray: { ...GRAY_DEFAULTS },
@@ -1630,6 +1631,13 @@ function syncQuadPrimaryLabel(){
   title.textContent = t(title.dataset.i18n);
 }
 
+function formatImageFileSize(bytes){
+  if(!Number.isSafeInteger(bytes) || bytes<0)return '—';
+  const units=['B','KB','MB','GB'];
+  const index=bytes>0 ? Math.min(units.length-1,Math.floor(Math.log(bytes)/Math.log(1024))) : 0;
+  const value=new Intl.NumberFormat(document.documentElement.lang || currentLanguage,{maximumFractionDigits:index===0 ? 0 : 2}).format(bytes/Math.pow(1024,index));
+  return value+' '+units[index];
+}
 function syncPreviewImageMeta(){
   const mainMeta = el('#previewImageMeta');
   if(!mainMeta) return;
@@ -1639,7 +1647,7 @@ function syncPreviewImageMeta(){
   }
   const zoom = state.viewMode === 'quad' ? quadCamera.zoom : (state.viewMode === 'split' ? splitCamera.zoom : previewStates.composite.zoom);
   const pixels = new Intl.NumberFormat(document.documentElement.lang || currentLanguage).format(state.origin.width * state.origin.height);
-  const text = t('previewImageMeta', { pixels, width:state.origin.width, height:state.origin.height, zoom:Math.round(zoom * 100) });
+  const text = t('previewImageMeta', { pixels, width:state.origin.width, height:state.origin.height, zoom:Math.round(zoom * 100), fileSize:formatImageFileSize(state.imageFileSize) });
   mainMeta.textContent = text;
   // 元信息保持在网格外，避免四分视图只有叠加格被额外文本压缩。
   mainMeta.hidden = false;
@@ -2489,7 +2497,7 @@ function syncPaintImageMeta(){
   const session = paintSession, meta = el('#paintImageMeta');
   if(!session || !meta) return;
   const pixels = new Intl.NumberFormat(document.documentElement.lang || currentLanguage).format(session.canvas.width * session.canvas.height);
-  meta.textContent = t('previewImageMeta', { pixels, width:session.canvas.width, height:session.canvas.height, zoom:Math.round(session.zoom * 100) });
+  meta.textContent = t('previewImageMeta', { pixels, width:session.canvas.width, height:session.canvas.height, zoom:Math.round(session.zoom * 100), fileSize:formatImageFileSize(state.imageFileSize) });
 }
 function fitPaintCanvas(){
   const session = paintSession, stage = el('#paintStage');
@@ -2908,7 +2916,7 @@ function openCropDialog(img, onComplete){
   draw(); applyCropTransform();
 }
 
-function importDecodedImage(img, rect){
+function importDecodedImage(img, rect, fileSize=null){
   // 裁切后的区域才参与像素上限计算，避免先缩小整图造成选区细节丢失。
   let maxPixels = MAX_IMPORT_PIXELS;
   let lim = scaleDownToPixelLimit(rect.w, rect.h, maxPixels);
@@ -2922,6 +2930,7 @@ function importDecodedImage(img, rect){
       ctx.drawImage(img, rect.x, rect.y, rect.w, rect.h, 0, 0, lim.w, lim.h);
       state.origin = ctx.getImageData(0, 0, lim.w, lim.h);
       state.originCanvas = c;
+      state.imageFileSize = fileSize;
       resetRegions();
       state.fullResGeneration = -1;
       state._roCache = null;
@@ -2954,7 +2963,7 @@ function loadImageFile(file){
     const w = img.naturalWidth, h = img.naturalHeight;
     if(!w || !h){ URL.revokeObjectURL(url); toast(t('invalidImageSize')); return; }
     URL.revokeObjectURL(url);
-    openCropDialog(img, rect => importDecodedImage(img, rect));
+    openCropDialog(img, rect => importDecodedImage(img, rect, file.size));
   };
   img.onerror = function(){ URL.revokeObjectURL(url); toast(t('imageLoadFailed')); };
   img.src = url;
@@ -3371,7 +3380,12 @@ function decodeProjectImage(source){
         const canvas = document.createElement('canvas'); canvas.width = limited.w; canvas.height = limited.h;
         const context = canvas.getContext('2d'); context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high';
         context.drawImage(img, 0, 0, limited.w, limited.h);
-        const origin = context.getImageData(0, 0, limited.w, limited.h); cleanup(); resolve({origin, canvas});
+        let fileSize=source instanceof Blob ? source.size : null;
+        if(typeof source==='string' && source.startsWith('data:')){
+          const comma=source.indexOf(','),payload=decodeURIComponent(source.slice(comma+1));
+          fileSize=source.slice(0,comma).includes(';base64') ? atob(payload).length : new TextEncoder().encode(payload).length;
+        }
+        const origin = context.getImageData(0, 0, limited.w, limited.h); cleanup(); resolve({origin, canvas, fileSize});
       } catch(error){ cleanup(); reject(error); }
     };
     img.onerror = () => { cleanup(); reject(new ProjectArchiveError('projectArchiveInvalid')); };
@@ -3383,6 +3397,7 @@ function applyImportedProject(project){
   const regions=validateRegions(project.regions,project.image.origin);
   // 图片和全部参数已在此之前完成校验，以下一次性替换当前工程状态。
   state.origin = project.image.origin; state.originCanvas = project.image.canvas;
+  state.imageFileSize = project.image.fileSize ?? null;
   state.fullResGeneration = -1; state._roCache = null;
   imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
   edgeSharpener.reset();
