@@ -264,6 +264,20 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .crop-stage{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
 .crop-stage canvas{display:block;flex:none;max-width:none;touch-action:none;cursor:default;will-change:transform;}
 /* toast */
+.region-list{display:flex;flex-direction:column;gap:3px;max-height:180px;overflow-x:hidden;overflow-y:auto;margin:8px 0;padding:4px;}
+.region-list button{text-align:left;flex-shrink:0;width:100%;min-width:0;margin:3px 0;}
+.region-list button span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.region-tools{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;}
+.region-tools .paint-tool{flex:1;padding:7px 5px;}
+.region-local[hidden]{display:none;}
+#regionalControls[hidden],.region-param-section[hidden]{display:none;}
+#regionBrushControl[hidden]{display:none;}
+.region-slider-track{position:relative;display:flex;align-items:center;height:16px;}
+.region-slider-track input{display:block;margin:0;}
+/* 圆点与槽共用中心线；尺寸等于槽高，颜色沿用手柄，并且不接收事件。 */
+.region-baseline{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--control-accent);top:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.region-name-input{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font:inherit;}
+#canvasComposite{touch-action:none;}
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);
   border:1px solid var(--border);border-radius:8px;padding:10px 18px;z-index:300;
@@ -368,9 +382,28 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <button type="button" data-processing-mode="color" data-i18n="colorMode">彩色识别分层</button>
     </div>
 
+    <div class="group" id="groupRegions">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="regionEditor">区域选择/编辑</span></button>
+      <div class="content"><div class="inner">
+        <div class="region-list" id="regionList"></div>
+        <div class="region-tools" id="regionTools">
+          <button type="button" class="paint-tool" data-region-tool="rect" data-i18n="regionRect">矩形</button>
+          <button type="button" class="paint-tool" data-region-tool="lasso" data-i18n="regionLasso">套索</button>
+          <button type="button" class="paint-tool" data-region-tool="brush" data-i18n="paintBrush">画笔</button>
+        </div>
+        <label class="ctl"><span class="lab" data-i18n="regionOperation">选区操作</span><select id="regionOperation">
+          <option value="new" data-i18n="regionNew">新增区域</option><option value="add" data-i18n="regionAdd">增选</option><option value="subtract" data-i18n="regionSubtract">减选</option>
+        </select></label>
+        <label class="ctl" id="regionBrushControl" hidden><span class="lab" data-i18n="paintSize">粗细</span><input id="regionBrushSize" type="range" min="1" max="160" value="24"></label>
+        <label class="check"><input type="checkbox" id="regionHighlight" checked><span data-i18n="regionShowHighlight">显示选区高光</span></label>
+        <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionRename" data-i18n="regionRename">重命名此选区</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionDelete" data-i18n="regionDelete">删除区域</button></div>
+        <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionClear" data-i18n="regionClear">重置局部调整</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionCopy" data-i18n="regionCopy">复制局部调整至</button></div>
+        <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionUndo" data-i18n="paintUndo">撤销</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionRedo" data-i18n="regionRedoLabel">重做</button></div>
+      </div></div>
+    </div>
     <div class="mode-specific" id="colorControls" hidden>
     <div class="group open" id="groupBasic">
-      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="basicParameters">基础参数</span></button>
+      <button type="button" class="group-header"><span class="chev">▶</span><span id="globalColorBasicTitle" data-i18n="basicParameters">基础参数：全局</span></button>
       <div class="content"><div class="inner">
         <label class="ctl"><span class="lab" data-i18n="surfaceFinish">表面处理工艺</span>
           <select id="selectFinish">
@@ -436,7 +469,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 
     <div class="mode-specific" id="grayControls">
       <div class="group open" id="groupGray">
-        <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="basicParameters">基础参数</span></button>
+        <button type="button" class="group-header"><span class="chev">▶</span><span id="globalGrayBasicTitle" data-i18n="basicParameters">基础参数：全局</span></button>
         <div class="content"><div class="inner">
           <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
             <select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option><option value="yellow" data-i18n="maskYellow">黄色</option><option value="purple" data-i18n="maskPurple">紫色</option></select>
@@ -449,6 +482,16 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       </div>
     </div>
 
+    <div id="regionalControls" hidden>
+      <div class="group open" id="groupRegional">
+        <button type="button" class="group-header"><span class="chev">▶</span><span id="regionBasicTitle">区域参数</span></button>
+        <div class="content"><div class="inner">
+          <div id="regionBasicSliders"></div>
+          <div class="region-param-section" id="regionBareSliders" hidden><p class="note" data-i18n="bareBinding">裸露基材绑定</p></div>
+          <div class="region-param-section" id="regionEdgeSliders" hidden><p class="note" data-i18n="edgeOperations">边缘操作</p></div>
+        </div></div>
+      </div>
+    </div>
     <div class="group open" id="groupActions">
       <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="drawingActions">图纸操作</span></button>
       <div class="content"><div class="inner">
@@ -603,6 +646,7 @@ function applyTranslations(){
   document.querySelectorAll('[data-language]').forEach(button => button.classList.toggle('active', button.dataset.language === currentLanguage));
   syncImportDrawingButton();
   syncPreviewImageMeta();
+  refreshRegionUI();
 }
 function setLanguage(language, persist){
   currentLanguage = TRANSLATIONS[language] ? language : 'zh-CN';
@@ -794,13 +838,13 @@ function applyGaussianBlur(src, kernelSize, sigma){
 /* ---------------- 图像分层核心 ---------------- */
 class ImageProcessor {
   constructor(){ this.cachedSource = null; this.cachedParams = null; this.cached = null; }
-  paramsKey(src, p){
+  paramsKey(src, p, context){
     return [src, p.finishType, p.maskColorName, p.isWhiteMask, p.goldThresh, p.silkThresh,
-      p.transThresh, p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim].join('|');
+      p.transThresh, p.copperDepth, p.enableBare, p.bareGrayMode, p.bareGrayMin, p.bareGrayMax, p.bareSim, context ? regionState.revision : 0].join('|');
   }
-  processImage(src, p, mutable){
+  processImage(src, p, mutable, context){
     if(!src) return { copper:null, mask:null, silk:null, bottom:null, composite:null };
-    const key = this.paramsKey(src, p);
+    const key = this.paramsKey(src, p, context);
     const makeOut = (base) => ({
       copper: mutable ? cloneImg(base.copper) : base.copper,
       mask: mutable ? cloneImg(base.mask) : base.mask,
@@ -811,35 +855,39 @@ class ImageProcessor {
     if(this.cachedSource === src && this.cachedParams === key){
       return makeOut(this.cached);
     }
-    const base = this.buildBaseLayers(src, p);
+    const base = this.buildBaseLayers(src, p, context);
     this.cachedSource = src; this.cachedParams = key; this.cached = base;
     return makeOut(base);
   }
-  buildBaseLayers(src, p){
+  buildBaseLayers(src, p, context){
     const w = src.width, h = src.height;
     const maskColor = getSolderMaskColor(p.maskColorName);
     const silkColor = getSilkColor(p.maskColorName);
     const metalColor = getMetalRenderColor(p.finishType);
     const bareColor = getBareColor();
-    const grayMinPct = clamp(Math.min(p.bareGrayMin, p.bareGrayMax), 0, 100);
-    const grayMaxPct = clamp(Math.max(p.bareGrayMin, p.bareGrayMax), 0, 100);
-    const simThresh = clamp(p.bareSim, 0, 100);
-    const effCopper = clamp(p.copperDepth, 0, 254);
+    const prepared = new Map();
+    const sets = context ? context.params : new Map([[0,p]]);
+    for(const [id,params] of sets) prepared.set(id,{...params,
+      grayMinPct:clamp(Math.min(params.bareGrayMin,params.bareGrayMax),0,100),
+      grayMaxPct:clamp(Math.max(params.bareGrayMin,params.bareGrayMax),0,100),
+      simThresh:clamp(params.bareSim,0,100),effCopper:clamp(params.copperDepth,0,254)});
     const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), bottom = makeImg(w,h), comp = makeImg(w,h);
     const sd = src.data, cd = copper.data, md = mask.data, sid = silk.data, bd = bottom.data, pd = comp.data;
     for(let y = 0; y < h; y++){
       const row = y*w;
       for(let x = 0; x < w; x++){
         const i = (row + x)*4;
+        const local = prepared.get(context?.owners[row+x] || 0);
+        const {grayMinPct,grayMaxPct,simThresh,effCopper} = local;
         const r = sd[i], g = sd[i+1], b = sd[i+2];
         const gray = qGrayRgb(r,g,b);
         const grayPct = Math.round(gray*100/255);
-        const isMetalPx = isMetal(r,g,b, p.finishType, p.goldThresh);
-        const silkPx = !isMetalPx && (p.isWhiteMask ? (gray < (255 - p.silkThresh)) : (gray > p.silkThresh));
+        const isMetalPx = isMetal(r,g,b, p.finishType, local.goldThresh);
+        const silkPx = !isMetalPx && (p.isWhiteMask ? (gray < (255 - local.silkThresh)) : (gray > local.silkThresh));
         let copperUnderMask = !isMetalPx && !silkPx && (p.isWhiteMask ? (gray < effCopper) : (gray > effCopper));
         let barePx = false;
-        if(p.enableBare && !isMetalPx){
-          if(p.bareGrayMode) barePx = (grayPct >= grayMinPct && grayPct <= grayMaxPct);
+        if(local.enableBare && !isMetalPx){
+          if(local.bareGrayMode) barePx = (grayPct >= grayMinPct && grayPct <= grayMaxPct);
           else barePx = colorSimilarityPercent({r,g,b}, bareColor) >= simThresh;
         }
         if(barePx) copperUnderMask = false;
@@ -849,7 +897,7 @@ class ImageProcessor {
         md[i] = md[i+1] = md[i+2] = maskOpen ? 255 : 0; md[i+3] = 255;
         sid[i] = sid[i+1] = sid[i+2] = (silkPx && !barePx) ? 255 : 0; sid[i+3] = 255;
         // 安装版语义：白色是开窗透光区，后续生产图会统一反色导出。
-        bd[i] = bd[i+1] = bd[i+2] = gray > p.transThresh ? 255 : 0; bd[i+3] = 255;
+        bd[i] = bd[i+1] = bd[i+2] = gray > local.transThresh ? 255 : 0; bd[i+3] = 255;
 
         let pr = { r:40, g:35, b:25 };
         if(isMetalPx) pr = metalColor;
@@ -1115,23 +1163,34 @@ function gaussianBlurGray(src, w, h, radius){
   }
   return out;
 }
-function processGrayLayers(src, p){
-  const w = src.width, h = src.height, sd = src.data;
-  let lumas = new Float32Array(w*h);
-  for(let i = 0, px = 0; i < sd.length; i += 4, px++){
-    // 与上传版本一致：近透明像素归为白色，避免其被误分到丝印层。
-    lumas[px] = sd[i+3] < 30 ? 255 : 0.299*sd[i] + 0.587*sd[i+1] + 0.114*sd[i+2];
+const grayLumaCache = {source:null,base:null,radius:0,blurred:null};
+function grayLumas(src,radius){
+  if(grayLumaCache.source!==src){
+    const d=src.data,base=new Float32Array(src.width*src.height);
+    for(let i=0,px=0;i<d.length;i+=4,px++)base[px]=d[i+3]<30 ? 255 : .299*d[i]+.587*d[i+1]+.114*d[i+2];
+    Object.assign(grayLumaCache,{source:src,base,radius:0,blurred:null});
   }
-  if(p.blurRadius > 0) lumas = gaussianBlurGray(lumas, w, h, p.blurRadius);
-
-  const copper = makeImg(w,h), mask = makeImg(w,h), silk = makeImg(w,h), composite = makeImg(w,h);
+  if(radius<=0)return grayLumaCache.base;
+  if(!grayLumaCache.blurred || grayLumaCache.radius!==radius){
+    grayLumaCache.radius=radius;
+    grayLumaCache.blurred=gaussianBlurGray(grayLumaCache.base,src.width,src.height,radius);
+  }
+  return grayLumaCache.blurred;
+}
+function processGrayLayers(src, p, target, owners, ownerId, bounds){
+  const w = src.width, h = src.height, sd = src.data;
+  const lumas = grayLumas(src,p.blurRadius);
+  const {copper,mask,silk,composite} = target || {copper:makeImg(w,h),mask:makeImg(w,h),silk:makeImg(w,h),composite:makeImg(w,h)};
   const cd = copper.data, md = mask.data, sid = silk.data, pd = composite.data;
   const t1 = clamp(p.silkThreshold, 0, 255), t2 = clamp(p.maskThreshold, 0, 255);
   // 原页面用 parseInt 读取该滑块；这里保留其整数像素半径语义。
   const radius = clamp(Math.trunc(p.thickRadius), 0, 12);
   const mid = grayPreviewColor(p.previewMaskId);
-  for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+  const area=bounds || {x:0,y:0,endX:w,endY:h};
+  for(let y = area.y; y < area.endY; y++) for(let x = area.x; x < area.endX; x++){
     const px = y*w + x, i = px*4;
+    if(owners && owners[px]!==ownerId)continue;
+    if(target){for(let k=0;k<4;k++){cd[i+k]=0;md[i+k]=0;sid[i+k]=0;}}
     let luma = lumas[px];
     if(radius > 0 && luma >= t1){
       let minLuma = luma;
@@ -1389,6 +1448,10 @@ function renderAtSize(tw, th, generation, authoritative){
 
   if(state.processingMode === 'gray'){
     const gray = processGrayLayers(renderOrigin, state.gray);
+    const context=regionRenderContext(renderOrigin,state.gray,'gray');
+    if(context) for(const item of [...regionState.items].sort((a,b)=>context.params.get(a.id).blurRadius-context.params.get(b.id).blurRadius)){
+      if(Object.values(item.offsets.gray).some(value=>value!==0)) processGrayLayers(renderOrigin,context.params.get(item.id),gray,context.owners,item.id,context.bounds.get(item.id));
+    }
     const layers = { Top_Copper:gray.copper, Top_Mask:gray.mask, Top_Silk:gray.silk };
     state.composite = gray.composite;
     state.previewLayers = layers;
@@ -1414,57 +1477,23 @@ function renderAtSize(tw, th, generation, authoritative){
   const transThresh = sliderVal('#sliderTrans');
   const copperDepth = sliderVal('#sliderCopper');
 
-  let edgeMask = null;
-  if(masterState.edge){
-    edgeMask = edgeSharpener.buildEdgeMaskForImage(
-      renderOrigin, edgeMode,
-      sliderVal('#sliderEdgeThresh'), sliderVal('#sliderEdgeThreshMax'),
-      state.prefilter.enabled, state.prefilter.kernel, state.prefilter.sigma);
-  }
-
   const p = {
-    finishType, maskColorName, isWhiteMask,
-    goldThresh, silkThresh, transThresh, copperDepth,
-    enableBare, bareGrayMode,
-    bareGrayMin: sliderVal('#sliderBareA'), bareGrayMax: sliderVal('#sliderBareB'), bareSim: sliderVal('#sliderBareSim')
+    finishType,maskColorName,isWhiteMask,goldThresh,silkThresh,transThresh,copperDepth,
+    enableBare,bareGrayMode,bareGrayMin:sliderVal('#sliderBareA'),bareGrayMax:sliderVal('#sliderBareB'),bareSim:sliderVal('#sliderBareSim'),
+    edgeMin:sliderVal('#sliderEdgeThresh'),edgeMax:sliderVal('#sliderEdgeThreshMax')
   };
-  const mutableLayers = !!edgeMask;
-  let { copper, mask, silk, bottom, composite } = imageProcessor.processImage(renderOrigin, p, mutableLayers);
-
-  if(edgeMask){
-    const w = Math.min(edgeMask.w, copper.width), h = Math.min(edgeMask.h, copper.height);
-    const silkColor = getSilkColor(maskColorName);
-    const cd = copper.data, md = mask.data, sid = silk.data, pd = composite.data, em = edgeMask.data;
-    if(useMetalEdge){
-      const mr = metalEdgeColor.r, mg = metalEdgeColor.g, mb = metalEdgeColor.b;
-      const maskColor = getSolderMaskColor(maskColorName);
-      const pmLight = lighter(maskColor, 135);
-      const expose = el('#chkExposeMetal').checked;
-      for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
-        const ei = y*w + x;
-        if(em[ei] > 0){
-          const i = ei*4;
-          cd[i]=cd[i+1]=cd[i+2]=255;
-          if(expose){
-            sid[i]=sid[i+1]=sid[i+2]=0;
-            md[i]=md[i+1]=md[i+2]=255;
-            pd[i]=mr; pd[i+1]=mg; pd[i+2]=mb;
-          } else {
-            const blended = blendColor({r:pd[i], g:pd[i+1], b:pd[i+2]}, pmLight, 170);
-            pd[i]=blended.r; pd[i+1]=blended.g; pd[i+2]=blended.b;
-          }
-        }
-      }
-    } else {
-      const sr = silkColor.r, sg = silkColor.g, sb = silkColor.b;
-      for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
-        const ei = y*w + x;
-        if(em[ei] > 0){
-          const i = ei*4;
-          sid[i]=sid[i+1]=sid[i+2]=255;
-          pd[i]=sr; pd[i+1]=sg; pd[i+2]=sb;
-        }
-      }
+  const context=regionRenderContext(renderOrigin,p,'color');
+  let {copper,mask,silk,bottom,composite}=imageProcessor.processImage(renderOrigin,p,masterState.edge,context);
+  if(masterState.edge){
+    const groups=new Map();
+    for(const [id,params] of (context ? context.params : new Map([[0,p]]))){
+      const key=params.edgeMin+'|'+params.edgeMax;
+      if(!groups.has(key))groups.set(key,{params,ids:new Set()});groups.get(key).ids.add(id);
+    }
+    for(const {params,ids} of groups.values()){
+      const edgeMask=edgeSharpener.buildEdgeMaskForImage(renderOrigin,edgeMode,params.edgeMin,params.edgeMax,
+        state.prefilter.enabled,state.prefilter.kernel,state.prefilter.sigma);
+      applyRegionEdges({copper,mask,silk,composite},edgeMask,context?.owners,ids,useMetalEdge,metalEdgeColor,maskColorName);
     }
   }
 
@@ -1526,6 +1555,11 @@ function transitionSegmentedSelection(buttons, nextButton){
 }
 
 function setProcessingMode(mode, shouldRender){
+  cancelRegionGesture();
+  if(state.processingMode!==mode){
+    imageProcessor.cachedSource=null;imageProcessor.cachedParams=null;imageProcessor.cached=null;
+    Object.assign(grayLumaCache,{source:null,base:null,radius:0,blurred:null});edgeSharpener.reset();
+  }
   state.processingMode = mode === 'gray' ? 'gray' : 'color';
   const isGray = state.processingMode === 'gray';
   if(isGray) state.light.pendingStart = null;
@@ -1540,11 +1574,13 @@ function setProcessingMode(mode, shouldRender){
   const nextButton = Array.from(modeButtons).find(btn => btn.dataset.processingMode === state.processingMode);
   if(shouldRender && nextButton) transitionSegmentedSelection(modeButtons, nextButton);
   else modeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.processingMode === state.processingMode));
+  refreshRegionSliders();
   if(shouldRender && state.origin) updateProcess();
   schedulePreviewResize();
 }
 
 function setViewMode(mode){
+  if(mode!=='overlay' && regionState.tool!=='none'){cancelRegionGesture();regionState.tool='none';refreshRegionUI();}
   state.viewMode = ['overlay', 'split', 'quad'].includes(mode) ? mode : 'overlay';
   const isQuad = state.viewMode === 'quad';
   el('#compositeWrap').hidden = isQuad;
@@ -1558,12 +1594,14 @@ function setViewMode(mode){
 }
 
 function setGroupOpen(groupId, open, withMaster){
+  if(groupId==='groupRegions' && !open){cancelRegionGesture();regionState.tool='none';refreshRegionUI();}
   const g = el('#'+groupId);
   if(open) g.classList.add('open'); else g.classList.remove('open');
   if(withMaster){
     const k = g.getAttribute('data-master');
     if(k) masterState[k] = open;
   }
+  refreshRegionSliders();
 }
 
 /* ---------------- 预览画布 ---------------- */
@@ -1655,6 +1693,7 @@ function renderPreviewCanvas(st, canvasEl, view, isComposite){
   const rect = calcPreviewRect(cw, ch, st.img.width, st.img.height, view.zoom, view.pan);
   ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(st.srcCanvas, rect.x, rect.y, rect.w, rect.h);
+  drawRegionOverlay(ctx,rect);
 }
 function refreshPreviews(){
   if(state.composite){ setPreviewImage(previewStates.composite, state.composite); el('#compositePlaceholder').style.display = 'none'; }
@@ -1813,7 +1852,7 @@ function attachQuadPreviewInteraction(key){
 function attachLightPlacement(canvasSelector, isQuadCanvas){
   const canvas = el(canvasSelector);
   canvas.addEventListener('pointerdown', function(e){
-    if(e.button !== 0 || state.processingMode !== 'color' || !masterState.light || !state.origin) return;
+    if(regionState.tool!=='none' || e.button !== 0 || state.processingMode !== 'color' || !masterState.light || !state.origin) return;
     const st = previewStates.composite;
     if(!st.img) return;
     const view = isQuadCanvas ? quadCamera : (state.viewMode === 'split' ? splitCamera : st);
@@ -1841,6 +1880,440 @@ function attachLightPlacement(canvasSelector, isQuadCanvas){
 }
 
 /* ---------------- 滑块创建 ---------------- */
+const REGION_PARAMETERS = {
+  sliderGold:{mode:'color',key:'goldThresh'}, sliderSilk:{mode:'color',key:'silkThresh'},
+  sliderTrans:{mode:'color',key:'transThresh'}, sliderCopper:{mode:'color',key:'copperDepth'},
+  sliderBareA:{mode:'color',key:'bareGrayMin'}, sliderBareB:{mode:'color',key:'bareGrayMax'},
+  sliderBareSim:{mode:'color',key:'bareSim'}, sliderEdgeThresh:{mode:'color',key:'edgeMin'},
+  sliderEdgeThreshMax:{mode:'color',key:'edgeMax'},
+  sliderGraySilk:{mode:'gray',key:'silkThreshold'}, sliderGrayMask:{mode:'gray',key:'maskThreshold'},
+  sliderGrayThick:{mode:'gray',key:'thickRadius'}, sliderGrayBlur:{mode:'gray',key:'blurRadius'}
+};
+const regionState = {items:[],selected:0,nextId:1,revision:0,maskRevision:0,tool:'none',highlight:true,
+  gesture:null,undo:[],redo:[],sliderBefore:null,ownerCache:null,previewOwnerCache:null,overlayCache:null};
+function selectedRegion(){ return regionState.items.find(item => item.id === regionState.selected); }
+for(const [language,words] of Object.entries({
+  'zh-CN':['区域选择/编辑','全局','正在调整','选择','矩形','套索','选区操作','新增区域','增选','减选','显示选区高光','重命名此选区','删除区域','重置局部调整','复制局部调整至','区域 {id}','没有可用的选区像素'],
+  'zh-TW':['區域選擇/編輯','全域','正在調整','選擇','矩形','套索','選區操作','新增區域','增選','減選','顯示選區高光','重新命名此選區','刪除區域','重置局部調整','複製局部調整至','區域 {id}','沒有可用的選區像素'],
+  en:['Region selection/editing','Global','Editing','Select','Rectangle','Lasso','Selection operation','New region','Add','Subtract','Show selection highlight','Rename this selection','Delete region','Reset local adjustments','Copy local adjustments to','Region {id}','No available selection pixels'],
+  ja:['領域選択/編集','全体','編集中','選択','矩形','投げ縄','選択操作','新しい領域','追加','除外','選択範囲を表示','この選択範囲の名前を変更','領域を削除','局所調整をリセット','局所調整のコピー先','領域 {id}','選択可能なピクセルがありません']
+})){
+  ['regionEditor','regionGlobal','regionEditing','regionSelect','regionRect','regionLasso','regionOperation','regionNew','regionAdd','regionSubtract','regionShowHighlight','regionRename','regionDelete','regionClear','regionCopy','regionDefaultName','regionEmptySelection']
+    .forEach((key,index)=>TRANSLATIONS[language][key]=words[index]);
+}
+for(const [language,text] of Object.entries({'zh-CN':'重做','zh-TW':'重做',en:'Redo',ja:'やり直し'}))TRANSLATIONS[language].regionRedoLabel=text;
+for(const [language,text] of Object.entries({'zh-CN':'区域参数','zh-TW':'區域參數',en:'Region parameters',ja:'領域パラメータ'}))TRANSLATIONS[language].regionParametersTitle=text;
+for(const [language,words] of Object.entries({
+  'zh-CN':['是否删除区域选择并将参数重置为全局？','是','否'],
+  'zh-TW':['是否刪除區域選擇並將參數重置為全域？','是','否'],
+  en:['Delete this region selection and restore global parameters?','Yes','No'],
+  ja:['この領域選択を削除し、パラメータを全体の設定に戻しますか？','はい','いいえ']
+}))['regionDeleteConfirm','regionYes','regionNo'].forEach((key,index)=>TRANSLATIONS[language][key]=words[index]);
+function regionRenderContext(src,base,mode){
+  if(!regionState.items.some(item=>Object.values(item.offsets[mode]).some(value=>value!==0)))return null;
+  const params=new Map([[0,base]]),bounds=new Map();
+  for(const item of regionState.items){
+    params.set(item.id,regionParameters(base,item,mode));
+    let x=state.origin.width,endX=0;for(const span of item.spans){x=Math.min(x,span[1]);endX=Math.max(endX,span[2]);}
+    bounds.set(item.id,{x:Math.max(0,Math.floor(x*src.width/state.origin.width)-1),
+      y:Math.max(0,Math.floor(item.spans[0][0]*src.height/state.origin.height)-1),
+      endX:Math.min(src.width,Math.ceil(endX*src.width/state.origin.width)+1),
+      endY:Math.min(src.height,Math.ceil((item.spans[item.spans.length-1][0]+1)*src.height/state.origin.height)+1)});
+  }
+  return {owners:regionOwners(src.width,src.height),params,bounds};
+}
+function applyRegionEdges(images,edgeMask,owners,ids,useMetal,metalColor,maskName){
+  if(!edgeMask)return;
+  const cd=images.copper.data,md=images.mask.data,sid=images.silk.data,pd=images.composite.data;
+  const silkColor=getSilkColor(maskName),pmLight=lighter(getSolderMaskColor(maskName),135),expose=el('#chkExposeMetal').checked;
+  // 描边在完整原图上下文中计算；写入时才限制到区域，避免选区边界产生轮廓。
+  for(let px=0;px<edgeMask.data.length;px++){
+    if(!edgeMask.data[px] || !ids.has(owners?.[px] || 0))continue;
+    const i=px*4;
+    if(useMetal){
+      cd[i]=cd[i+1]=cd[i+2]=255;
+      if(expose){sid[i]=sid[i+1]=sid[i+2]=0;md[i]=md[i+1]=md[i+2]=255;pd[i]=metalColor.r;pd[i+1]=metalColor.g;pd[i+2]=metalColor.b;}
+      else {const blended=blendColor({r:pd[i],g:pd[i+1],b:pd[i+2]},pmLight,170);pd[i]=blended.r;pd[i+1]=blended.g;pd[i+2]=blended.b;}
+    } else {sid[i]=sid[i+1]=sid[i+2]=255;pd[i]=silkColor.r;pd[i+1]=silkColor.g;pd[i+2]=silkColor.b;}
+  }
+}
+function regionEffectiveValue(id, region){
+  const def = REGION_PARAMETERS[id], input = el('#'+id+' input');
+  const base = Number(input.value), delta = region?.offsets[def.mode][def.key] || 0;
+  // 只钳位实际值，保留偏移；全局回调后恢复原来的区域差异。
+  const value = clamp(base+delta, Number(input.min), Number(input.max));
+  const step = Number(input.step) || 1;
+  return Number((Number(input.min)+Math.round((value-Number(input.min))/step)*step).toFixed(6));
+}
+function regionParameters(base, region, mode){
+  const p = {...base};
+  for(const [id, def] of Object.entries(REGION_PARAMETERS)) if(def.mode === mode) p[def.key] = regionEffectiveValue(id, region);
+  return p;
+}
+function captureRegionSnapshot(){
+  const globals = {};
+  for(const id of Object.keys(REGION_PARAMETERS)) globals[id] = sliderVal('#'+id);
+  // 选区段在修改范围时整体替换，历史可共享旧段，避免每一步复制整幅掩膜。
+  return {globals,selected:regionState.selected,items:regionState.items.map(item => ({...item,
+    offsets:{gray:{...item.offsets.gray},color:{...item.offsets.color}}}))};
+}
+function recordRegionChange(before){
+  if(JSON.stringify(before) === JSON.stringify(captureRegionSnapshot())) return;
+  regionState.undo.push(before); if(regionState.undo.length > 50) regionState.undo.shift();
+  regionState.redo = []; refreshRegionUI();
+}
+function touchRegionMasks(){
+  regionState.revision++; regionState.maskRevision++;
+  regionState.ownerCache = regionState.previewOwnerCache = regionState.overlayCache = null;
+}
+function restoreRegionSnapshot(snapshot){
+  cancelRegionGesture();
+  regionState.items = snapshot.items.map(item => ({...item,offsets:{gray:{...item.offsets.gray},color:{...item.offsets.color}}}));
+  regionState.selected = snapshot.selected;
+  for(const [id,value] of Object.entries(snapshot.globals)){
+    setSlider('#'+id,value);
+    const def = REGION_PARAMETERS[id]; if(def.mode === 'gray') state.gray[def.key] = value;
+  }
+  touchRegionMasks(); refreshRegionUI(); updateProcess();
+}
+function undoRegionChange(redo){
+  const from = redo ? regionState.redo : regionState.undo, to = redo ? regionState.undo : regionState.redo;
+  if(!from.length) return;
+  to.push(captureRegionSnapshot()); restoreRegionSnapshot(from.pop());
+}
+function resetRegions(){
+  cancelRegionGesture(); regionState.items=[]; regionState.selected=0; regionState.nextId=1;
+  regionState.undo=[]; regionState.redo=[]; regionState.sliderBefore=null; regionState.tool='none';
+  touchRegionMasks(); refreshRegionUI();
+  Object.assign(grayLumaCache,{source:null,base:null,radius:0,blurred:null});
+}
+function regionOwners(w,h){
+  if(!regionState.items.length || !state.origin) return null;
+  const sw=state.origin.width, sh=state.origin.height;
+  if(!regionState.ownerCache){
+    const owners = new Uint32Array(sw*sh);
+    for(const item of regionState.items) for(const [y,x,end] of item.spans) owners.fill(item.id,y*sw+x,y*sw+end);
+    regionState.ownerCache = {w:sw,h:sh,data:owners};
+  }
+  if(w===sw && h===sh) return regionState.ownerCache.data;
+  const cached=regionState.previewOwnerCache;
+  if(cached && cached.w===w && cached.h===h) return cached.data;
+  // 预览用像素中心最近邻采样，禁止插值出重叠归属。
+  const data=new Uint32Array(w*h), source=regionState.ownerCache.data;
+  for(let y=0;y<h;y++){
+    const sy=Math.min(sh-1,Math.floor((y+.5)*sh/h));
+    for(let x=0;x<w;x++) data[y*w+x]=source[sy*sw+Math.min(sw-1,Math.floor((x+.5)*sw/w))];
+  }
+  regionState.previewOwnerCache={w,h,data}; return data;
+}
+function serializeRegions(){
+  if(!regionState.items.length) return undefined;
+  return {width:state.origin.width,height:state.origin.height,items:regionState.items.map(item => ({
+    id:item.id,name:item.name,offsets:item.offsets,spans:item.spans}))};
+}
+function validateRegions(data,image){
+  if(data === undefined) return [];
+  if(!data || data.width!==image.width || data.height!==image.height || !Array.isArray(data.items)) throw new ProjectArchiveError('projectArchiveInvalid');
+  const owners=new Uint32Array(image.width*image.height), ids=new Set();
+  return data.items.map(item => {
+    if(!item || !Number.isSafeInteger(item.id) || item.id<=0 || item.id>0xffffffff || ids.has(item.id)
+      || typeof item.name!=='string' || !item.name.trim() || item.name.length>100
+      || !item.offsets || !item.offsets.gray || !item.offsets.color || Array.isArray(item.offsets.gray) || Array.isArray(item.offsets.color)
+      || typeof item.offsets.gray!=='object' || typeof item.offsets.color!=='object' || !Array.isArray(item.spans) || !item.spans.length) throw new ProjectArchiveError('projectArchiveInvalid');
+    ids.add(item.id);
+    const offsets={gray:{},color:{}};
+    for(const mode of ['gray','color']) for(const [key,value] of Object.entries(item.offsets[mode])){
+      const pair=Object.entries(REGION_PARAMETERS).find(([,def])=>def.mode===mode && def.key===key);
+      const input=pair && el('#'+pair[0]+' input');
+      if(!input || !Number.isFinite(value) || Math.abs(value)>Number(input.max)-Number(input.min)) throw new ProjectArchiveError('projectArchiveInvalid');
+      offsets[mode][key]=value;
+    }
+    let previousY=-1,previousEnd=0;
+    const spans=item.spans.map(span => {
+      if(!Array.isArray(span) || span.length!==3 || !span.every(Number.isSafeInteger)) throw new ProjectArchiveError('projectArchiveInvalid');
+      const [y,x,end]=span;
+      if(y<0 || y>=image.height || x<0 || end>image.width || x>=end || y<previousY || (y===previousY && x<previousEnd)) throw new ProjectArchiveError('projectArchiveInvalid');
+      for(let px=y*image.width+x;px<y*image.width+end;px++){
+        if(owners[px]) throw new ProjectArchiveError('projectArchiveInvalid'); owners[px]=item.id;
+      }
+      previousY=y;previousEnd=end; return [y,x,end];
+    });
+    return {id:item.id,name:item.name,offsets,spans};
+  });
+}
+function selectRegion(id){
+  cancelRegionGesture(); regionState.selected=id; refreshRegionUI(); renderAllPreviews();
+}
+function refreshRegionSliders(){
+  const item=selectedRegion();
+  const regionalControls=el('#regionalControls');
+  const globalGroup=el(state.processingMode==='gray' ? '#groupGray' : '#groupBasic');
+  // 两块参数保持独立，模式切换时只移动区域块，拖动过程中不重建控件。
+  if(regionalControls.previousElementSibling!==globalGroup)globalGroup.after(regionalControls);
+  regionalControls.hidden=!item;
+  const separator=currentLanguage==='en' ? ': ' : '：';
+  for(const id of ['globalColorBasicTitle','globalGrayBasicTitle'])el('#'+id).textContent=t('basicParameters')+separator+t('regionGlobal');
+  el('#regionBasicTitle').textContent=t('regionParametersTitle')+(item ? separator+item.name : '');
+  el('#regionBareSliders').hidden=state.processingMode!=='color' || !masterState.bare;
+  el('#regionEdgeSliders').hidden=state.processingMode!=='color' || !masterState.edge;
+  for(const [id,def] of Object.entries(REGION_PARAMETERS)){
+    const host=el('#'+id), local=el('#regionLocal_'+id); if(!local) continue;
+    local.hidden=!item || def.mode!==state.processingMode; if(!item) continue;
+    const input=host.querySelector('input'), regional=local.querySelector('input');
+    regional.value=regionEffectiveValue(id,item);
+    const title=t(input.closest('.ctl').querySelector('.lab').dataset.i18nSlider);
+    local.querySelector('.lab').textContent=title+': '+regional.value;
+    regional.setAttribute('aria-label',title+' · '+item.name);
+    const fraction=(Number(input.value)-Number(input.min))/(Number(input.max)-Number(input.min));
+    local.querySelector('.region-baseline').style.left='calc(8px + (100% - 16px) * '+fraction+')';
+  }
+}
+function refreshRegionUI(){
+  const list=el('#regionList'); if(!list) return;
+  list.replaceChildren();
+  for(const item of [{id:0,name:t('regionGlobal')},...regionState.items]){
+    const button=document.createElement('button');button.type='button';button.className='btn drawing-action-btn';
+    const name=document.createElement('span');name.textContent=item.name;button.appendChild(name);button.title=item.name;
+    button.classList.toggle('action-selected',item.id===regionState.selected);
+    button.setAttribute('aria-pressed',String(item.id===regionState.selected));button.onclick=()=>selectRegion(item.id);
+    attachFortniteHoverEffect(button); list.appendChild(button);
+  }
+  const selected=!!selectedRegion(), hasImage=!!state.origin;
+  for(const id of ['regionRename','regionDelete','regionClear']) el('#'+id).disabled=!selected;
+  el('#regionCopy').disabled=!selected || regionState.items.length<2;
+  el('#regionUndo').disabled=!regionState.undo.length;el('#regionRedo').disabled=!regionState.redo.length;
+  el('#regionOperation').querySelectorAll('option').forEach(option=>option.disabled=option.value!=='new' && !selected);
+  if(!selected) el('#regionOperation').value='new';
+  el('#regionBrushControl').hidden=regionState.tool!=='brush';
+  document.querySelectorAll('[data-region-tool]').forEach(button=>{
+    button.disabled=!hasImage;button.classList.toggle('active',button.dataset.regionTool===regionState.tool);
+  });
+  el('#canvasComposite').style.cursor=regionState.tool==='none' ? '' : 'crosshair';
+  refreshRegionSliders();
+}
+function attachRegionSlider(id,globalInput,titleKey){
+  if(!REGION_PARAMETERS[id]) return;
+  const label=document.createElement('label');label.className='ctl region-local';label.id='regionLocal_'+id;label.hidden=true;
+  const text=document.createElement('span');text.className='lab';label.appendChild(text);
+  const track=document.createElement('div');track.className='region-slider-track';
+  const input=document.createElement('input');input.type='range';input.min=globalInput.min;input.max=globalInput.max;input.step=globalInput.step;
+  const marker=document.createElement('span');marker.className='region-baseline';marker.setAttribute('aria-hidden','true');
+  const section=id.startsWith('sliderBare') ? '#regionBareSliders' : (id.startsWith('sliderEdge') ? '#regionEdgeSliders' : '#regionBasicSliders');
+  track.append(input,marker);label.appendChild(track);el(section).appendChild(label);
+  input.addEventListener('pointerdown',()=>{
+    regionState.sliderBefore=captureRegionSnapshot();draggingSlider=true;
+    if(state.origin) prcSliderPressed({w:state.origin.width,h:state.origin.height});
+  });
+  input.addEventListener('input',()=>{
+    const item=selectedRegion();if(!item) return;
+    if(!regionState.sliderBefore) regionState.sliderBefore=captureRegionSnapshot();
+    const def=REGION_PARAMETERS[id];item.offsets[def.mode][def.key]=Number((Number(input.value)-Number(globalInput.value)).toFixed(6));
+    regionState.revision++;refreshRegionSliders();
+    if(draggingSlider && state.origin) prcSliderValueChanged({w:state.origin.width,h:state.origin.height});else updateProcess();
+  });
+  const finish=()=>finishRegionSlider();
+  input.addEventListener('change',finish);input.addEventListener('pointerup',finish);input.addEventListener('pointercancel',finish);
+  input.setAttribute('aria-label',t(titleKey));
+}
+function finishRegionSlider(){
+  if(regionState.sliderBefore){ const before=regionState.sliderBefore;regionState.sliderBefore=null;recordRegionChange(before); }
+  if(draggingSlider){draggingSlider=false;if(state.origin) prcSliderReleased({w:state.origin.width,h:state.origin.height});}
+}
+function regionPoint(event,canvas,view,allowOutside){
+  if(!state.origin) return null;
+  const bounds=canvas.getBoundingClientRect();
+  const rect=calcPreviewRect(canvas.width,canvas.height,state.origin.width,state.origin.height,view.zoom,view.pan);
+  const x=(event.clientX-bounds.left)*canvas.width/bounds.width,y=(event.clientY-bounds.top)*canvas.height/bounds.height;
+  if(!rect.w || !rect.h || (!allowOutside && (x<rect.x || y<rect.y || x>=rect.x+rect.w || y>=rect.y+rect.h))) return null;
+  return {x:clamp((x-rect.x)/rect.w*state.origin.width,0,state.origin.width-.001),
+    y:clamp((y-rect.y)/rect.h*state.origin.height,0,state.origin.height-.001)};
+}
+function rasterizeRegionGesture(gesture,scale,clip){
+  const points=gesture.points,pad=gesture.tool==='brush' ? gesture.size/2+1 : 1;
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const p of points){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
+  const x=Math.max(0,Math.floor(minX-pad),clip ? clip.x : 0),y=Math.max(0,Math.floor(minY-pad),clip ? clip.y : 0);
+  const w=Math.min(state.origin.width,Math.ceil(maxX+pad),clip ? clip.x+clip.w : state.origin.width)-x;
+  const h=Math.min(state.origin.height,Math.ceil(maxY+pad),clip ? clip.y+clip.h : state.origin.height)-y;
+  if(w<=0 || h<=0)return null;
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.ceil(w*scale));canvas.height=Math.max(1,Math.ceil(h*scale));
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.scale(scale,scale);ctx.translate(-x,-y);ctx.fillStyle='#fff';ctx.strokeStyle='#fff';
+  if(gesture.tool==='rect'){
+    const a=points[0],b=points[points.length-1];ctx.fillRect(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(a.x-b.x),Math.abs(a.y-b.y));
+  } else if(gesture.tool==='lasso'){
+    ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(const p of points.slice(1)) ctx.lineTo(p.x,p.y);ctx.closePath();ctx.fill();
+  } else {
+    ctx.lineWidth=gesture.size;ctx.lineCap='round';ctx.lineJoin='round';
+    if(points.length===1){ctx.beginPath();ctx.arc(points[0].x,points[0].y,gesture.size/2,0,Math.PI*2);ctx.fill();}
+    else {ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(const p of points.slice(1)) ctx.lineTo(p.x,p.y);ctx.stroke();}
+  }
+  return {x,y,w,h,canvas,data:ctx.getImageData(0,0,canvas.width,canvas.height).data,scale};
+}
+function cancelRegionGesture(){
+  const gesture=regionState.gesture;regionState.gesture=null;regionState.overlayCache=null;
+  if(gesture && el('#canvasComposite').hasPointerCapture(gesture.pointerId)) el('#canvasComposite').releasePointerCapture(gesture.pointerId);
+}
+function finishRegionGesture(cancel){
+  const gesture=regionState.gesture;if(!gesture) return;
+  if(cancel){cancelRegionGesture();renderAllPreviews();return;}
+  const before=captureRegionSnapshot(), sw=state.origin.width,sh=state.origin.height;
+  const raster=rasterizeRegionGesture(gesture,1), prior=regionOwners(sw,sh), owners=prior ? prior.slice() : new Uint32Array(sw*sh);
+  let nextId=regionState.nextId>0xffffffff ? 1 : regionState.nextId;
+  const existingIds=new Set(regionState.items.map(item=>item.id));while(existingIds.has(nextId))nextId++;
+  const target=gesture.operation==='new' ? nextId : regionState.selected;
+  let changed=false;
+  for(let y=0;y<raster.canvas.height;y++) for(let x=0;x<raster.canvas.width;x++){
+    if(raster.data[(y*raster.canvas.width+x)*4+3]<128) continue;
+    const px=(y+raster.y)*sw+x+raster.x,owner=owners[px];
+    if(gesture.operation==='subtract'){if(owner===target){owners[px]=0;changed=true;}}
+    else if(owner===0){owners[px]=target;changed=true;}
+  }
+  cancelRegionGesture();
+  if(!changed){toast(t('regionEmptySelection'));renderAllPreviews();return;}
+  const spans=[];
+  for(let y=0;y<sh;y++){
+    let x=0;while(x<sw){if(owners[y*sw+x]!==target){x++;continue;}const start=x++;while(x<sw && owners[y*sw+x]===target)x++;spans.push([y,start,x]);}
+  }
+  if(gesture.operation==='new'){
+    regionState.items.push({id:target,name:t('regionDefaultName',{id:target}),spans,offsets:{gray:{},color:{}}});regionState.nextId=target+1;
+  } else {
+    const item=selectedRegion();if(spans.length) item.spans=spans;else regionState.items=regionState.items.filter(item=>item.id!==target);
+  }
+  regionState.selected=spans.length ? target : 0;
+  touchRegionMasks();recordRegionChange(before);refreshRegionUI();updateProcess();
+}
+function drawRegionOverlay(ctx,rect){
+  if(!state.origin || (!regionState.gesture && (!regionState.highlight || !selectedRegion()))) return;
+  if(rect.w<=0 || rect.h<=0)return;
+  const sw=state.origin.width,sh=state.origin.height;
+  // 高光按原图像素绘制；可见范围多取一圈，避免裁切处形成假边界。
+  const x0=clamp(Math.floor(-rect.x*sw/rect.w)-1,0,sw),y0=clamp(Math.floor(-rect.y*sh/rect.h)-1,0,sh);
+  const x1=clamp(Math.ceil((ctx.canvas.width-rect.x)*sw/rect.w)+1,0,sw);
+  const y1=clamp(Math.ceil((ctx.canvas.height-rect.y)*sh/rect.h)+1,0,sh);
+  const w=x1-x0,h=y1-y0;if(w<=0 || h<=0)return;
+  let cached=regionState.overlayCache;
+  if(!cached || cached.selected!==regionState.selected || cached.highlight!==regionState.highlight ||
+      cached.x!==x0 || cached.y!==y0 || cached.canvas.width!==w || cached.canvas.height!==h || regionState.gesture){
+    const owners=regionOwners(sw,sh), active=new Uint8Array(w*h),selected=regionState.selected;
+    if(regionState.highlight && selected)for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      if(owners?.[(y+y0)*sw+x+x0]===selected)active[y*w+x]=1;
+    }
+    const gesture=regionState.gesture;
+    if(gesture){
+      const raster=rasterizeRegionGesture(gesture,1,{x:x0,y:y0,w,h});
+      if(raster)for(let y=0;y<raster.canvas.height;y++)for(let x=0;x<raster.canvas.width;x++){
+        if(raster.data[(y*raster.canvas.width+x)*4+3]<128)continue;
+        const ox=raster.x+x-x0,oy=raster.y+y-y0;
+        const i=oy*w+ox, owner=owners?.[(oy+y0)*sw+ox+x0] || 0;
+        if(gesture.operation==='subtract'){if(owner===selected)active[i]=3;}
+        else if(!owner || (gesture.operation==='add' && owner===selected))active[i]=2;
+      }
+    }
+    const image=makeImg(w,h),d=image.data;
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      const px=y*w+x,type=active[px];if(!type)continue;
+      const edge=x===0 || y===0 || x===w-1 || y===h-1 || active[px-1]!==type || active[px+1]!==type || active[px-w]!==type || active[px+w]!==type;
+      const i=px*4;d[i]=type===3 ? 255 : 76;d[i+1]=type===3 ? 110 : 194;d[i+2]=type===3 ? 110 : 255;d[i+3]=edge ? 220 : (type===2 ? 75 : 42);
+    }
+    cached={selected,highlight:regionState.highlight,x:x0,y:y0,canvas:toCanvas(image)};
+    if(!gesture)regionState.overlayCache=cached;
+  }
+  ctx.save();ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(cached.canvas,rect.x+x0*rect.w/sw,rect.y+y0*rect.h/sh,w*rect.w/sw,h*rect.h/sh);ctx.restore();
+}
+function openRegionRename(){
+  const item=selectedRegion();if(!item)return;
+  showModal('<h3>'+t('regionRename')+'</h3><input class="region-name-input" id="regionName" maxlength="100"><div class="btns"><button type="button" class="btn" id="regionNameCancel">'+t('cancel')+'</button><button type="button" class="btn drawing-action-btn action-selected" id="regionNameSave">'+t('confirm')+'</button></div>');
+  const input=el('#regionName');input.value=item.name;input.focus();input.select();
+  el('#regionNameCancel').onclick=closeModal;
+  const save=()=>{const name=input.value.trim();if(!name)return;const before=captureRegionSnapshot();item.name=name;recordRegionChange(before);refreshRegionUI();closeModal();};
+  el('#regionNameSave').onclick=save;input.onkeydown=event=>{if(event.key==='Enter')save();if(event.key==='Escape')closeModal();};
+  attachFortniteHoverEffect(el('#regionNameSave'));
+}
+function openRegionCopy(){
+  const source=selectedRegion();if(!source)return;
+  showModal('<h3>'+t('regionCopy')+'</h3><div id="regionCopyTargets"></div><div class="btns"><button type="button" class="btn" id="regionCopyCancel">'+t('cancel')+'</button><button type="button" class="btn drawing-action-btn action-selected" id="regionCopySave">'+t('confirm')+'</button></div>');
+  for(const item of regionState.items.filter(item=>item.id!==source.id)){
+    const label=document.createElement('label');label.className='check';const input=document.createElement('input');input.type='checkbox';input.value=item.id;
+    const name=document.createElement('span');name.textContent=item.name;label.append(input,name);el('#regionCopyTargets').append(label);
+  }
+  el('#regionCopyCancel').onclick=closeModal;
+  el('#regionCopySave').onclick=()=>{
+    const ids=new Set([...el('#regionCopyTargets').querySelectorAll('input:checked')].map(input=>Number(input.value))),before=captureRegionSnapshot();
+    for(const item of regionState.items)if(ids.has(item.id))item.offsets[state.processingMode]={...source.offsets[state.processingMode]};
+    regionState.revision++;recordRegionChange(before);refreshRegionUI();closeModal();updateProcess();
+  };
+  attachFortniteHoverEffect(el('#regionCopySave'));
+}
+function openRegionDelete(){
+  const item=selectedRegion();if(!item)return;
+  showModal('<div id="regionDeleteConfirm"><h3>'+t('regionDelete')+'</h3><p>'+t('regionDeleteConfirm')+'</p><div class="btns"><button type="button" class="btn drawing-action-btn" id="regionDeleteYes">'+t('regionYes')+'</button><button type="button" class="btn drawing-action-btn action-selected" id="regionDeleteNo">'+t('regionNo')+'</button></div></div>');
+  el('#regionDeleteNo').onclick=closeModal;
+  el('#regionDeleteYes').onclick=()=>{
+    // 弹窗绑定打开时的区域，取消不修改状态或增加历史。
+    if(!regionState.items.some(region=>region.id===item.id)){closeModal();return;}
+    cancelRegionGesture();const before=captureRegionSnapshot();
+    regionState.items=regionState.items.filter(region=>region.id!==item.id);
+    if(regionState.selected===item.id)regionState.selected=0;
+    touchRegionMasks();recordRegionChange(before);refreshRegionUI();closeModal();updateProcess();
+  };
+  el('#regionDeleteConfirm').onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeModal();}};
+  for(const id of ['regionDeleteYes','regionDeleteNo'])attachFortniteHoverEffect(el('#'+id));
+  el('#regionDeleteNo').focus();
+}
+function initializeRegions(){
+  document.querySelectorAll('[data-region-tool]').forEach(button=>{
+    attachFortniteHoverEffect(button);button.onclick=()=>{
+      cancelRegionGesture();regionState.tool=regionState.tool===button.dataset.regionTool ? 'none' : button.dataset.regionTool;
+      if(regionState.tool!=='none'){state.light.pendingStart=null;setViewMode('overlay');}
+      refreshRegionUI();renderAllPreviews();
+    };
+  });
+  el('#regionOperation').onchange=()=>{cancelRegionGesture();renderAllPreviews();};
+  el('#regionHighlight').onchange=function(){regionState.highlight=this.checked;regionState.overlayCache=null;renderAllPreviews();};
+  el('#regionRename').onclick=openRegionRename;el('#regionCopy').onclick=openRegionCopy;
+  el('#regionDelete').onclick=openRegionDelete;
+  el('#regionClear').onclick=()=>{const item=selectedRegion();if(!item)return;const before=captureRegionSnapshot();item.offsets[state.processingMode]={};regionState.revision++;recordRegionChange(before);refreshRegionUI();updateProcess();};
+  el('#regionUndo').onclick=()=>undoRegionChange(false);el('#regionRedo').onclick=()=>undoRegionChange(true);
+  const canvas=el('#canvasComposite');
+  canvas.addEventListener('pointerdown',event=>{
+    if(event.button!==0 || !state.origin)return;
+    const view=state.viewMode==='split' ? splitCamera : previewStates.composite;
+    const point=regionPoint(event,canvas,view,false);if(!point)return;
+    if(regionState.tool==='none'){
+      if(masterState.light && state.processingMode==='color')return;
+      if(!el('#groupRegions').classList.contains('open'))return;
+      const owners=regionOwners(state.origin.width,state.origin.height);selectRegion(owners?.[Math.floor(point.y)*state.origin.width+Math.floor(point.x)] || 0);return;
+    }
+    const operation=el('#regionOperation').value;if(operation!=='new' && !selectedRegion())return;
+    regionState.gesture={tool:regionState.tool,operation,size:Number(el('#regionBrushSize').value),points:[point],pointerId:event.pointerId};
+    // 仅绘制工具接管左键，选择状态仍允许原有布灯；缩放和平移不被拦截。
+    canvas.setPointerCapture(event.pointerId);event.preventDefault();event.stopImmediatePropagation();renderAllPreviews();
+  },true);
+  canvas.addEventListener('pointermove',event=>{
+    const gesture=regionState.gesture;if(!gesture || gesture.pointerId!==event.pointerId)return;
+    const point=regionPoint(event,canvas,previewStates.composite,true);if(!point)return;
+    if(gesture.tool==='rect')gesture.points=[gesture.points[0],point];
+    else {const last=gesture.points[gesture.points.length-1];if(Math.hypot(last.x-point.x,last.y-point.y)<.5)return;gesture.points.push(point);}
+    renderAllPreviews();event.preventDefault();
+  });
+  canvas.addEventListener('pointerup',event=>{if(regionState.gesture?.pointerId===event.pointerId)finishRegionGesture(false);});
+  canvas.addEventListener('pointercancel',()=>finishRegionGesture(true));
+  const selectable=[...Object.entries(previewStates).filter(([key])=>key!=='composite').map(([,st])=>({canvas:el(st.canvas),st,view:()=>state.viewMode==='split' ? splitCamera : st})),
+    ...Object.keys(quadPreviewCanvases).map(key=>({canvas:el(quadPreviewCanvases[key]),st:previewStates[quadPreviewKey(key)],view:()=>quadCamera}))];
+  for(const surface of selectable)surface.canvas.addEventListener('pointerdown',event=>{
+    if(event.button!==0 || regionState.tool!=='none' || !surface.st.img || !el('#groupRegions').classList.contains('open'))return;
+    const point=regionPoint(event,surface.canvas,surface.view(),false);if(!point)return;
+    const owners=regionOwners(state.origin.width,state.origin.height);selectRegion(owners?.[Math.floor(point.y)*state.origin.width+Math.floor(point.x)] || 0);
+  });
+  window.addEventListener('keydown',event=>{
+    if(event.key==='Escape' && !el('#modalBack').classList.contains('show')){cancelRegionGesture();regionState.tool='none';refreshRegionUI();renderAllPreviews();}
+    if((event.ctrlKey || event.metaKey) && ['z','y'].includes(event.key.toLowerCase()) && !el('#modalBack').classList.contains('show') && !['INPUT','TEXTAREA','SELECT'].includes(event.target.tagName)){
+      event.preventDefault();undoRegionChange(event.key.toLowerCase()==='y' || event.shiftKey);
+    }
+  });
+  refreshRegionUI();
+}
 let draggingSlider = false;
 function createSlider(containerId, titleKey, min, max, def, step, onValueChange){
   const host = document.getElementById(containerId);
@@ -1851,31 +2324,42 @@ function createSlider(containerId, titleKey, min, max, def, step, onValueChange)
   labText.dataset.i18nSlider = titleKey;
   const input = document.createElement('input');
   input.type = 'range'; input.min = min; input.max = max; input.step = step || 1; input.value = def;
+  input._lastValue=Number(input.value);
   refreshSliderLabel(labText, input);
   lab.appendChild(labText); lab.appendChild(input);
   host.appendChild(lab);
+  attachRegionSlider(containerId,input,titleKey);
 
   function onInput(){
+    if(REGION_PARAMETERS[containerId] && !regionState.sliderBefore){
+      regionState.sliderBefore=captureRegionSnapshot();regionState.sliderBefore.globals[containerId]=input._lastValue;
+    }
     refreshSliderLabel(labText, input);
     if(onValueChange) onValueChange(parseFloat(input.value));
+    input._lastValue=Number(input.value);
+    refreshRegionSliders();
     if(!state.origin){ updateProcess(); }
     else if(draggingSlider){ prcSliderValueChanged({w:state.origin.width, h:state.origin.height}); }
     else { updateProcess(); }
   }
   input.addEventListener('input', onInput);
   input.addEventListener('pointerdown', function(){
+    if(REGION_PARAMETERS[containerId]) regionState.sliderBefore=captureRegionSnapshot();
     draggingSlider = true;
     if(state.origin) prcSliderPressed({w:state.origin.width, h:state.origin.height});
   });
   input.addEventListener('change', function(){
+    if(REGION_PARAMETERS[containerId]){ finishRegionSlider();return; }
     if(draggingSlider){
       draggingSlider = false;
       if(state.origin) prcSliderReleased({w:state.origin.width, h:state.origin.height});
     }
   });
   input.addEventListener('pointerup', function(){
+    if(REGION_PARAMETERS[containerId]) finishRegionSlider();
     /* change 事件负责结束；键盘/触控不会触发 change 前的手动标记 */
   });
+  input.addEventListener('pointercancel',()=>{if(REGION_PARAMETERS[containerId]) finishRegionSlider();});
   return input;
 }
 
@@ -1977,7 +2461,9 @@ function paintFoldOldestStroke(){
 }
 function replaceProjectOrigin(imageData, sourceCanvas){
   // 仅替换原图与相关缓存，分层参数、视图相机和灯条坐标保持不变。
+  if(state.origin && (state.origin.width!==imageData.width || state.origin.height!==imageData.height))resetRegions();
   state.origin = imageData; state.originCanvas = sourceCanvas;
+  Object.assign(grayLumaCache,{source:null,base:null,radius:0,blurred:null});
   state.fullResGeneration = -1; state._roCache = null;
   imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
   edgeSharpener.reset();
@@ -2436,6 +2922,7 @@ function importDecodedImage(img, rect){
       ctx.drawImage(img, rect.x, rect.y, rect.w, rect.h, 0, 0, lim.w, lim.h);
       state.origin = ctx.getImageData(0, 0, lim.w, lim.h);
       state.originCanvas = c;
+      resetRegions();
       state.fullResGeneration = -1;
       state._roCache = null;
       imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
@@ -2770,7 +3257,7 @@ function desktopControlsToPortable(controls){
 function buildNativeProjectArgs(){
   const controls = gatherControls(), experimental = projectExperimentalSettings(), strips = state.light.strips;
   return { schemaVersion:1, controls:portableControlsToDesktop(controls), experimental, ledStrips:portableStripsToDesktop(strips), imageFileName:'source.png',
-    portable:{ schemaVersion:4, controls, experimental, ledStrips:strips } };
+    portable:{ schemaVersion:5, controls, experimental, ledStrips:strips, regions:serializeRegions() } };
 }
 async function canvasPngBlob(canvas){
   return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new ProjectArchiveError('projectArchiveInvalid')), 'image/png'));
@@ -2842,6 +3329,7 @@ function setSlider(sel, v){
   if(!input) return;
   const lo = parseInt(input.min, 10), hi = parseInt(input.max, 10);
   input.value = clamp(v, lo, hi);
+  input._lastValue=Number(input.value);
   const lab = input.parentElement.querySelector('.lab');
   if(lab) refreshSliderLabel(lab, input);
 }
@@ -2891,15 +3379,20 @@ function decodeProjectImage(source){
   });
 }
 function applyImportedProject(project){
+  // 区域数据先校验，失败时原图、参数与当前选区均不变。
+  const regions=validateRegions(project.regions,project.image.origin);
   // 图片和全部参数已在此之前完成校验，以下一次性替换当前工程状态。
   state.origin = project.image.origin; state.originCanvas = project.image.canvas;
   state.fullResGeneration = -1; state._roCache = null;
   imageProcessor.cachedSource = null; imageProcessor.cachedParams = null; imageProcessor.cached = null;
   edgeSharpener.reset();
+  resetRegions();
+  regionState.items=regions;regionState.nextId=regions.reduce((max,item)=>Math.max(max,item.id+1),1);
+  touchRegionMasks();
   restoreControls(project.controls || {});
   applyExperimentalSettings(project.experimental);
   restoreLightStrips(project.ledStrips);
-  setExportControlsEnabled(true); syncImportDrawingButton(); syncPreviewImageMeta(); updateProcess();
+  setExportControlsEnabled(true); syncImportDrawingButton(); syncPreviewImageMeta(); refreshRegionUI(); updateProcess();
 }
 function archiveImageEntry(files, imageFileName){
   const requested = String(imageFileName || '').toLowerCase();
@@ -2926,14 +3419,14 @@ async function importNativeProjectFile(file){
   const image = await decodeProjectImage(new Blob([imageEntry.data], {type}));
   const portable = args.portable && typeof args.portable === 'object' ? args.portable : null;
   applyImportedProject({ image, controls:portable && portable.controls ? portable.controls : desktopControlsToPortable(args.controls),
-    experimental:portable && portable.experimental ? portable.experimental : args.experimental, ledStrips:portable && Array.isArray(portable.ledStrips) ? portable.ledStrips : desktopStripsToPortable(args.ledStrips) });
+    experimental:portable && portable.experimental ? portable.experimental : args.experimental, ledStrips:portable && Array.isArray(portable.ledStrips) ? portable.ledStrips : desktopStripsToPortable(args.ledStrips), regions:portable ? portable.regions : undefined });
 }
 async function importLegacyProjectFile(file){
   let root;
   try { root = JSON.parse(await file.text()); } catch(error){ throw new ProjectArchiveError('projectArchiveInvalid'); }
   if(!root || typeof root !== 'object' || !root.controls || typeof root.image !== 'string') throw new ProjectArchiveError('projectArchiveInvalid');
   const image = await decodeProjectImage(root.image);
-  applyImportedProject({image, controls:root.controls, experimental:root.experimental, ledStrips:root.ledStrips});
+  applyImportedProject({image, controls:root.controls, experimental:root.experimental, ledStrips:root.ledStrips, regions:root.regions});
 }
 async function importProjectFile(file){
   try {
@@ -3100,7 +3593,9 @@ function resetAllSettings(){
   // 安装版 v1.5.1 的默认边缘处理为描边；重置后同样回到该默认行为。
   el('#radioEdgeStroke').checked = true; el('#radioEdgeEnhance').checked = false;
   setProcessingMode('gray', false);
-  if(state.origin) updateProcess();
+  for(const item of regionState.items)item.offsets={gray:{},color:{}};
+  regionState.revision++;regionState.undo=[];regionState.redo=[];refreshRegionUI();
+  if(state.origin)updateProcess();
   setLanguage('zh-CN', false);
   toast(t('resetSuccess'));
 }
@@ -3218,6 +3713,7 @@ function init(){
 
   el('#modalBack').addEventListener('click', function(e){ if(e.target === this) closeModal(); });
 
+  initializeRegions();
   setupMenus();
   loadLocalPrefs();
   setViewMode('overlay');
