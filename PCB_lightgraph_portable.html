@@ -236,6 +236,22 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .modal input[type=number]{width:90px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;}
 .modal input[type=color]{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 .modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+/* 声明正文单独滚动，标题与关闭操作始终可见。 */
+.disclaimer-modal{width:min(720px,calc(100vw - 32px));min-width:0;max-width:720px;max-height:calc(100vh - 32px);height:min(82vh,780px);padding:0;display:flex;flex-direction:column;overflow:hidden;}
+.disclaimer-header{flex:none;padding:18px 22px;background:var(--panel2);border-bottom:1px solid var(--border);}
+.disclaimer-header h3{margin:0;font-size:18px;}
+.disclaimer-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:4px 22px 18px;line-height:1.8;font-size:13px;user-select:text;}
+.disclaimer-content h4{margin:20px 0 6px;color:var(--text);font-size:14px;}
+.disclaimer-content p{margin:0;color:var(--text-dim);}
+.disclaimer-content strong{color:var(--text);font-weight:600;}
+.disclaimer-content a,.disclaimer-content a:visited{color:var(--accent);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;}
+.disclaimer-content a:hover{color:var(--accent-hover);}
+.disclaimer-content a:focus-visible,.disclaimer-content:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.disclaimer-footer{flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-top:1px solid var(--border);background:var(--panel2);}
+.disclaimer-remember{display:flex;align-items:flex-start;gap:8px;line-height:1.6;font-size:12px;color:var(--text-dim);cursor:pointer;}
+.disclaimer-remember input{flex:none;margin:3px 0 0;accent-color:var(--accent);}
+.disclaimer-footer .drawing-action-btn{flex:none;min-width:82px;}
+@media (max-width:480px){.disclaimer-header{padding:16px;}.disclaimer-content{padding:0 16px 16px;}.disclaimer-footer{padding:14px 16px;gap:12px;}.disclaimer-remember{max-width:220px;}}
 /* 内置画板直接编辑原图像素；显示尺寸仅用于适配窗口，不改变源图分辨率。 */
 .paint-modal{width:min(1120px,94vw);max-width:1120px;height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;}
 .paint-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border);}
@@ -352,6 +368,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
         <button type="button" id="mCheckUpdates" data-i18n="checkUpdates">检查更新</button>
         <button type="button" id="mGitHub" data-i18n="githubLink">跳转至 GitHub</button>
         <button type="button" id="mIssueFeedback" data-i18n="issueFeedback">问题反馈</button>
+        <button type="button" id="mDisclaimer" data-i18n="disclaimer">免责声明</button>
       </div>
     </div>
   </div>
@@ -560,6 +577,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', githubLink:'跳转至 
 Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', githubLink:'前往 GitHub', issueFeedback:'問題回饋' });
 Object.assign(TRANSLATIONS.en, { menuHelp:'About', githubLink:'Open GitHub', issueFeedback:'Report an Issue' });
 Object.assign(TRANSLATIONS.ja, { menuHelp:'概要', githubLink:'GitHub を開く', issueFeedback:'問題を報告' });
+Object.assign(TRANSLATIONS['zh-CN'], { disclaimer:'免责声明' });
+Object.assign(TRANSLATIONS['zh-TW'], { disclaimer:'免責聲明' });
+Object.assign(TRANSLATIONS.en, { disclaimer:'Disclaimer' });
+Object.assign(TRANSLATIONS.ja, { disclaimer:'免責事項' });
 Object.assign(TRANSLATIONS['zh-CN'], { starProject:'你觉得好用就给我点一个Star吧(ﾉ>ω<)ﾉ' });
 Object.assign(TRANSLATIONS['zh-TW'], { starProject:'覺得好用就給我一個 Star 吧(ﾉ>ω<)ﾉ' });
 Object.assign(TRANSLATIONS.en, { starProject:'Enjoy it? Please give it a Star! (ﾉ>ω<)ﾉ' });
@@ -2372,7 +2393,11 @@ function createSlider(containerId, titleKey, min, max, def, step, onValueChange)
 }
 
 /* ---------------- 弹窗 / 提示 ---------------- */
+const DISCLAIMER_STORAGE_KEY = 'pcblg_disclaimer';
+const DISCLAIMER_VERSION = '2026-10-03';
+let disclaimerCleanup = null;
 function showModal(html, modalClass){
+  if(disclaimerCleanup) closeModal();
   const body = el('#modalBody');
   body.className = 'modal' + (modalClass ? ' ' + modalClass : '');
   body.innerHTML = html;
@@ -2382,6 +2407,77 @@ function closeModal(){
   if(paintSession && paintSession.cleanup) paintSession.cleanup();
   paintSession = null;
   el('#modalBack').classList.remove('show');
+  if(disclaimerCleanup){
+    const cleanup = disclaimerCleanup;
+    disclaimerCleanup = null;
+    cleanup();
+  }
+}
+function hasReadDisclaimer(){
+  try{ return localStorage.getItem(DISCLAIMER_STORAGE_KEY) === DISCLAIMER_VERSION; }
+  catch(_){ return false; }
+}
+function showDisclaimer(){
+  const previousFocus = document.activeElement;
+  showModal(`
+    <div class="disclaimer-header"><h3 id="disclaimerTitle">免责声明</h3></div>
+    <div class="disclaimer-content" tabindex="0" role="region" aria-label="免责声明正文">
+      <h4>一、非官方声明</h4>
+      <p>本工具是个人维护的<strong>开源 PCB 图像分层工具</strong>，与图片中涉及的游戏、品牌及相关公司无关联，未获其授权、认可或赞助。</p>
+      <h4>二、素材版权</h4>
+      <p>上传图片中的插画、角色、标识等内容，其版权及相关权益归相应权利人所有。本工具仅提供图像处理功能，使用本工具<strong>不代表取得素材使用授权</strong>。</p>
+      <h4>三、开源许可</h4>
+      <p>本项目代码采用 <strong>MIT 许可</strong>。项目仓库：<a href="https://github.com/Ashlixy17/PCB_lightgraph_Portable" target="_blank" rel="noopener noreferrer">PCB_lightgraph_Portable（GitHub）</a>。代码许可不授予第三方图片、商标或其他素材的使用权，使用者应自行确认素材来源及授权范围。</p>
+      <h4>四、使用规范</h4>
+      <p>请勿处理或传播违法违规、侵犯版权、肖像权或隐私权的内容；请勿冒充官方产品，或将未经授权的素材用于生产、销售及其他商业活动。</p>
+      <h4>五、用户责任与制板说明</h4>
+      <p>使用者应对上传素材、导出图纸及后续生产和销售行为负责。<strong>网页预览不代表实际制板效果</strong>，导出结果也不构成电路设计或生产质量保证。下单前请自行检查图层、尺寸、线宽、间距及厂家工艺要求。</p>
+      <h4>六、隐私说明</h4>
+      <p>图片和工程文件<strong>仅在当前浏览器中处理</strong>，本工具不会将其上传至服务器。界面偏好及“不再显示”选择保存在当前浏览器中；主动检查更新或访问外部链接时，会连接相应网站。</p>
+      <h4>七、侵权反馈</h4>
+      <p>如认为本项目提供的内容侵犯您的合法权益，请通过项目的<a href="https://github.com/Ashlixy17/PCB_lightgraph_Portable/issues/new" target="_blank" rel="noopener noreferrer">问题反馈入口</a>提供相关说明和证明材料，维护者核实后将及时处理。</p>
+      <h4>八、免费与免责说明</h4>
+      <p>本网页<strong>免费提供，按现状提供</strong>，不保证无缺陷或适合特定用途。使用素材、制作或销售 PCB 产品所产生的版权、质量及其他问题，由使用者自行负责。</p>
+    </div>
+    <div class="disclaimer-footer">
+      <label class="disclaimer-remember"><input type="checkbox" id="disclaimerRemember"><span>我已阅读并知晓上述内容，不再显示</span></label>
+      <button type="button" class="drawing-action-btn action-selected" id="disclaimerClose">关闭</button>
+    </div>
+  `, 'disclaimer-modal');
+  const body = el('#modalBody');
+  body.setAttribute('role', 'dialog');
+  body.setAttribute('aria-modal', 'true');
+  body.setAttribute('aria-labelledby', 'disclaimerTitle');
+  body.setAttribute('lang', 'zh-CN');
+  el('#disclaimerRemember').checked = hasReadDisclaimer();
+  const closeButton = el('#disclaimerClose');
+  closeButton.onclick = closeModal;
+  attachFortniteHoverEffect(closeButton);
+  const background = [...document.querySelectorAll('.topbar, .main')].map(node => ({ node, inert:node.inert }));
+  background.forEach(({node}) => { node.inert = true; });
+  const onKeyDown = event => {
+    if(event.key === 'Escape'){
+      event.preventDefault(); event.stopImmediatePropagation(); closeModal();
+    }else if(event.key === 'Tab'){
+      const focusable = [...body.querySelectorAll('a[href], button, input, [tabindex="0"]')];
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if(event.shiftKey && document.activeElement === first){ event.preventDefault(); last.focus(); }
+      else if(!event.shiftKey && document.activeElement === last){ event.preventDefault(); first.focus(); }
+    }
+  };
+  document.addEventListener('keydown', onKeyDown, true);
+  disclaimerCleanup = () => {
+    // 只在关闭时记录当前选择；旧版声明或存储不可用时仍会重新提示。
+    try{
+      if(el('#disclaimerRemember').checked) localStorage.setItem(DISCLAIMER_STORAGE_KEY, DISCLAIMER_VERSION);
+      else localStorage.removeItem(DISCLAIMER_STORAGE_KEY);
+    }catch(_){}
+    document.removeEventListener('keydown', onKeyDown, true);
+    background.forEach(({node,inert}) => { node.inert = inert; });
+    ['role','aria-modal','aria-labelledby','lang'].forEach(name => body.removeAttribute(name));
+    if(previousFocus && previousFocus.isConnected) previousFocus.focus();
+  };
+  body.querySelector('.disclaimer-content').focus();
 }
 let toastTimer = null;
 function toast(msg){
@@ -3492,6 +3588,7 @@ function setupMenus(){
   el('#btnStarProject').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_Portable', '_blank', 'noopener');
   el('#mGitHub').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable', '_blank', 'noopener');
   el('#mIssueFeedback').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable/issues/new', '_blank', 'noopener');
+  el('#mDisclaimer').onclick = showDisclaimer;
 
   // 界面缩放子菜单
   const scaleMenu = el('#scaleMenu');
@@ -3726,15 +3823,17 @@ function init(){
   pi.addEventListener('change', function(){ if(this.files[0]) importProjectFile(this.files[0]); this.value = ''; });
   document.body.appendChild(pi);
 
-  el('#modalBack').addEventListener('click', function(e){ if(e.target === this) closeModal(); });
+  el('#modalBack').addEventListener('click', function(e){ if(e.target === this && !disclaimerCleanup) closeModal(); });
 
   initializeRegions();
   setupMenus();
-  loadLocalPrefs();
+  try{ loadLocalPrefs(); }
+  catch(_){ setLanguage('zh-CN', false); }
   setViewMode('overlay');
   syncEdgeUI();
   resizeCanvases();
   window.addEventListener('resize', resizeCanvases);
+  if(!hasReadDisclaimer()) showDisclaimer();
 }
 
 /* 全局错误提示：任何运行时错误都显示为 toast，避免“无声失败” */
