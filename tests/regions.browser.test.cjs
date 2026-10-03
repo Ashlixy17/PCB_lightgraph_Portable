@@ -56,6 +56,7 @@ async function test(name, run) {
     const errors = []; page.on('pageerror', error => errors.push(error.message));
     await page.goto(pathToFileURL(path.join(root, 'PCB_lightgraph_portable.html')).href);
     await old.goto(pathToFileURL(baseline).href);
+    for (const p of [page, old]) if (await p.locator('#disclaimerClose').isVisible()) await p.locator('#disclaimerClose').click();
     await source(page); await source(old);
 
     await test('unchanged baseline in gray/color, including edge styles and transparent source pixels', async () => {
@@ -108,11 +109,11 @@ async function test(name, run) {
       await page.setViewportSize({ width: 1000, height: 1000 });
       const original = await page.evaluate(() => regionState.items[0].name);
       await page.evaluate(() => { regionState.items[0].name = '区域名称'.repeat(25); refreshRegionUI(); setGroupOpen('groupRegions', true, false); });
-      const button = page.locator('#regionList button').nth(1);
-      await button.focus(); await button.hover();
+      const choice = page.locator('#regionList .region-choice').nth(1);
+      await choice.locator('input').focus(); await choice.hover();
       const geometry = await page.locator('#regionList').evaluate(list => ({
         overflow: getComputedStyle(list).overflowX, width: list.clientWidth, content: list.scrollWidth,
-        ellipsis: getComputedStyle(list.children[1].firstElementChild).textOverflow
+        ellipsis: getComputedStyle(list.querySelectorAll('.region-choice span')[1]).textOverflow
       }));
       assert.equal(geometry.overflow, 'hidden');
       assert.ok(geometry.content <= geometry.width, JSON.stringify(geometry));
@@ -183,7 +184,7 @@ async function test(name, run) {
         }, zoom);
         assert.ok(geometry.dx < 1 && geometry.dy < 1, JSON.stringify(geometry));
         assert.ok(Math.abs(geometry.diameter - geometry.thickness) < .1);
-        assert.equal(geometry.color, 'rgb(185, 197, 232)');
+        assert.equal(geometry.color, 'rgb(31, 111, 235)');
         assert.equal(geometry.pointerEvents, 'none');
       }
       await page.evaluate(() => document.body.style.zoom = 1);
@@ -244,7 +245,7 @@ async function test(name, run) {
       assert.equal(await page.locator('#regionDeleteNo').innerText(), '否');
       assert.deepEqual(await page.evaluate(() => ({ no: getComputedStyle(el('#regionDeleteNo')).backgroundColor,
         yes: getComputedStyle(el('#regionDeleteYes')).backgroundColor, focus: document.activeElement.id })),
-        { no: 'rgb(185, 197, 232)', yes: 'rgb(45, 45, 45)', focus: 'regionDeleteNo' });
+        { no: 'rgb(33, 40, 48)', yes: 'rgb(218, 54, 51)', focus: 'regionDeleteNo' });
       await page.screenshot({ path: path.join(temp, 'delete-confirmation.png') });
       await page.locator('#regionDeleteNo').click();
       assert.deepEqual(await page.evaluate(() => ({ snapshot: JSON.stringify(captureRegionSnapshot()), history: regionState.undo.length })), before);
@@ -318,7 +319,7 @@ async function test(name, run) {
     }
     async function gesture(tool, operation, points) {
       if (await page.evaluate(() => regionState.tool) !== tool) await page.locator('[data-region-tool=' + tool + ']').click();
-      await page.locator('#regionOperation').selectOption(operation);
+      await page.locator('[data-region-operation=' + operation + ']').click();
       const first = await imagePoint(...points[0]); await page.mouse.move(first.x, first.y); await page.mouse.down();
       for (const p of points.slice(1)) { const target = await imagePoint(...p); await page.mouse.move(target.x, target.y, { steps: 4 }); }
       await page.mouse.up();

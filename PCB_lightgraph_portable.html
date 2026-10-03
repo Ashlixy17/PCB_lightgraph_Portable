@@ -5,24 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PCB_lightgraph_Portable</title>
 <style>
-:root{
-  --bg:#1b1b1b;
-  --panel:#252525;
-  --panel2:#2d2d2d;
-  --border:#3a3a3a;
-  --text:#e8e8e8;
-  --text-dim:#9d9d9d;
-  --accent:#4cc2ff;
-  --accent-hover:#6fd0ff;
-  --control-accent:#b9c5e8;
-  --control-accent-text:#091331;
-  --radius:10px;
-}
+:root{color-scheme:dark;--bg:#0d1117;--panel:#151b23;--panel2:#212830;--border:#3d444d;--text:#f0f6fc;--text-dim:#9198a1;--accent:#4493f8;--accent-hover:#79b8ff;--control-accent:#1f6feb;--control-accent-text:#fff;--radius:6px;--gh-hover:#262c36;--gh-active:#2a313c;--gh-primary:#238636;--gh-primary-hover:#29903b;--gh-danger:#f85149;--gh-focus:#1f6feb;--gh-selected:rgba(56,139,253,.12);--segment-padding:3px;}
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;height:100%;}
 body{
   background:var(--bg);color:var(--text);
-  font-family:"Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
   font-size:14px;overflow:hidden;display:flex;flex-direction:column;
   user-select:none;
 }
@@ -32,7 +20,7 @@ body{
   background:var(--panel);border-bottom:1px solid var(--border);flex:0 0 auto;
 }
 .brand{display:inline-flex;align-items:center;gap:5px;font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap;}
-.brand-badge{display:inline-flex;align-items:center;align-self:center;border-radius:3px;background:var(--control-accent);color:var(--control-accent-text);padding:2px 5px;font-size:10px;font-weight:700;letter-spacing:.03em;line-height:1.2;transform:translateY(1px);}
+.brand-badge{display:inline-flex;align-items:center;align-self:center;color:var(--text-dim);padding:2px 5px;font-size:10px;font-weight:700;letter-spacing:.03em;line-height:1.2;transform:translateY(1px);}
 .brand-badge[hidden]{display:none;}
 .brand .dot{color:var(--accent);}
 .brand .edition{color:var(--text-dim);font-weight:400;font-size:12.5px;}
@@ -43,60 +31,37 @@ body{
   cursor:pointer;font-size:14px;font-family:inherit;
 }
 .menu>button:hover,.menu:focus-within>button{background:var(--panel2);}
-.star-link{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  background:transparent;border:none;padding:6px 10px;border-radius:10px;
-  cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;
-  animation:star-rainbow 3s linear infinite;transition:background 220ms ease;
-}
-/* 三类操作控件共用描边与扫光；仅模式按钮额外保留过渡和选中态。 */
-.star-link::before,.drawing-action-btn::before,.mode-switch button::before,.paint-tool::before{position:absolute;inset:-1px;border:2px solid #f8fcff;border-radius:13px;box-shadow:0 0 3px rgb(237 248 255 / 88%);content:"";opacity:0;pointer-events:none;transform:scale(.98);}
-.star-link::after,.drawing-action-btn::after,.mode-switch button::after,.paint-tool::after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 42%,rgb(255 255 255 / 0%) 46%,rgb(255 255 255 / 55%) 50%,rgb(220 244 255 / 18%) 54%,transparent 58%);background-position:-130% -130%;background-size:260% 260%;content:"";opacity:0;pointer-events:none;}
-@media (hover:hover){
-  .star-link.is-hovered{background:rgba(76,194,255,.15);}
-  .star-link.is-hovered::before,.drawing-action-btn:not(:disabled).is-hovered::before,.mode-switch button:not(.active).is-hovered::before,.paint-tool:not(.active).is-hovered::before{animation:mode-switch-rim-enter 150ms linear both;}
-  .star-link.is-hovered::after,.drawing-action-btn:not(:disabled).is-hovered::after,.mode-switch button:not(.active).is-hovered::after,.paint-tool:not(.active).is-hovered::after{animation:mode-switch-shine 380ms ease-out both;}
-  .star-link.is-leaving::before,.drawing-action-btn:not(:disabled).is-leaving::before,.mode-switch button.is-leaving::before,.paint-tool.is-leaving::before{animation:mode-switch-rim-leave 150ms linear both;}
-}
-.star-link:focus-visible{background:rgba(76,194,255,.15);outline:none;}
-.star-link:focus-visible::before,.drawing-action-btn:focus-visible:not(:disabled)::before,.mode-switch button:focus-visible:not(.active)::before,.paint-tool:focus-visible:not(.active)::before{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
-@keyframes star-rainbow{from{color:#ff758f;}20%{color:#ffbc4b;}40%{color:#8ad45b;}60%{color:#55c7ff;}80%{color:#b38cff;}to{color:#ff758f;}}
-/* 窄窗口让 Star 提示独占下一行，避免与菜单的可点击区域重叠。 */
+.star-link{cursor:pointer;font:inherit;font-size:12.5px;white-space:nowrap;}
+/* 窄窗口允许页头换行，避免菜单和 Star 按钮重叠。 */
 @media (max-width:1120px){
   .topbar{flex-wrap:wrap;}
   .menubar{flex-wrap:wrap;}
-  .star-link{position:static;transform:none;order:3;flex:0 0 100%;text-align:center;}
 }
 .dropdown{
   display:none;position:absolute;top:100%;left:0;min-width:200px;z-index:100;
   background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:4px;
   box-shadow:0 8px 24px rgba(0,0,0,.5);
 }
-.menu:hover > .dropdown,.menu:focus-within > .dropdown{display:block;}
 .dropdown button{
   display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--text);
   padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13.5px;font-family:inherit;
 }
-.dropdown button:hover{background:rgba(76,194,255,.15);}
-.dropdown button.active::after{content:'✓';float:right;color:var(--accent);}
 .dropdown button.disabled,.dropdown button:disabled{color:#666;cursor:not-allowed;}
 .dropdown button:disabled:hover{background:transparent;}
 .dropdown .menu-check{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13.5px;
 }
-.dropdown .menu-check:hover{background:rgba(76,194,255,.15);}
 .dropdown .menu-check input{accent-color:var(--control-accent);width:16px;height:16px;cursor:pointer;}
 .dropdown .sep{height:1px;background:var(--border);margin:4px 6px;}
 .submenu{position:relative;}
 .submenu>.dropdown{left:100%;top:0;}
-.submenu:hover>.dropdown,.submenu:focus-within>.dropdown{display:block;}
 /* ---- main ---- */
 .main{flex:1 1 auto;display:flex;min-height:0;}
 .col-preview{flex:4 4 0;display:flex;flex-direction:column;padding:10px;min-width:0;gap:6px;}
 .hint{color:var(--text-dim);font-size:12.5px;flex:0 0 auto;}
 .preview-wrap{
-  flex:1 1 auto;min-height:0;position:relative;background:#232323;
+  flex:1 1 auto;min-height:0;position:relative;background:var(--bg);
   border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;
 }
 .preview-wrap canvas{display:block;width:100%;height:100%;}
@@ -112,7 +77,7 @@ body{
 .quad-grid[hidden]{display:none;}
 .quad-cell{display:flex;flex-direction:column;min-width:0;min-height:0;}
 .quad-cell .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
-.quad-cell .w{flex:1 1 auto;min-height:0;position:relative;background:#232323;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.quad-cell .w{flex:1 1 auto;min-height:0;position:relative;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .quad-cell canvas{display:block;width:100%;height:100%;}
 .quad-cell .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);pointer-events:none;font-size:13px;}
 .col-controls{flex:1.1 1 0;min-width:280px;max-width:420px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;padding:10px;border-left:1px solid var(--border);border-right:1px solid var(--border);}
@@ -138,12 +103,6 @@ body{
 /* controls */
 label.ctl{display:block;margin:9px 0;font-size:13px;}
 label.ctl .lab{display:block;color:var(--text-dim);font-size:12.5px;margin-bottom:4px;}
-select{
-  width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
-  border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;
-}
-/* 操作区控件共用模式选中态配色，预览画布仍保留独立的蓝色提示。 */
-select:focus{border-color:var(--control-accent);}
 input[type=range]{
   -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;
   background:var(--panel2);outline:none;border:1px solid var(--border);cursor:grab;
@@ -158,55 +117,12 @@ input[type=range]:not(:disabled):active,input[type=range]:not(:disabled):active:
 input[type=range]:disabled,input[type=range]:disabled::-webkit-slider-thumb,input[type=range]:disabled::-moz-range-thumb{opacity:.4;cursor:not-allowed;}
 .check,.radio{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;cursor:pointer;}
 .check input,.radio input{accent-color:var(--control-accent);width:16px;height:16px;cursor:pointer;}
-button.btn{
-  background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;
-  padding:8px 12px;cursor:pointer;font-size:13px;font-family:inherit;margin:3px 2px;
-}
-button.btn:hover{border-color:var(--control-accent);}
-button.btn.accent{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
-button.btn.accent:hover{background:var(--control-accent);}
-button.btn:disabled{opacity:.4;cursor:not-allowed;}
-/* 图纸操作继承上方共用描边和扫光；禁用按钮不参与交互动画。 */
-button.drawing-action-btn{position:relative;border-radius:10px;transition:color 220ms ease,background 220ms ease,border-color 220ms ease;}
-/* 导出动作沿用模式切换的选中态配色，导入动作仍保持普通按钮层级。 */
-button.drawing-action-btn.action-selected{background:var(--control-accent);color:var(--control-accent-text);border-color:var(--control-accent);font-weight:600;}
-button.drawing-action-btn.action-selected:hover{background:var(--control-accent);}
-.drawing-action-btn:focus-visible:not(:disabled){outline:none;}
 .btn-row{display:flex;gap:6px;}
 .btn-row.centered{justify-content:center;}
 .flex-fill{flex:1;}
 .note{margin:9px 0 0;color:var(--text-dim);font-size:12px;line-height:1.5;}
-/* 分层算法切换：仅展示当前算法所需的参数，避免误以为隐藏控件仍会生效。 */
-.mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;margin-bottom:10px;}
-.mode-switch button{position:relative;flex:1;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
-/* 同一条描边先以细亮线出现，再向外扩为较暗的宽边；伪元素不会改变模式按钮布局。 */
-.mode-switch button::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
-/* 扫光限制在按钮表面，避免裁切负责外扩描边的 ::before。 */
-@media (hover:hover){.mode-switch button:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
-/* 进入与退出均让宽度、颜色和透明度同步变化，避免边框突然亮起或出现阶段分界。 */
-@keyframes mode-switch-shine{
-  0%{background-position:-130% -130%;opacity:0;}
-  10%{opacity:1;}
-  88%{opacity:.9;}
-  100%{background-position:130% 130%;opacity:0;}
-}
-@keyframes mode-switch-rim-enter{
-  0%{inset:-1px;border-width:2px;border-color:#f8fcff;box-shadow:0 0 3px rgb(237 248 255 / 88%);opacity:0;transform:scale(.98);}
-  100%{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
-}
-@keyframes mode-switch-rim-leave{
-  0%{inset:-4px;border-width:4px;border-color:rgb(239 247 255 / 90%);box-shadow:0 0 8px 1px rgb(203 230 255 / 62%);opacity:.9;transform:scale(1);}
-  100%{inset:-1px;border-width:2px;border-color:#f8fcff;box-shadow:0 0 3px rgb(237 248 255 / 88%);opacity:0;transform:scale(.98);}
-}
-.mode-switch button:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
-/* 当前算法的 active 状态由 setProcessingMode 统一维护，优先于悬停描边。 */
-.mode-switch button.active{background:var(--control-accent);color:var(--control-accent-text);}
-.mode-switch button.active::before{opacity:0;}
-.mode-switch button.is-switching-in,.paint-tool.is-switching-in{animation:mode-switch-selected-enter 220ms ease both;}
-.mode-switch button.is-switching-out,.paint-tool.is-switching-out{pointer-events:none;animation:mode-switch-selected-leave 220ms ease both;}
-@keyframes mode-switch-selected-enter{from{background:rgb(185 197 232 / 0%);color:var(--text-dim);}to{background:var(--control-accent);color:var(--control-accent-text);}}
-@keyframes mode-switch-selected-leave{from{background:var(--control-accent);color:var(--control-accent-text);}to{background:rgb(185 197 232 / 0%);color:var(--text-dim);}}
-@media (prefers-reduced-motion:reduce){.mode-switch button,.mode-switch button::before,.paint-tool,.paint-tool::before,.drawing-action-btn,.drawing-action-btn::before{transition-duration:0ms;transition-delay:0ms;}}
+.mode-switch{display:flex;margin-bottom:10px;}
+.mode-switch button{flex:1;cursor:pointer;font:inherit;}
 .mode-specific[hidden]{display:none;}
 /* layer previews grid */
 .layers-grid{
@@ -217,7 +133,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
 .layers-grid .lp .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
 .layers-grid .lp .w{
-  flex:1 1 auto;min-height:0;background:#1e1e1e;border:1px dashed #3a3a3a;border-radius:8px;
+  flex:1 1 auto;min-height:0;background:var(--bg);border:1px dashed var(--border);border-radius:8px;
   overflow:hidden;position:relative;
 }
 .layers-grid .lp canvas{display:block;width:100%;height:100%;}
@@ -258,16 +174,11 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .paint-toolbar label{display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12.5px;}
 .paint-toolbar input[type=color]{width:34px;height:28px;}
 .paint-toolbar input[type=range]{width:120px;}
-.paint-tool-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;}
-/* 画笔和橡皮擦直接沿用主页模式切换的外观与动画，不叠加普通按钮边框。 */
-.paint-tool{position:relative;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 12px;cursor:pointer;font:inherit;font-size:12.5px;transition:color 220ms ease,background 220ms ease;}
-.paint-tool::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
-@media (hover:hover){.paint-tool:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
-.paint-tool.active{background:var(--control-accent);color:var(--control-accent-text);}
-.paint-tool.active::before{opacity:0;}
-.paint-tool:focus-visible:not(.active){color:var(--text);background:rgb(76 194 255 / 12%);outline:none;}
+.paint-tool-switch{display:flex;}
+/* 画笔与橡皮擦共用分段控件。 */
+.paint-tool{cursor:pointer;font:inherit;}
 #paintBrushModeWrap{flex:0 0 auto;flex-wrap:nowrap;white-space:nowrap;}
-.paint-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;margin-top:10px;}
+.paint-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-top:10px;}
 .paint-stage canvas{display:block;flex:none;touch-action:none;cursor:crosshair;box-shadow:0 0 0 1px rgb(255 255 255 / 10%);will-change:transform;}
 .paint-size-indicator{position:absolute;border:1.5px solid var(--control-accent);border-radius:50%;box-sizing:border-box;pointer-events:none;z-index:1;opacity:0;transition:opacity .15s ease;box-shadow:0 0 3px rgb(0 0 0 / 82%);}
 .paint-size-indicator.show{opacity:1;}
@@ -277,14 +188,13 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;height:min(82vh,720px);max-height:calc(100vh - 32px);overflow:hidden;}
 .crop-modal>div{display:flex;flex-direction:column;min-height:0;height:100%;}
 .crop-hint{margin:0 0 12px;color:var(--text-dim);font-size:12.5px;line-height:1.5;}
-.crop-stage{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;overflow:hidden;background:#171717;border:1px solid var(--border);border-radius:8px;padding:8px;}
+.crop-stage{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;overflow:hidden;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;}
 .crop-stage canvas{display:block;flex:none;max-width:none;touch-action:none;cursor:default;will-change:transform;}
 /* toast */
 .region-list{display:flex;flex-direction:column;gap:3px;max-height:180px;overflow-x:hidden;overflow-y:auto;margin:8px 0;padding:4px;}
-.region-list button{text-align:left;flex-shrink:0;width:100%;min-width:0;margin:3px 0;}
-.region-list button span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .region-tools{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;}
 .region-tools .paint-tool{flex:1;padding:7px 5px;}
+.region-control-label{display:block;color:var(--text-dim);font-size:12.5px;margin:9px 0 4px;}
 .region-local[hidden]{display:none;}
 #regionalControls[hidden],.region-param-section[hidden]{display:none;}
 #regionBrushControl[hidden]{display:none;}
@@ -299,6 +209,90 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
   border:1px solid var(--border);border-radius:8px;padding:10px 18px;z-index:300;
   display:none;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.5);
 }
+/* GitHub 黑色界面：控件、菜单与弹窗共用配色。 */
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";}
+.topbar{background:#010409;min-height:48px;padding:8px 12px;}
+.brand-badge{background:transparent;color:var(--text-dim);border:1px solid var(--border);border-radius:20px;padding:1px 6px;}
+.star-link{position:static;transform:none;margin-left:auto;font-weight:500;color:var(--text);animation:none;border:1px solid var(--border);background:var(--panel2);border-radius:6px;min-height:32px;padding:5px 12px;display:inline-flex;align-items:center;gap:6px;}
+.star-link:hover{background:var(--gh-hover);}
+.star-link .github-icon{color:#e3b341;}
+.menu>button{min-height:32px;padding:5px 10px;}
+.menu>button:hover,.menu.menu-open>button{background:var(--panel2);}
+.dropdown{position:fixed;background:var(--panel);border-radius:12px;padding:4px;box-shadow:0 8px 24px rgba(1,4,9,.65);min-width:210px;max-width:none;overflow-y:auto;overscroll-behavior:contain;}
+.menu.menu-open>.dropdown,.submenu.menu-open>.dropdown{display:block;}
+.dropdown button{font-size:14px;min-height:32px;padding:5px 8px;display:flex;align-items:center;gap:8px;}
+.dropdown button:hover,.dropdown button:focus-visible,.dropdown .menu-check:hover{background:var(--gh-hover);}
+.dropdown .menu-check{min-height:32px;font-size:14px;padding:5px 8px;}
+.dropdown button.disabled,.dropdown button:disabled{color:#656c76;background:transparent;}
+.github-menu-check{margin-left:auto;}
+.github-menu-check:not(.active-check){visibility:hidden;}
+.github-menu-chevron{margin-left:auto;}
+.preview-wrap,.quad-cell .w,.paint-stage,.crop-stage{background:var(--bg);}
+.group{background:var(--bg);}
+.group>.group-header{min-height:36px;background:var(--panel);padding:8px 12px;}
+.group>.group-header:hover{background:var(--panel2);}
+.group .inner{padding-top:6px;}
+button.btn,button.drawing-action-btn{min-height:32px;padding:5px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;margin:3px 2px;box-shadow:0 1px 0 rgba(1,4,9,.04);transition:background-color 80ms linear,border-color 80ms linear;}
+button.btn:hover,button.drawing-action-btn:hover{background:var(--gh-hover);border-color:#8b949e;}
+button.btn:active,button.drawing-action-btn:active{background:var(--gh-active);}
+button.btn.accent,button.drawing-action-btn.action-selected{background:var(--gh-primary);border-color:rgba(240,246,252,.1);color:#fff;}
+button.btn.accent:not(:disabled):hover,button.drawing-action-btn.action-selected:not(:disabled):hover{background:var(--gh-primary-hover);}
+button.btn.accent:not(:disabled):active,button.drawing-action-btn.action-selected:not(:disabled):active{background:#1c6e2e;}
+button.btn:disabled,button.drawing-action-btn:disabled{opacity:1;color:#656c76;background:#161b22;border-color:rgba(61,68,77,.6);cursor:not-allowed;}
+.region-choice{display:flex;align-items:center;gap:8px;min-height:32px;padding:6px 0;cursor:pointer;}
+.region-choice input{margin:0;}
+.region-choice span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#regionDelete,#regionDeleteYes{color:var(--gh-danger);}
+#regionDelete:not(:disabled):hover,#regionDeleteYes:hover{background:#b62324;border-color:#b62324;color:#fff;}
+#regionDeleteYes{background:#da3633;border-color:rgba(240,246,252,.1);color:#fff;}
+#regionDeleteYes:active{background:#a40e26;}
+#regionDeleteNo{background:var(--panel2);border-color:var(--border);color:var(--text);}
+#regionDeleteNo:hover{background:var(--gh-hover);}
+#regionDelete:disabled{color:#656c76;}
+/* 外框圆角包含留白和边框厚度，与内侧按钮的圆角同心。 */
+.mode-switch,.paint-tool-switch,.region-tools{background:var(--panel);border:1px solid var(--border);border-radius:calc(var(--radius) + var(--segment-padding) + 1px);padding:var(--segment-padding);gap:2px;}
+.mode-switch button,.paint-tool{background:transparent;border:1px solid transparent;border-radius:var(--radius);min-height:32px;padding:5px 8px;font-size:13px;color:var(--text);transition:background-color 80ms linear;}
+.mode-switch button:hover,.paint-tool:hover{background:var(--gh-hover);}
+.paint-tool.active{background:#323a44;border-color:var(--border);color:var(--text);box-shadow:0 1px 2px rgba(1,4,9,.3);}
+.mode-switch button.active{background:var(--gh-primary);border-color:rgba(240,246,252,.1);color:#fff;box-shadow:0 1px 0 rgba(1,4,9,.04);}
+.mode-switch button.active:not(:disabled):hover{background:var(--gh-primary-hover);}
+.mode-switch button.active:not(:disabled):active{background:#1c6e2e;}
+.mode-switch button:disabled,.paint-tool:disabled{color:#656c76;background:transparent;cursor:not-allowed;}
+:is(button,a,input,.disclaimer-content):focus-visible{outline:2px solid var(--gh-focus);outline-offset:2px;}
+:is(input[type=text],input[type=number],.region-name-input){color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:6px;min-height:32px;padding:5px 8px;}
+input[type=color]{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px;}
+input[type=range]{background:var(--panel2);border-color:var(--border);}
+:is(input[type=checkbox],input[type=radio]){appearance:none;flex-shrink:0;width:16px;height:16px;border:1px solid #656c76;background:var(--bg);border-radius:3px;vertical-align:middle;cursor:pointer;}
+input[type=checkbox]:checked{border-color:var(--control-accent);background:var(--control-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='white' d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'/%3E%3C/svg%3E") center/14px no-repeat;}
+input[type=radio]{border-radius:50%;}
+input[type=radio]:checked{border:4px solid var(--control-accent);background:#fff;}
+:is(input[type=checkbox],input[type=radio]):disabled{opacity:.45;cursor:not-allowed;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px rgba(1,4,9,.65);}
+.modal-back{background:rgba(1,4,9,.65);}
+.modal h3{font-size:16px;}
+.disclaimer-header,.disclaimer-footer{background:var(--panel);}
+.paint-size-indicator{border-color:var(--accent);box-shadow:none;}
+#toast{background:var(--panel);border-radius:6px;}
+select{display:none;}
+.ui-select-button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;min-height:32px;margin:0;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text);background:var(--panel2);font:inherit;font-size:13px;cursor:pointer;}
+.ui-select-button:hover{background:var(--gh-hover);}
+.ui-select-button:disabled{color:#656c76;background:var(--bg);cursor:not-allowed;}
+.ui-select-button[aria-expanded=true]{border-color:var(--accent);}
+.ui-select-button[hidden]{display:none;}
+.ui-select-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.github-icon{width:16px;height:16px;flex-shrink:0;fill:currentColor;vertical-align:middle;}
+.ui-select-popover{position:fixed;z-index:250;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px;overflow:auto;overscroll-behavior:contain;box-shadow:0 8px 24px rgba(1,4,9,.65);}
+.ui-select-popover[hidden]{display:none;}
+.ui-select-option{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;border:0;border-radius:6px;background:transparent;color:var(--text);padding:5px 8px;text-align:left;font:inherit;font-size:14px;cursor:pointer;}
+.ui-select-option:hover,.ui-select-option:focus-visible{background:var(--gh-hover);}
+.ui-select-option[aria-selected=true]{background:var(--gh-selected);}
+.ui-select-option:disabled{color:#656c76;cursor:not-allowed;background:transparent;}
+.ui-select-option .github-icon{margin-left:auto;}
+:is(.menu>button,.dropdown button,.group>.group-header,.ui-select-option){border:1px solid transparent;}
+/* 控件只改变边框颜色与填充；菜单、工具和弹窗按钮共用同一边框宽度及圆角。 */
+button{border-width:1px!important;border-style:solid!important;border-radius:var(--radius)!important;}
+@media(max-width:1120px){.star-link{margin-left:0;flex:0 1 auto;order:0;}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important;animation:none!important;}}
 </style>
 </head>
 <body>
@@ -311,8 +305,8 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <div class="dropdown">
         <button type="button" id="mImport" data-i18n="importImage">导入图片</button>
         <button type="button" id="mExport" class="disabled" data-i18n="exportDrawing">导出全部图纸</button>
-        <button type="button" id="mSave" data-i18n="saveProject">保存工程…</button>
-        <button type="button" id="mLoad" data-i18n="loadProject">导入工程…</button>
+        <button type="button" id="mSave" class="disabled" disabled data-i18n="saveProject">保存工程</button>
+        <button type="button" id="mLoad" data-i18n="loadProject">导入工程</button>
       </div>
     </div>
     <div class="menu" id="menuEdit">
@@ -403,14 +397,21 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="regionEditor">区域选择/编辑</span></button>
       <div class="content"><div class="inner">
         <div class="region-list" id="regionList"></div>
-        <div class="region-tools" id="regionTools">
+        <span class="region-control-label" data-i18n="regionDrawing">区域划取</span>
+        <div class="region-tools" id="regionTools" role="group" data-i18n-aria="regionDrawing" aria-label="区域划取">
           <button type="button" class="paint-tool" data-region-tool="rect" data-i18n="regionRect">矩形</button>
           <button type="button" class="paint-tool" data-region-tool="lasso" data-i18n="regionLasso">套索</button>
           <button type="button" class="paint-tool" data-region-tool="brush" data-i18n="paintBrush">画笔</button>
         </div>
-        <label class="ctl"><span class="lab" data-i18n="regionOperation">选区操作</span><select id="regionOperation">
+        <span class="region-control-label" data-i18n="regionOperation">选区操作</span>
+        <div class="region-tools" id="regionOperations" role="group" data-i18n-aria="regionOperation" aria-label="选区操作">
+          <button type="button" class="paint-tool" data-region-operation="new" data-i18n="regionNew">新增区域</button>
+          <button type="button" class="paint-tool" data-region-operation="add" data-i18n="regionAdd">增选</button>
+          <button type="button" class="paint-tool" data-region-operation="subtract" data-i18n="regionSubtract">减选</button>
+        </div>
+        <select id="regionOperation" data-ui="segmented">
           <option value="new" data-i18n="regionNew">新增区域</option><option value="add" data-i18n="regionAdd">增选</option><option value="subtract" data-i18n="regionSubtract">减选</option>
-        </select></label>
+        </select>
         <label class="ctl" id="regionBrushControl" hidden><span class="lab" data-i18n="paintSize">粗细</span><input id="regionBrushSize" type="range" min="1" max="160" value="24"></label>
         <label class="check"><input type="checkbox" id="regionHighlight" checked><span data-i18n="regionShowHighlight">显示选区高光</span></label>
         <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionRename" data-i18n="regionRename">重命名此选区</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionDelete" data-i18n="regionDelete">删除区域</button></div>
@@ -555,16 +556,16 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 /* ---------------- 界面多语言 ---------------- */
 const TRANSLATIONS = {
   'zh-CN': {
-    pageTitle:'PCB_lightgraph Portable', menuFile:'文件', menuOption:'选项', importImage:'导入图片', importDrawing:'导入图纸', exportDrawing:'导出图纸', saveProject:'保存工程…', loadProject:'导入工程…', liveEditUnavailable:'画图实时编辑（不可用）', liveEditTitle:'浏览器版不支持外部画图实时联动', edgeMenu:'边缘处理 ▸', experimentalMenu:'实验性功能 ▸', filterPreprocess:'滤波预处理…', dpSimplify:'道格拉斯-普克抽稀…', uiScaleMenu:'界面缩放 ▸', languageMenu:'语言 ▸', colorSettings:'颜色设置…', resetAll:'重置所有设置…', previewHint:'【预览区】滚轮缩放，中键/右键拖动平移', importPlaceholder:'请导入图片…', processingMode:'分层模式', colorMode:'彩色识别分层', grayMode:'纯灰度三分分层', basicParameters:'基础参数', surfaceFinish:'表面处理工艺', finishEnig:'沉金（金黄色）', finishHasl:'喷锡（银色）', finishOsp:'OSP（玫瑰金）', maskColor:'阻焊颜色', maskBlue:'蓝色', maskBlack:'黑色', maskRed:'红色', maskGreen:'绿色', maskWhite:'白色', bareBinding:'裸露基材绑定', bareGrayMode:'1. 绑定层次（用灰度判断）', bareColorMode:'2. 绑定颜色（与基材色相似）', edgeOperations:'边缘操作', edgeStroke:'描边', edgeEnhance:'边缘增强', useMetal:'使用金属', exposeMetal:'裸露金属勾线', grayParameters:'纯灰度三分参数', grayPreviewMaskColor:'合成预览阻焊颜色', drawingActions:'图纸操作', expandLayerPreviews:'展开生产层预览', layerCopper:'Top Copper（线路）', layerMask:'Top Mask（阻焊）', layerSilk:'Top Silk（丝印）', goldThreshold:'金色/银色判定', silkThreshold:'丝印阈值', copperThreshold:'敷铜层较深阈值', bareGrayMin:'灰度下限 A（%）', bareGrayMax:'灰度上限 B（%）', bareSimilarity:'颜色相似度 C（%）', edgeThresholdMin:'强边缘阈值/边缘下限阈值', edgeThresholdMax:'弱边缘阈值/边缘上限阈值', autoInvertRange:'自动反色范围', graySilkThreshold:'丝印层阈值', grayMaskThreshold:'阻焊层阈值', grayThick:'边缘线条加粗', grayBlur:'抗锯齿平滑度', invalidImageSize:'图片尺寸无效', importFailed:'导入失败：', imageTooLarge:'导入失败：图片过大，无法处理', imageLoadFailed:'图片加载失败', exporting:'正在导出…', exportSuccess:'导出成功，共 {count} 个文件', projectSaved:'工程已导出为 project.pcblg.json', projectImported:'工程已导入', projectParseFailed:'工程文件解析失败', resetSuccess:'已重置所有设置', runtimeError:'出错：', filterTitle:'滤波预处理（实验性）', enableGaussian:'启用高斯预滤波', gaussianKernel:'高斯模糊矩阵大小', sigma:'Sigma', cancel:'取消', confirm:'确定', dpTitle:'道格拉斯-普克抽稀（实验性）', enableDp:'启用抽稀', tolerance:'容忍度', lineWidth:'线宽', dpNote:'注：桌面版当前未将抽稀接入渲染管线，此处仅保存参数。', colorTitle:'颜色设置（本地持久化，与工程无关）', colorEnig:'沉金 ENIG', colorOsp:'OSP（玫瑰金）', colorHasl:'喷锡 HASL', colorBare:'裸露基材', welcomeTitle:'欢迎使用 PCB_lightgraph Portable 🎉', welcomeIntro:'单文件 HTML 版，双击即可在浏览器中使用，无需安装。', welcomeStep1:'1. 文件 → 导入图片（无需预处理）', welcomeStep2:'2. 展开各参数分组调节', welcomeStep3:'3. 文件 → 导出图纸（下载为 PNG）', dontShowAgain:'不再显示', getStarted:'开始使用', liveEditMessage:'浏览器版不支持外部画图实时联动，请重新导入图片', canvasContextFailed:'无法创建绘图上下文', unknownError:'未知错误'
+    pageTitle:'PCB_lightgraph Portable', menuFile:'文件', menuOption:'选项', importImage:'导入图片', importDrawing:'导入图纸', exportDrawing:'导出图纸', saveProject:'保存工程', loadProject:'导入工程', liveEditUnavailable:'画图实时编辑（不可用）', liveEditTitle:'浏览器版不支持外部画图实时联动', edgeMenu:'边缘处理 ▸', experimentalMenu:'实验性功能 ▸', filterPreprocess:'滤波预处理…', dpSimplify:'道格拉斯-普克抽稀…', uiScaleMenu:'界面缩放 ▸', languageMenu:'语言 ▸', colorSettings:'颜色设置…', resetAll:'重置所有设置…', previewHint:'【预览区】滚轮缩放，中键/右键拖动平移', importPlaceholder:'请导入图片…', processingMode:'分层模式', colorMode:'彩色识别分层', grayMode:'纯灰度三分分层', basicParameters:'基础参数', surfaceFinish:'表面处理工艺', finishEnig:'沉金（金黄色）', finishHasl:'喷锡（银色）', finishOsp:'OSP（玫瑰金）', maskColor:'阻焊颜色', maskBlue:'蓝色', maskBlack:'黑色', maskRed:'红色', maskGreen:'绿色', maskWhite:'白色', bareBinding:'裸露基材绑定', bareGrayMode:'1. 绑定层次（用灰度判断）', bareColorMode:'2. 绑定颜色（与基材色相似）', edgeOperations:'边缘操作', edgeStroke:'描边', edgeEnhance:'边缘增强', useMetal:'使用金属', exposeMetal:'裸露金属勾线', grayParameters:'纯灰度三分参数', grayPreviewMaskColor:'合成预览阻焊颜色', drawingActions:'图纸操作', expandLayerPreviews:'展开生产层预览', layerCopper:'Top Copper（线路）', layerMask:'Top Mask（阻焊）', layerSilk:'Top Silk（丝印）', goldThreshold:'金色/银色判定', silkThreshold:'丝印阈值', copperThreshold:'敷铜层较深阈值', bareGrayMin:'灰度下限 A（%）', bareGrayMax:'灰度上限 B（%）', bareSimilarity:'颜色相似度 C（%）', edgeThresholdMin:'强边缘阈值/边缘下限阈值', edgeThresholdMax:'弱边缘阈值/边缘上限阈值', autoInvertRange:'自动反色范围', graySilkThreshold:'丝印层阈值', grayMaskThreshold:'阻焊层阈值', grayThick:'边缘线条加粗', grayBlur:'抗锯齿平滑度', invalidImageSize:'图片尺寸无效', importFailed:'导入失败：', imageTooLarge:'导入失败：图片过大，无法处理', imageLoadFailed:'图片加载失败', exporting:'正在导出…', exportSuccess:'导出成功，共 {count} 个文件', projectSaved:'工程已导出为 project.pcblg.json', projectImported:'工程已导入', projectParseFailed:'工程文件解析失败', resetSuccess:'已重置所有设置', runtimeError:'出错：', filterTitle:'滤波预处理（实验性）', enableGaussian:'启用高斯预滤波', gaussianKernel:'高斯模糊矩阵大小', sigma:'Sigma', cancel:'取消', confirm:'确定', dpTitle:'道格拉斯-普克抽稀（实验性）', enableDp:'启用抽稀', tolerance:'容忍度', lineWidth:'线宽', dpNote:'注：桌面版当前未将抽稀接入渲染管线，此处仅保存参数。', colorTitle:'颜色设置（本地持久化，与工程无关）', colorEnig:'沉金 ENIG', colorOsp:'OSP（玫瑰金）', colorHasl:'喷锡 HASL', colorBare:'裸露基材', welcomeTitle:'欢迎使用 PCB_lightgraph Portable 🎉', welcomeIntro:'单文件 HTML 版，双击即可在浏览器中使用，无需安装。', welcomeStep1:'1. 文件 → 导入图片（无需预处理）', welcomeStep2:'2. 展开各参数分组调节', welcomeStep3:'3. 文件 → 导出图纸（下载为 PNG）', dontShowAgain:'不再显示', getStarted:'开始使用', liveEditMessage:'浏览器版不支持外部画图实时联动，请重新导入图片', canvasContextFailed:'无法创建绘图上下文', unknownError:'未知错误'
   },
   'zh-TW': {
-    pageTitle:'PCB_lightgraph Portable', menuFile:'檔案', menuOption:'選項', importImage:'匯入圖片', importDrawing:'匯入圖紙', exportDrawing:'匯出圖紙', saveProject:'儲存工程…', loadProject:'匯入工程…', liveEditUnavailable:'即時繪圖編輯（不可用）', liveEditTitle:'瀏覽器版不支援外部繪圖即時連動', edgeMenu:'邊緣處理 ▸', experimentalMenu:'實驗性功能 ▸', filterPreprocess:'濾波預處理…', dpSimplify:'Douglas-Peucker 簡化…', uiScaleMenu:'介面縮放 ▸', languageMenu:'語言 ▸', colorSettings:'顏色設定…', resetAll:'重設所有設定…', previewHint:'【預覽區】滾輪縮放，中鍵／右鍵拖曳平移', importPlaceholder:'請匯入圖片…', processingMode:'分層模式', colorMode:'彩色識別分層', grayMode:'純灰階三分分層', basicParameters:'基本參數', surfaceFinish:'表面處理工藝', finishEnig:'沉金（金黃色）', finishHasl:'噴錫（銀色）', finishOsp:'OSP（玫瑰金）', maskColor:'阻焊顏色', maskBlue:'藍色', maskBlack:'黑色', maskRed:'紅色', maskGreen:'綠色', maskWhite:'白色', bareBinding:'裸露基材綁定', bareGrayMode:'1. 綁定層次（以灰階判斷）', bareColorMode:'2. 綁定顏色（與基材色相似）', edgeOperations:'邊緣操作', edgeStroke:'描邊', edgeEnhance:'邊緣增強', useMetal:'使用金屬', exposeMetal:'裸露金屬勾線', grayParameters:'純灰階三分參數', grayPreviewMaskColor:'合成預覽阻焊顏色', drawingActions:'圖紙操作', expandLayerPreviews:'展開生產層預覽', layerCopper:'Top Copper（線路）', layerMask:'Top Mask（阻焊）', layerSilk:'Top Silk（絲印）', goldThreshold:'金色／銀色判定', silkThreshold:'絲印閾值', copperThreshold:'敷銅層較深閾值', bareGrayMin:'灰階下限 A（%）', bareGrayMax:'灰階上限 B（%）', bareSimilarity:'顏色相似度 C（%）', edgeThresholdMin:'強邊緣閾值／邊緣下限閾值', edgeThresholdMax:'弱邊緣閾值／邊緣上限閾值', autoInvertRange:'自動反色範圍', graySilkThreshold:'絲印層閾值', grayMaskThreshold:'阻焊層閾值', grayThick:'邊緣線條加粗', grayBlur:'抗鋸齒平滑度', invalidImageSize:'圖片尺寸無效', importFailed:'匯入失敗：', imageTooLarge:'匯入失敗：圖片過大，無法處理', imageLoadFailed:'圖片載入失敗', exporting:'正在匯出…', exportSuccess:'匯出成功，共 {count} 個檔案', projectSaved:'工程已匯出為 project.pcblg.json', projectImported:'工程已匯入', projectParseFailed:'工程檔案解析失敗', resetSuccess:'已重設所有設定', runtimeError:'錯誤：', filterTitle:'濾波預處理（實驗性）', enableGaussian:'啟用高斯預濾波', gaussianKernel:'高斯模糊矩陣大小', sigma:'Sigma', cancel:'取消', confirm:'確定', dpTitle:'Douglas-Peucker 簡化（實驗性）', enableDp:'啟用簡化', tolerance:'容忍度', lineWidth:'線寬', dpNote:'註：桌面版目前未將簡化接入渲染管線，此處僅儲存參數。', colorTitle:'顏色設定（本機持久化，與工程無關）', colorEnig:'沉金 ENIG', colorOsp:'OSP（玫瑰金）', colorHasl:'噴錫 HASL', colorBare:'裸露基材', welcomeTitle:'歡迎使用 PCB_lightgraph Portable 🎉', welcomeIntro:'單檔 HTML 版，雙擊即可在瀏覽器中使用，無需安裝。', welcomeStep1:'1. 檔案 → 匯入圖片（無需預處理）', welcomeStep2:'2. 展開各參數分組調整', welcomeStep3:'3. 檔案 → 匯出圖紙（下載為 PNG）', dontShowAgain:'不再顯示', getStarted:'開始使用', liveEditMessage:'瀏覽器版不支援外部繪圖即時連動，請重新匯入圖片', canvasContextFailed:'無法建立繪圖內容', unknownError:'未知錯誤'
+    pageTitle:'PCB_lightgraph Portable', menuFile:'檔案', menuOption:'選項', importImage:'匯入圖片', importDrawing:'匯入圖紙', exportDrawing:'匯出圖紙', saveProject:'儲存工程', loadProject:'匯入工程', liveEditUnavailable:'即時繪圖編輯（不可用）', liveEditTitle:'瀏覽器版不支援外部繪圖即時連動', edgeMenu:'邊緣處理 ▸', experimentalMenu:'實驗性功能 ▸', filterPreprocess:'濾波預處理…', dpSimplify:'Douglas-Peucker 簡化…', uiScaleMenu:'介面縮放 ▸', languageMenu:'語言 ▸', colorSettings:'顏色設定…', resetAll:'重設所有設定…', previewHint:'【預覽區】滾輪縮放，中鍵／右鍵拖曳平移', importPlaceholder:'請匯入圖片…', processingMode:'分層模式', colorMode:'彩色識別分層', grayMode:'純灰階三分分層', basicParameters:'基本參數', surfaceFinish:'表面處理工藝', finishEnig:'沉金（金黃色）', finishHasl:'噴錫（銀色）', finishOsp:'OSP（玫瑰金）', maskColor:'阻焊顏色', maskBlue:'藍色', maskBlack:'黑色', maskRed:'紅色', maskGreen:'綠色', maskWhite:'白色', bareBinding:'裸露基材綁定', bareGrayMode:'1. 綁定層次（以灰階判斷）', bareColorMode:'2. 綁定顏色（與基材色相似）', edgeOperations:'邊緣操作', edgeStroke:'描邊', edgeEnhance:'邊緣增強', useMetal:'使用金屬', exposeMetal:'裸露金屬勾線', grayParameters:'純灰階三分參數', grayPreviewMaskColor:'合成預覽阻焊顏色', drawingActions:'圖紙操作', expandLayerPreviews:'展開生產層預覽', layerCopper:'Top Copper（線路）', layerMask:'Top Mask（阻焊）', layerSilk:'Top Silk（絲印）', goldThreshold:'金色／銀色判定', silkThreshold:'絲印閾值', copperThreshold:'敷銅層較深閾值', bareGrayMin:'灰階下限 A（%）', bareGrayMax:'灰階上限 B（%）', bareSimilarity:'顏色相似度 C（%）', edgeThresholdMin:'強邊緣閾值／邊緣下限閾值', edgeThresholdMax:'弱邊緣閾值／邊緣上限閾值', autoInvertRange:'自動反色範圍', graySilkThreshold:'絲印層閾值', grayMaskThreshold:'阻焊層閾值', grayThick:'邊緣線條加粗', grayBlur:'抗鋸齒平滑度', invalidImageSize:'圖片尺寸無效', importFailed:'匯入失敗：', imageTooLarge:'匯入失敗：圖片過大，無法處理', imageLoadFailed:'圖片載入失敗', exporting:'正在匯出…', exportSuccess:'匯出成功，共 {count} 個檔案', projectSaved:'工程已匯出為 project.pcblg.json', projectImported:'工程已匯入', projectParseFailed:'工程檔案解析失敗', resetSuccess:'已重設所有設定', runtimeError:'錯誤：', filterTitle:'濾波預處理（實驗性）', enableGaussian:'啟用高斯預濾波', gaussianKernel:'高斯模糊矩陣大小', sigma:'Sigma', cancel:'取消', confirm:'確定', dpTitle:'Douglas-Peucker 簡化（實驗性）', enableDp:'啟用簡化', tolerance:'容忍度', lineWidth:'線寬', dpNote:'註：桌面版目前未將簡化接入渲染管線，此處僅儲存參數。', colorTitle:'顏色設定（本機持久化，與工程無關）', colorEnig:'沉金 ENIG', colorOsp:'OSP（玫瑰金）', colorHasl:'噴錫 HASL', colorBare:'裸露基材', welcomeTitle:'歡迎使用 PCB_lightgraph Portable 🎉', welcomeIntro:'單檔 HTML 版，雙擊即可在瀏覽器中使用，無需安裝。', welcomeStep1:'1. 檔案 → 匯入圖片（無需預處理）', welcomeStep2:'2. 展開各參數分組調整', welcomeStep3:'3. 檔案 → 匯出圖紙（下載為 PNG）', dontShowAgain:'不再顯示', getStarted:'開始使用', liveEditMessage:'瀏覽器版不支援外部繪圖即時連動，請重新匯入圖片', canvasContextFailed:'無法建立繪圖內容', unknownError:'未知錯誤'
   },
   en: {
-    pageTitle:'PCB_lightgraph Portable', menuFile:'File', menuOption:'Options', importImage:'Import Image', importDrawing:'Import Drawing', exportDrawing:'Export Drawing', saveProject:'Save Project…', loadProject:'Load Project…', liveEditUnavailable:'Live Editing (Unavailable)', liveEditTitle:'Browser version cannot monitor external drawing changes', edgeMenu:'Edge Processing ▸', experimentalMenu:'Experimental ▸', filterPreprocess:'Filter Preprocess…', dpSimplify:'Douglas-Peucker Simplification…', uiScaleMenu:'UI Scale ▸', languageMenu:'Language ▸', colorSettings:'Color Settings…', resetAll:'Reset All Settings…', previewHint:'[Preview] Wheel: zoom; middle/right drag: pan', importPlaceholder:'Import an image…', processingMode:'Layering Mode', colorMode:'Color Recognition', grayMode:'Grayscale Three-way', basicParameters:'Basic Parameters', surfaceFinish:'Surface Finish', finishEnig:'ENIG (Gold)', finishHasl:'HASL (Silver)', finishOsp:'OSP (Rose Gold)', maskColor:'Solder Mask Color', maskBlue:'Blue', maskBlack:'Black', maskRed:'Red', maskGreen:'Green', maskWhite:'White', bareBinding:'Bare Substrate Binding', bareGrayMode:'1. Bind by level (grayscale)', bareColorMode:'2. Bind by color (similar to substrate)', edgeOperations:'Edge Operations', edgeStroke:'Stroke', edgeEnhance:'Edge Enhancement', useMetal:'Use Metal', exposeMetal:'Outline Exposed Metal', grayParameters:'Grayscale Three-way Parameters', grayPreviewMaskColor:'Preview Solder Mask Color', drawingActions:'Drawing Actions', expandLayerPreviews:'Show Production Layer Previews', layerCopper:'Top Copper (Traces)', layerMask:'Top Mask (Solder Mask)', layerSilk:'Top Silk (Silkscreen)', goldThreshold:'Gold/Silver Threshold', silkThreshold:'Silkscreen Threshold', copperThreshold:'Copper Depth Threshold', bareGrayMin:'Grayscale Lower Bound A (%)', bareGrayMax:'Grayscale Upper Bound B (%)', bareSimilarity:'Color Similarity C (%)', edgeThresholdMin:'Strong Edge / Lower Threshold', edgeThresholdMax:'Weak Edge / Upper Threshold', autoInvertRange:'Auto-invert Range', graySilkThreshold:'Silkscreen Threshold', grayMaskThreshold:'Solder Mask Threshold', grayThick:'Edge Thickening', grayBlur:'Anti-alias Smoothing', invalidImageSize:'Invalid image dimensions', importFailed:'Import failed: ', imageTooLarge:'Import failed: image is too large to process', imageLoadFailed:'Image failed to load', exporting:'Exporting…', exportSuccess:'Export complete: {count} files', projectSaved:'Project exported as project.pcblg.json', projectImported:'Project imported', projectParseFailed:'Project file could not be parsed', resetSuccess:'All settings reset', runtimeError:'Error: ', filterTitle:'Filter Preprocess (Experimental)', enableGaussian:'Enable Gaussian prefilter', gaussianKernel:'Gaussian kernel size', sigma:'Sigma', cancel:'Cancel', confirm:'OK', dpTitle:'Douglas-Peucker Simplification (Experimental)', enableDp:'Enable simplification', tolerance:'Tolerance', lineWidth:'Line width', dpNote:'Note: the desktop version does not currently apply simplification to its render pipeline; these parameters are stored only.', colorTitle:'Color Settings (local only, not saved in projects)', colorEnig:'ENIG', colorOsp:'OSP (Rose Gold)', colorHasl:'HASL', colorBare:'Bare Substrate', welcomeTitle:'Welcome to PCB_lightgraph Portable 🎉', welcomeIntro:'A single-file HTML version. Double-click to use it in a browser; no installation needed.', welcomeStep1:'1. File → Import Image (no preprocessing required)', welcomeStep2:'2. Expand parameter groups to adjust settings', welcomeStep3:'3. File → Export Drawing (PNG download)', dontShowAgain:"Don't show again", getStarted:'Get Started', liveEditMessage:'The browser version cannot monitor external drawing changes. Please import the image again.'
+    pageTitle:'PCB_lightgraph Portable', menuFile:'File', menuOption:'Options', importImage:'Import Image', importDrawing:'Import Drawing', exportDrawing:'Export Drawing', saveProject:'Save Project', loadProject:'Load Project', liveEditUnavailable:'Live Editing (Unavailable)', liveEditTitle:'Browser version cannot monitor external drawing changes', edgeMenu:'Edge Processing ▸', experimentalMenu:'Experimental ▸', filterPreprocess:'Filter Preprocess…', dpSimplify:'Douglas-Peucker Simplification…', uiScaleMenu:'UI Scale ▸', languageMenu:'Language ▸', colorSettings:'Color Settings…', resetAll:'Reset All Settings…', previewHint:'[Preview] Wheel: zoom; middle/right drag: pan', importPlaceholder:'Import an image…', processingMode:'Layering Mode', colorMode:'Color Recognition', grayMode:'Grayscale Three-way', basicParameters:'Basic Parameters', surfaceFinish:'Surface Finish', finishEnig:'ENIG (Gold)', finishHasl:'HASL (Silver)', finishOsp:'OSP (Rose Gold)', maskColor:'Solder Mask Color', maskBlue:'Blue', maskBlack:'Black', maskRed:'Red', maskGreen:'Green', maskWhite:'White', bareBinding:'Bare Substrate Binding', bareGrayMode:'1. Bind by level (grayscale)', bareColorMode:'2. Bind by color (similar to substrate)', edgeOperations:'Edge Operations', edgeStroke:'Stroke', edgeEnhance:'Edge Enhancement', useMetal:'Use Metal', exposeMetal:'Outline Exposed Metal', grayParameters:'Grayscale Three-way Parameters', grayPreviewMaskColor:'Preview Solder Mask Color', drawingActions:'Drawing Actions', expandLayerPreviews:'Show Production Layer Previews', layerCopper:'Top Copper (Traces)', layerMask:'Top Mask (Solder Mask)', layerSilk:'Top Silk (Silkscreen)', goldThreshold:'Gold/Silver Threshold', silkThreshold:'Silkscreen Threshold', copperThreshold:'Copper Depth Threshold', bareGrayMin:'Grayscale Lower Bound A (%)', bareGrayMax:'Grayscale Upper Bound B (%)', bareSimilarity:'Color Similarity C (%)', edgeThresholdMin:'Strong Edge / Lower Threshold', edgeThresholdMax:'Weak Edge / Upper Threshold', autoInvertRange:'Auto-invert Range', graySilkThreshold:'Silkscreen Threshold', grayMaskThreshold:'Solder Mask Threshold', grayThick:'Edge Thickening', grayBlur:'Anti-alias Smoothing', invalidImageSize:'Invalid image dimensions', importFailed:'Import failed: ', imageTooLarge:'Import failed: image is too large to process', imageLoadFailed:'Image failed to load', exporting:'Exporting…', exportSuccess:'Export complete: {count} files', projectSaved:'Project exported as project.pcblg.json', projectImported:'Project imported', projectParseFailed:'Project file could not be parsed', resetSuccess:'All settings reset', runtimeError:'Error: ', filterTitle:'Filter Preprocess (Experimental)', enableGaussian:'Enable Gaussian prefilter', gaussianKernel:'Gaussian kernel size', sigma:'Sigma', cancel:'Cancel', confirm:'OK', dpTitle:'Douglas-Peucker Simplification (Experimental)', enableDp:'Enable simplification', tolerance:'Tolerance', lineWidth:'Line width', dpNote:'Note: the desktop version does not currently apply simplification to its render pipeline; these parameters are stored only.', colorTitle:'Color Settings (local only, not saved in projects)', colorEnig:'ENIG', colorOsp:'OSP (Rose Gold)', colorHasl:'HASL', colorBare:'Bare Substrate', welcomeTitle:'Welcome to PCB_lightgraph Portable 🎉', welcomeIntro:'A single-file HTML version. Double-click to use it in a browser; no installation needed.', welcomeStep1:'1. File → Import Image (no preprocessing required)', welcomeStep2:'2. Expand parameter groups to adjust settings', welcomeStep3:'3. File → Export Drawing (PNG download)', dontShowAgain:"Don't show again", getStarted:'Get Started', liveEditMessage:'The browser version cannot monitor external drawing changes. Please import the image again.'
   },
   ja: {
-    pageTitle:'PCB_lightgraph Portable', menuFile:'ファイル', menuOption:'オプション', importImage:'画像を読み込む', importDrawing:'図面を読み込む', exportDrawing:'図面を書き出す', saveProject:'プロジェクトを保存…', loadProject:'プロジェクトを読み込む…', liveEditUnavailable:'ライブ編集（利用不可）', liveEditTitle:'ブラウザ版は外部描画の変更をリアルタイムに監視できません', edgeMenu:'エッジ処理 ▸', experimentalMenu:'実験的機能 ▸', filterPreprocess:'フィルター前処理…', dpSimplify:'Douglas-Peucker 簡略化…', uiScaleMenu:'UI 拡大率 ▸', languageMenu:'言語 ▸', colorSettings:'色の設定…', resetAll:'すべての設定をリセット…', previewHint:'【プレビュー】ホイールで拡大縮小、中／右ボタンのドラッグで移動', importPlaceholder:'画像を読み込んでください…', processingMode:'レイヤー分離モード', colorMode:'カラー認識分離', grayMode:'グレースケール三分割', basicParameters:'基本パラメータ', surfaceFinish:'表面仕上げ', finishEnig:'ENIG（金色）', finishHasl:'HASL（銀色）', finishOsp:'OSP（ローズゴールド）', maskColor:'ソルダーレジスト色', maskBlue:'青', maskBlack:'黒', maskRed:'赤', maskGreen:'緑', maskWhite:'白', bareBinding:'露出基材の紐付け', bareGrayMode:'1. 階調で紐付け', bareColorMode:'2. 色で紐付け（基材色に近似）', edgeOperations:'エッジ操作', edgeStroke:'輪郭線', edgeEnhance:'エッジ強調', useMetal:'金属を使用', exposeMetal:'露出金属を輪郭化', grayParameters:'グレースケール三分割パラメータ', grayPreviewMaskColor:'プレビュー用レジスト色', drawingActions:'図面操作', expandLayerPreviews:'製造レイヤープレビューを表示', layerCopper:'Top Copper（配線）', layerMask:'Top Mask（レジスト）', layerSilk:'Top Silk（シルク）', goldThreshold:'金／銀の判定', silkThreshold:'シルク閾値', copperThreshold:'銅層の濃度閾値', bareGrayMin:'階調下限 A（%）', bareGrayMax:'階調上限 B（%）', bareSimilarity:'色の類似度 C（%）', edgeThresholdMin:'強エッジ／下限閾値', edgeThresholdMax:'弱エッジ／上限閾値', autoInvertRange:'自動反転範囲', graySilkThreshold:'シルク層閾値', grayMaskThreshold:'レジスト層閾値', grayThick:'エッジ線を太くする', grayBlur:'アンチエイリアス平滑度', invalidImageSize:'画像サイズが無効です', importFailed:'読み込みに失敗しました：', imageTooLarge:'読み込みに失敗しました：画像が大きすぎます', imageLoadFailed:'画像の読み込みに失敗しました', exporting:'書き出し中…', exportSuccess:'書き出し完了：{count} ファイル', projectSaved:'プロジェクトを project.pcblg.json として書き出しました', projectImported:'プロジェクトを読み込みました', projectParseFailed:'プロジェクトファイルを解析できませんでした', resetSuccess:'すべての設定をリセットしました', runtimeError:'エラー：', filterTitle:'フィルター前処理（実験的）', enableGaussian:'ガウス前処理を有効化', gaussianKernel:'ガウスぼかしカーネルサイズ', sigma:'Sigma', cancel:'キャンセル', confirm:'OK', dpTitle:'Douglas-Peucker 簡略化（実験的）', enableDp:'簡略化を有効化', tolerance:'許容誤差', lineWidth:'線幅', dpNote:'注：デスクトップ版では現在、簡略化は描画処理に接続されていません。ここではパラメータのみ保存します。', colorTitle:'色の設定（ローカル保存、プロジェクトとは無関係）', colorEnig:'ENIG', colorOsp:'OSP（ローズゴールド）', colorHasl:'HASL', colorBare:'露出基材', welcomeTitle:'PCB_lightgraph Portable へようこそ 🎉', welcomeIntro:'単一 HTML ファイル版です。ダブルクリックでブラウザから使用でき、インストールは不要です。', welcomeStep1:'1. ファイル → 画像を読み込む（前処理不要）', welcomeStep2:'2. 各パラメータグループを開いて調整', welcomeStep3:'3. ファイル → 図面を書き出す（PNG をダウンロード）', dontShowAgain:'今後表示しない', getStarted:'開始', liveEditMessage:'ブラウザ版は外部描画の変更をリアルタイムに監視できません。画像を再度読み込んでください。'
+    pageTitle:'PCB_lightgraph Portable', menuFile:'ファイル', menuOption:'オプション', importImage:'画像を読み込む', importDrawing:'図面を読み込む', exportDrawing:'図面を書き出す', saveProject:'プロジェクトを保存', loadProject:'プロジェクトを読み込む', liveEditUnavailable:'ライブ編集（利用不可）', liveEditTitle:'ブラウザ版は外部描画の変更をリアルタイムに監視できません', edgeMenu:'エッジ処理 ▸', experimentalMenu:'実験的機能 ▸', filterPreprocess:'フィルター前処理…', dpSimplify:'Douglas-Peucker 簡略化…', uiScaleMenu:'UI 拡大率 ▸', languageMenu:'言語 ▸', colorSettings:'色の設定…', resetAll:'すべての設定をリセット…', previewHint:'【プレビュー】ホイールで拡大縮小、中／右ボタンのドラッグで移動', importPlaceholder:'画像を読み込んでください…', processingMode:'レイヤー分離モード', colorMode:'カラー認識分離', grayMode:'グレースケール三分割', basicParameters:'基本パラメータ', surfaceFinish:'表面仕上げ', finishEnig:'ENIG（金色）', finishHasl:'HASL（銀色）', finishOsp:'OSP（ローズゴールド）', maskColor:'ソルダーレジスト色', maskBlue:'青', maskBlack:'黒', maskRed:'赤', maskGreen:'緑', maskWhite:'白', bareBinding:'露出基材の紐付け', bareGrayMode:'1. 階調で紐付け', bareColorMode:'2. 色で紐付け（基材色に近似）', edgeOperations:'エッジ操作', edgeStroke:'輪郭線', edgeEnhance:'エッジ強調', useMetal:'金属を使用', exposeMetal:'露出金属を輪郭化', grayParameters:'グレースケール三分割パラメータ', grayPreviewMaskColor:'プレビュー用レジスト色', drawingActions:'図面操作', expandLayerPreviews:'製造レイヤープレビューを表示', layerCopper:'Top Copper（配線）', layerMask:'Top Mask（レジスト）', layerSilk:'Top Silk（シルク）', goldThreshold:'金／銀の判定', silkThreshold:'シルク閾値', copperThreshold:'銅層の濃度閾値', bareGrayMin:'階調下限 A（%）', bareGrayMax:'階調上限 B（%）', bareSimilarity:'色の類似度 C（%）', edgeThresholdMin:'強エッジ／下限閾値', edgeThresholdMax:'弱エッジ／上限閾値', autoInvertRange:'自動反転範囲', graySilkThreshold:'シルク層閾値', grayMaskThreshold:'レジスト層閾値', grayThick:'エッジ線を太くする', grayBlur:'アンチエイリアス平滑度', invalidImageSize:'画像サイズが無効です', importFailed:'読み込みに失敗しました：', imageTooLarge:'読み込みに失敗しました：画像が大きすぎます', imageLoadFailed:'画像の読み込みに失敗しました', exporting:'書き出し中…', exportSuccess:'書き出し完了：{count} ファイル', projectSaved:'プロジェクトを project.pcblg.json として書き出しました', projectImported:'プロジェクトを読み込みました', projectParseFailed:'プロジェクトファイルを解析できませんでした', resetSuccess:'すべての設定をリセットしました', runtimeError:'エラー：', filterTitle:'フィルター前処理（実験的）', enableGaussian:'ガウス前処理を有効化', gaussianKernel:'ガウスぼかしカーネルサイズ', sigma:'Sigma', cancel:'キャンセル', confirm:'OK', dpTitle:'Douglas-Peucker 簡略化（実験的）', enableDp:'簡略化を有効化', tolerance:'許容誤差', lineWidth:'線幅', dpNote:'注：デスクトップ版では現在、簡略化は描画処理に接続されていません。ここではパラメータのみ保存します。', colorTitle:'色の設定（ローカル保存、プロジェクトとは無関係）', colorEnig:'ENIG', colorOsp:'OSP（ローズゴールド）', colorHasl:'HASL', colorBare:'露出基材', welcomeTitle:'PCB_lightgraph Portable へようこそ 🎉', welcomeIntro:'単一 HTML ファイル版です。ダブルクリックでブラウザから使用でき、インストールは不要です。', welcomeStep1:'1. ファイル → 画像を読み込む（前処理不要）', welcomeStep2:'2. 各パラメータグループを開いて調整', welcomeStep3:'3. ファイル → 図面を書き出す（PNG をダウンロード）', dontShowAgain:'今後表示しない', getStarted:'開始', liveEditMessage:'ブラウザ版は外部描画の変更をリアルタイムに監視できません。画像を再度読み込んでください。'
   }
 };
 Object.assign(TRANSLATIONS.en, { canvasContextFailed:'Unable to create a drawing context', unknownError:'Unknown error' });
@@ -668,12 +669,228 @@ function applyTranslations(){
   syncImportDrawingButton();
   syncPreviewImageMeta();
   refreshRegionUI();
+  refreshInterfaceControls();
 }
 function setLanguage(language, persist){
   currentLanguage = TRANSLATIONS[language] ? language : 'zh-CN';
   if(persist) localStorage.setItem('pcblg_language', currentLanguage);
   applyTranslations();
 }
+
+/* ---------------- 菜单、选择面板与弹窗交互 ---------------- */
+let interfaceReady=false,interfaceRefreshQueued=false,selectPopup=null,selectSource=null,selectVersion='',modalReturnFocus=null,modalBackground=[];
+const selectButtons=new WeakMap();
+// Octicons 图形内置于单文件，来自 GitHub Primer Octicons（MIT）。
+const UI_ICON_PATHS={
+  right:'M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z',
+  down:'M12.78 5.22a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L3.22 6.28a.75.75 0 0 1 1.06-1.06L8 8.94l3.72-3.72a.75.75 0 0 1 1.06 0Z',
+  check:'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z',
+  star:'M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.969.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.979a.75.75 0 0 1-1.088-.79l.72-4.193L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.616 5.5a.75.75 0 0 1-.565.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.768-1.456a.75.75 0 0 1 .698 0l2.768 1.456-.528-3.084a.75.75 0 0 1 .216-.664l2.24-2.184-3.097-.45a.75.75 0 0 1-.565-.41L8 2.695Z'
+};
+function uiIcon(name,className=''){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 16 16');svg.setAttribute('aria-hidden','true');svg.setAttribute('class','github-icon '+className);
+  const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',UI_ICON_PATHS[name]);svg.appendChild(path);return svg;
+}
+function uiVisible(node){return !!node && !!node.getClientRects().length && !node.closest('[hidden]');}
+function menuItems(panel){return [...panel.children].flatMap(node=>node.matches('.submenu') ? [node.querySelector(':scope > button')] : (node.matches('button') ? [node] : [...node.querySelectorAll('input')])).filter(node=>node && !node.disabled && !node.classList.contains('disabled') && uiVisible(node));}
+function positionPopover(panel,anchor,side=false){
+  const zoom=parseFloat(document.body.style.zoom)||1,box=anchor.getBoundingClientRect(),margin=8;
+  panel.style.maxHeight=Math.max(32,(window.innerHeight-margin*2)/zoom)+'px';
+  panel.style.maxWidth=Math.max(32,(window.innerWidth-margin*2)/zoom)+'px';
+  const size=panel.getBoundingClientRect();
+  let left=side ? box.right+4 : box.left,top=side ? box.top : box.bottom+4;
+  if(side && left+size.width>window.innerWidth-margin)left=box.left-size.width-4;
+  if(!side && top+size.height>window.innerHeight-margin && box.top>=size.height+margin)top=box.top-size.height-4;
+  left=Math.max(margin,Math.min(left,window.innerWidth-size.width-margin));
+  top=Math.max(margin,Math.min(top,window.innerHeight-size.height-margin));
+  panel.style.left=left/zoom+'px';panel.style.top=top/zoom+'px';
+}
+function closeMenuBranch(container){
+  [container,...container.querySelectorAll('.menu-open')].forEach(node=>{node.classList.remove('menu-open');node.querySelector(':scope > button')?.setAttribute('aria-expanded','false');});
+}
+function closeMenus(){document.querySelectorAll('.menu-open').forEach(closeMenuBranch);}
+function openMenu(container,focus=false){
+  closeSelectPanel();
+  if(container.matches('.menu'))closeMenus();
+  else [...container.parentElement.children].filter(node=>node!==container && node.matches('.submenu')).forEach(closeMenuBranch);
+  container.classList.add('menu-open');const trigger=container.querySelector(':scope > button'),panel=container.querySelector(':scope > .dropdown');
+  trigger.setAttribute('aria-expanded','true');positionPopover(panel,trigger,container.matches('.submenu'));
+  if(focus)menuItems(panel)[0]?.focus();
+}
+function closeSelectPanel(restoreFocus=false){
+  if(!selectSource)return;
+  const button=selectButtons.get(selectSource);button?.setAttribute('aria-expanded','false');
+  selectSource=null;selectPopup.hidden=true;selectPopup.replaceChildren();
+  if(restoreFocus && uiVisible(button))button.focus();
+}
+function openSelectPanel(select){
+  if(select.disabled)return;
+  const same=selectSource===select;closeSelectPanel();if(same)return;
+  closeMenus();selectSource=select;
+  selectVersion=selectOptionsKey(select);
+  const button=selectButtons.get(select);button.setAttribute('aria-expanded','true');selectPopup.replaceChildren();
+  for(const option of select.options){
+    if(option.hidden)continue;
+    const item=document.createElement('button');item.type='button';item.className='ui-select-option';item.setAttribute('role','option');
+    item.setAttribute('aria-selected',String(option.selected));item.disabled=option.disabled || !!option.closest('optgroup:disabled');
+    const text=document.createElement('span');text.textContent=option.textContent;item.append(text);
+    if(option.selected)item.append(uiIcon('check'));
+    item.onclick=()=>{
+      // 参数仍由原 select 与原处理函数读取，界面控件不进入工程数据。
+      const changed=select.value!==option.value;select.value=option.value;closeSelectPanel(true);
+      if(changed){select.dispatchEvent(new Event('input',{bubbles:true}));select.dispatchEvent(new Event('change',{bubbles:true}));}
+      refreshInterfaceControls();
+    };
+    selectPopup.appendChild(item);
+  }
+  selectPopup.hidden=false;selectPopup.style.minWidth=button.getBoundingClientRect().width/(parseFloat(document.body.style.zoom)||1)+'px';
+  positionPopover(selectPopup,button);
+  (selectPopup.querySelector('[aria-selected=true]:not(:disabled)') || selectPopup.querySelector('button:not(:disabled)'))?.focus();
+}
+function selectOptionsKey(select){return JSON.stringify([...select.options].map(option=>[option.value,option.textContent,option.selected,option.hidden,option.disabled,!!option.closest('optgroup:disabled')]));}
+function refreshInterfaceControls(){
+  if(!interfaceReady)return;
+  for(const select of document.querySelectorAll('select')){
+    if(select.dataset.ui==='segmented')continue;
+    let button=selectButtons.get(select);
+    if(!button){
+      button=document.createElement('button');button.type='button';button.className='ui-select-button';
+      button.setAttribute('aria-haspopup','listbox');button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls','selectPopup');
+      if(select.id)button.dataset.selectId=select.id;
+      const label=document.createElement('span');label.className='ui-select-label';button.append(label,uiIcon('down'));
+      select.classList.add('parameter-select');select.after(button);selectButtons.set(select,button);
+      button.addEventListener('click',event=>{event.preventDefault();openSelectPanel(select);});
+      button.addEventListener('keydown',event=>{if(['ArrowDown','ArrowUp'].includes(event.key)){event.preventDefault();openSelectPanel(select);}});
+      select.addEventListener('change',queueInterfaceRefresh);
+    }
+    const label=button.querySelector('.ui-select-label'),value=select.selectedOptions[0]?.textContent || '';
+    if(label.textContent!==value)label.textContent=value;
+    if(button.disabled!==select.disabled)button.disabled=select.disabled;
+    if(button.hidden!==select.hidden)button.hidden=select.hidden;
+    const caption=select.closest('label')?.querySelector('.lab')?.textContent || select.getAttribute('aria-label') || value;
+    if(button.getAttribute('aria-label')!==caption)button.setAttribute('aria-label',caption);
+    if(selectSource===select && (select.disabled || !select.isConnected || !uiVisible(button) || selectVersion!==selectOptionsKey(select)))closeSelectPanel();
+  }
+  if(selectSource && !selectSource.isConnected)closeSelectPanel();
+  for(const button of document.querySelectorAll('.dropdown button')){
+    button.setAttribute('role','menuitem');button.setAttribute('aria-disabled',String(button.disabled || button.classList.contains('disabled')));
+  }
+  for(const arrow of document.querySelectorAll('.chev')){
+    if(!arrow.querySelector('svg'))arrow.replaceChildren(uiIcon('right'));
+  }
+  for(const button of document.querySelectorAll('.menubar .submenu > button')){
+    const name=t(button.dataset.i18n),label=name.replace(/\s*▸\s*$/,'');
+    if(button.textContent!==label)button.textContent=label;
+    if(!button.querySelector('svg'))button.append(uiIcon('right','github-menu-chevron'));
+  }
+  for(const button of document.querySelectorAll('.dropdown button.active,.dropdown button:has(.github-menu-check)')){
+    let icon=button.querySelector('.github-menu-check');
+    if(!icon){icon=uiIcon('check','github-menu-check');button.append(icon);}
+    icon?.classList.toggle('active-check',button.classList.contains('active'));
+  }
+  const star=el('#btnStarProject');if(!star.querySelector('svg'))star.prepend(uiIcon('star'));
+}
+function queueInterfaceRefresh(){
+  if(interfaceRefreshQueued)return;interfaceRefreshQueued=true;
+  queueMicrotask(()=>{interfaceRefreshQueued=false;refreshInterfaceControls();});
+}
+function modalFocusables(){return [...el('#modalBody').querySelectorAll('button,input,select,a[href],[tabindex]')].filter(node=>!node.disabled && node.tabIndex>=0 && uiVisible(node));}
+function releaseModalBackground(){
+  modalBackground.forEach(({node,inert})=>node.inert=inert);modalBackground=[];
+}
+function prepareModal(){
+  if(!modalReturnFocus){const focused=document.activeElement;modalReturnFocus=focused?.closest('.menu')?.querySelector(':scope > button') || focused;}
+  closeSelectPanel();closeMenus();releaseModalBackground();
+}
+function activateModal(){
+  if(el('#modalBody').classList.contains('disclaimer-modal'))return;
+  el('#modalBody').setAttribute('role','dialog');el('#modalBody').setAttribute('aria-modal','true');el('#modalBody').setAttribute('aria-label',el('#modalBody h3')?.textContent || t('confirm'));
+  modalBackground=[...document.querySelectorAll('.topbar,.main')].map(node=>({node,inert:node.inert}));modalBackground.forEach(({node})=>node.inert=true);
+  queueMicrotask(()=>{if(el('#modalBack').classList.contains('show') && !el('#modalBody').contains(document.activeElement))(modalFocusables()[0] || el('#modalBody')).focus();});
+}
+function finishModal(){
+  closeSelectPanel();releaseModalBackground();
+  const target=modalReturnFocus;modalReturnFocus=null;
+  if(!el('#modalBody').classList.contains('disclaimer-modal'))['role','aria-modal','aria-label'].forEach(name=>el('#modalBody').removeAttribute(name));
+  if(target?.isConnected && uiVisible(target))target.focus();
+}
+function dismissModal(){
+  const cancel=el('#modalBody').querySelector('#regionDeleteNo,#regionNameCancel,#regionCopyCancel,#paintCancel,#cropSkip,#dlgFilterCancel,#dlgDPCancel,#dlgColorCancel');
+  if(cancel)cancel.click();else closeModal();
+}
+function initializeInterface(){
+  interfaceReady=true;selectPopup=document.createElement('div');selectPopup.id='selectPopup';selectPopup.className='ui-select-popover';selectPopup.hidden=true;selectPopup.setAttribute('role','listbox');document.body.append(selectPopup);
+  for(const container of document.querySelectorAll('.menubar .menu,.menubar .submenu')){
+    const button=container.querySelector(':scope > button');button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');container.querySelector(':scope > .dropdown').setAttribute('role','menu');
+    button.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();
+      if(container.classList.contains('menu-open'))closeMenuBranch(container);
+      else openMenu(container);
+    });
+  }
+  document.addEventListener('click',event=>{
+    if(!event.target.closest('.menubar'))closeMenus();
+    else if((event.target.closest('.dropdown button') && !event.target.closest('.submenu > button')) || event.target.closest('.menu-check')){
+      const trigger=event.target.closest('.menu')?.querySelector(':scope > button');closeMenus();
+      if(document.activeElement?.closest('.dropdown'))trigger?.focus();
+    }
+    if(selectSource && !selectPopup.contains(event.target) && !event.target.closest('.ui-select-button'))closeSelectPanel();
+  });
+  document.addEventListener('click',event=>{
+    if(event.target.closest('.dropdown button.disabled')){event.preventDefault();event.stopImmediatePropagation();}
+  },true);
+  document.addEventListener('pointerdown',event=>{
+    if(selectSource && !selectPopup.contains(event.target) && !event.target.closest('.ui-select-button'))closeSelectPanel();
+    if(!event.target.closest('.menubar'))closeMenus();
+  },true);
+  document.addEventListener('keydown',event=>{
+    const stop=()=>{event.preventDefault();event.stopImmediatePropagation();};
+    if(selectSource){
+      const items=[...selectPopup.querySelectorAll('button:not(:disabled)')],index=items.indexOf(document.activeElement);
+      if(event.key==='Escape'){stop();closeSelectPanel(true);return;}
+      if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){stop();const next=event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;items[next]?.focus();return;}
+      if(event.key==='Tab'){closeSelectPanel(true);return;}
+      if(['Enter',' '].includes(event.key)){stop();document.activeElement?.click();return;}
+    }
+    const container=document.activeElement?.closest('.menu,.submenu'),panel=document.activeElement?.closest('.dropdown');
+    if(event.key==='Escape' && document.querySelector('.menu-open')){
+      stop();const opened=[...document.querySelectorAll('.menu-open')].pop();closeMenuBranch(opened);opened.querySelector(':scope > button').focus();return;
+    }
+    if(container && !panel && ['ArrowDown','ArrowUp'].includes(event.key)){stop();openMenu(container,true);return;}
+    if(panel && ['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+      stop();const items=menuItems(panel),index=items.indexOf(document.activeElement);const next=event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;items[next]?.focus();return;
+    }
+    if(panel && event.key==='ArrowRight' && document.activeElement?.parentElement.matches('.submenu')){stop();openMenu(document.activeElement.parentElement,true);return;}
+    if(panel && event.key==='ArrowLeft' && panel.parentElement.matches('.submenu')){stop();closeMenuBranch(panel.parentElement);panel.parentElement.querySelector(':scope > button').focus();return;}
+    if(panel && ['Enter',' '].includes(event.key)){stop();if(!document.activeElement.disabled && !document.activeElement.classList.contains('disabled'))document.activeElement.click();return;}
+    if(event.key==='Tab' && document.querySelector('.menu-open'))closeMenus();
+    if(el('#modalBack').classList.contains('show') && !el('#modalBody').classList.contains('disclaimer-modal')){
+      if(event.key==='Escape'){stop();dismissModal();return;}
+      if(event.key==='Tab'){
+        const nodes=modalFocusables(),first=nodes[0],last=nodes[nodes.length-1];
+        if(event.shiftKey && document.activeElement===first){stop();last?.focus();}else if(!event.shiftKey && document.activeElement===last){stop();first?.focus();}
+      }
+    }
+  },true);
+  document.addEventListener('focusin',event=>{
+    if(!event.target.closest('.menubar'))closeMenus();
+    if(el('#modalBack').classList.contains('show') && !el('#modalBody').classList.contains('disclaimer-modal') && !el('#modalBody').contains(event.target) && !selectPopup.contains(event.target))modalFocusables()[0]?.focus();
+  });
+  document.addEventListener('scroll',event=>{
+    if(event.target.closest?.('.ui-select-popover'))return;
+    // 聚焦或滚轮引起的侧栏滚动只重定位面板，不能吞掉刚打开的选项。
+    if(selectSource){
+      const anchor=selectButtons.get(selectSource),box=anchor.getBoundingClientRect();
+      if(box.bottom<8 || box.top>innerHeight-8)closeSelectPanel();else positionPopover(selectPopup,anchor);
+    }
+    for(const menu of document.querySelectorAll('.menu-open'))positionPopover(menu.querySelector(':scope > .dropdown'),menu.querySelector(':scope > button'),menu.matches('.submenu'));
+  },true);
+  window.addEventListener('resize',()=>{closeSelectPanel();closeMenus();});
+  new MutationObserver(queueInterfaceRefresh).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','selected','hidden']});
+  refreshInterfaceControls();
+}
+function uiCanvasColors(){return {background:'#0d1117',checker:['#151b23','#0d1117'],text:'#9198a1',selection:[68,147,248]};}
 
 /* ---------------- 基础工具 ---------------- */
 function clamp(v, lo, hi){ return v < lo ? lo : (v > hi ? hi : v); }
@@ -1558,22 +1775,8 @@ function sliderVal(sel){
 /* 折叠组：master 状态（bare/edge 展开=启用） */
 const masterState = { light:false, bare:false, edge:false };
 
-function transitionSegmentedSelection(buttons, nextButton){
-  const list = Array.from(buttons);
-  const previous = list.find(button => button.classList.contains('active'));
-  if(previous === nextButton) return;
-  list.forEach(button => {
-    if(button._selectionTimer) clearTimeout(button._selectionTimer);
-    button.classList.remove('is-switching-in', 'is-switching-out');
-  });
-  if(previous){
-    previous.classList.remove('active');
-    previous.classList.add('is-switching-out');
-  }
-  nextButton.classList.add('active', 'is-switching-in');
-  [previous, nextButton].filter(Boolean).forEach(button => {
-    button._selectionTimer = setTimeout(() => button.classList.remove('is-switching-in', 'is-switching-out'), 220);
-  });
+function transitionSegmentedSelection(buttons,nextButton){
+  Array.from(buttons).forEach(button=>button.classList.toggle('active',button===nextButton));
 }
 
 function setProcessingMode(mode, shouldRender){
@@ -1694,12 +1897,13 @@ function setPreviewImage(st, img){
 function renderPreviewCanvas(st, canvasEl, view, isComposite){
   view = view || st;
   const ctx = canvasEl.getContext('2d');
+  const colors = uiCanvasColors();
   const cw = canvasEl.width, ch = canvasEl.height;
   const isGrayEmptyBottom = state.processingMode === 'gray' && st === previewStates.bottom && !st.img;
   if(isGrayEmptyBottom){
-    ctx.fillStyle = '#1a1a1a';
+    ctx.fillStyle = colors.background;
     ctx.fillRect(0, 0, cw, ch);
-    ctx.fillStyle = '#9d9d9d';
+    ctx.fillStyle = colors.text;
     ctx.font = '13px "Microsoft YaHei", "Segoe UI", sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(t('noOutput'), cw * 0.5, ch * 0.5);
@@ -1709,11 +1913,11 @@ function renderPreviewCanvas(st, canvasEl, view, isComposite){
     // 透明生产层需要可见的底色；合成预览仍保持原有深色背景。
     const size = 12;
     for(let y = 0; y < ch; y += size) for(let x = 0; x < cw; x += size){
-      ctx.fillStyle = ((x/size + y/size) % 2 === 0) ? '#262626' : '#171717';
+      ctx.fillStyle = colors.checker[(x/size + y/size) % 2 === 0 ? 0 : 1];
       ctx.fillRect(x, y, size, size);
     }
   } else {
-    ctx.fillStyle = '#1a1a1a';
+    ctx.fillStyle = colors.background;
     ctx.fillRect(0, 0, cw, ch);
   }
   if(!st.img) return;
@@ -1931,6 +2135,7 @@ for(const [language,words] of Object.entries({
     .forEach((key,index)=>TRANSLATIONS[language][key]=words[index]);
 }
 for(const [language,text] of Object.entries({'zh-CN':'重做','zh-TW':'重做',en:'Redo',ja:'やり直し'}))TRANSLATIONS[language].regionRedoLabel=text;
+for(const [language,text] of Object.entries({'zh-CN':'区域划取','zh-TW':'區域劃取',en:'Region selection',ja:'領域選択'}))TRANSLATIONS[language].regionDrawing=text;
 for(const [language,text] of Object.entries({'zh-CN':'区域参数','zh-TW':'區域參數',en:'Region parameters',ja:'領域パラメータ'}))TRANSLATIONS[language].regionParametersTitle=text;
 for(const [language,words] of Object.entries({
   'zh-CN':['是否删除区域选择并将参数重置为全局？','是','否'],
@@ -2101,11 +2306,14 @@ function refreshRegionUI(){
   const list=el('#regionList'); if(!list) return;
   list.replaceChildren();
   for(const item of [{id:0,name:t('regionGlobal')},...regionState.items]){
-    const button=document.createElement('button');button.type='button';button.className='btn drawing-action-btn';
-    const name=document.createElement('span');name.textContent=item.name;button.appendChild(name);button.title=item.name;
-    button.classList.toggle('action-selected',item.id===regionState.selected);
-    button.setAttribute('aria-pressed',String(item.id===regionState.selected));button.onclick=()=>selectRegion(item.id);
-    attachFortniteHoverEffect(button); list.appendChild(button);
+    const choice=document.createElement('label');choice.className='region-choice';
+    const radio=document.createElement('input');radio.type='radio';radio.name='regionSelection';radio.value=String(item.id);radio.checked=item.id===regionState.selected;
+    const caption=document.createElement('span');caption.textContent=item.name;caption.title=item.name;choice.append(radio,caption);list.appendChild(choice);
+    radio.onchange=()=>{
+      const hadFocus=document.activeElement===radio;selectRegion(item.id);
+      // 选区列表会重建；将键盘焦点留在新单选项上，方向键才能继续切换。
+      if(hadFocus)list.querySelector('.region-choice input[value="'+item.id+'"]')?.focus();
+    };
   }
   const selected=!!selectedRegion(), hasImage=!!state.origin;
   for(const id of ['regionRename','regionDelete','regionClear']) el('#'+id).disabled=!selected;
@@ -2113,12 +2321,20 @@ function refreshRegionUI(){
   el('#regionUndo').disabled=!regionState.undo.length;el('#regionRedo').disabled=!regionState.redo.length;
   el('#regionOperation').querySelectorAll('option').forEach(option=>option.disabled=option.value!=='new' && !selected);
   if(!selected) el('#regionOperation').value='new';
+  document.querySelectorAll('[data-region-operation]').forEach(button=>{
+    const operation=el('#regionOperation'),option=[...operation.options].find(option=>option.value===button.dataset.regionOperation);
+    button.disabled=!hasImage || option.disabled;
+    button.classList.toggle('active',operation.value===button.dataset.regionOperation);
+    button.setAttribute('aria-pressed',String(operation.value===button.dataset.regionOperation));
+  });
   el('#regionBrushControl').hidden=regionState.tool!=='brush';
   document.querySelectorAll('[data-region-tool]').forEach(button=>{
     button.disabled=!hasImage;button.classList.toggle('active',button.dataset.regionTool===regionState.tool);
+    button.setAttribute('aria-pressed',String(button.dataset.regionTool===regionState.tool));
   });
   el('#canvasComposite').style.cursor=regionState.tool==='none' ? '' : 'crosshair';
   refreshRegionSliders();
+  refreshInterfaceControls();
 }
 function attachRegionSlider(id,globalInput,titleKey){
   if(!REGION_PARAMETERS[id]) return;
@@ -2238,11 +2454,11 @@ function drawRegionOverlay(ctx,rect){
         else if(!owner || (gesture.operation==='add' && owner===selected))active[i]=2;
       }
     }
-    const image=makeImg(w,h),d=image.data;
+    const image=makeImg(w,h),d=image.data,selection=uiCanvasColors().selection;
     for(let y=0;y<h;y++)for(let x=0;x<w;x++){
       const px=y*w+x,type=active[px];if(!type)continue;
       const edge=x===0 || y===0 || x===w-1 || y===h-1 || active[px-1]!==type || active[px+1]!==type || active[px-w]!==type || active[px+w]!==type;
-      const i=px*4;d[i]=type===3 ? 255 : 76;d[i+1]=type===3 ? 110 : 194;d[i+2]=type===3 ? 110 : 255;d[i+3]=edge ? 220 : (type===2 ? 75 : 42);
+      const i=px*4;d[i]=type===3 ? 255 : selection[0];d[i+1]=type===3 ? 110 : selection[1];d[i+2]=type===3 ? 110 : selection[2];d[i+3]=edge ? 220 : (type===2 ? 75 : 42);
     }
     cached={selected,highlight:regionState.highlight,x:x0,y:y0,canvas:toCanvas(image)};
     if(!gesture)regionState.overlayCache=cached;
@@ -2257,7 +2473,6 @@ function openRegionRename(){
   el('#regionNameCancel').onclick=closeModal;
   const save=()=>{const name=input.value.trim();if(!name)return;const before=captureRegionSnapshot();item.name=name;recordRegionChange(before);refreshRegionUI();closeModal();};
   el('#regionNameSave').onclick=save;input.onkeydown=event=>{if(event.key==='Enter')save();if(event.key==='Escape')closeModal();};
-  attachFortniteHoverEffect(el('#regionNameSave'));
 }
 function openRegionCopy(){
   const source=selectedRegion();if(!source)return;
@@ -2272,7 +2487,6 @@ function openRegionCopy(){
     for(const item of regionState.items)if(ids.has(item.id))item.offsets[state.processingMode]={...source.offsets[state.processingMode]};
     regionState.revision++;recordRegionChange(before);refreshRegionUI();closeModal();updateProcess();
   };
-  attachFortniteHoverEffect(el('#regionCopySave'));
 }
 function openRegionDelete(){
   const item=selectedRegion();if(!item)return;
@@ -2287,18 +2501,24 @@ function openRegionDelete(){
     touchRegionMasks();recordRegionChange(before);refreshRegionUI();closeModal();updateProcess();
   };
   el('#regionDeleteConfirm').onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeModal();}};
-  for(const id of ['regionDeleteYes','regionDeleteNo'])attachFortniteHoverEffect(el('#'+id));
   el('#regionDeleteNo').focus();
 }
 function initializeRegions(){
   document.querySelectorAll('[data-region-tool]').forEach(button=>{
-    attachFortniteHoverEffect(button);button.onclick=()=>{
+    button.onclick=()=>{
       cancelRegionGesture();regionState.tool=regionState.tool===button.dataset.regionTool ? 'none' : button.dataset.regionTool;
       if(regionState.tool!=='none'){state.light.pendingStart=null;setViewMode('overlay');}
       refreshRegionUI();renderAllPreviews();
     };
   });
-  el('#regionOperation').onchange=()=>{cancelRegionGesture();renderAllPreviews();};
+  document.querySelectorAll('[data-region-operation]').forEach(button=>{
+    button.onclick=()=>{
+      const operation=el('#regionOperation');if(operation.value===button.dataset.regionOperation)return;
+      // 分段按钮沿用原参数入口，绘制和选区排他规则仍由原处理函数负责。
+      operation.value=button.dataset.regionOperation;operation.dispatchEvent(new Event('change',{bubbles:true}));
+    };
+  });
+  el('#regionOperation').onchange=()=>{cancelRegionGesture();refreshRegionUI();renderAllPreviews();};
   el('#regionHighlight').onchange=function(){regionState.highlight=this.checked;regionState.overlayCache=null;renderAllPreviews();};
   el('#regionRename').onclick=openRegionRename;el('#regionCopy').onclick=openRegionCopy;
   el('#regionDelete').onclick=openRegionDelete;
@@ -2398,10 +2618,12 @@ const DISCLAIMER_VERSION = '2026-10-03';
 let disclaimerCleanup = null;
 function showModal(html, modalClass){
   if(disclaimerCleanup) closeModal();
+  prepareModal();
   const body = el('#modalBody');
   body.className = 'modal' + (modalClass ? ' ' + modalClass : '');
   body.innerHTML = html;
   el('#modalBack').classList.add('show');
+  refreshInterfaceControls();activateModal();
 }
 function closeModal(){
   if(paintSession && paintSession.cleanup) paintSession.cleanup();
@@ -2412,6 +2634,7 @@ function closeModal(){
     disclaimerCleanup = null;
     cleanup();
   }
+  finishModal();
 }
 function hasReadDisclaimer(){
   try{ return localStorage.getItem(DISCLAIMER_STORAGE_KEY) === DISCLAIMER_VERSION; }
@@ -2452,7 +2675,6 @@ function showDisclaimer(){
   el('#disclaimerRemember').checked = hasReadDisclaimer();
   const closeButton = el('#disclaimerClose');
   closeButton.onclick = closeModal;
-  attachFortniteHoverEffect(closeButton);
   const background = [...document.querySelectorAll('.topbar, .main')].map(node => ({ node, inert:node.inert }));
   background.forEach(({node}) => { node.inert = true; });
   const onKeyDown = event => {
@@ -2765,8 +2987,6 @@ function openPaintEditor(){
   el('#paintReset').onclick = paintResetAllStrokes;
   el('#paintCancel').onclick = cancelPaintEditor;
   el('#paintSave').onclick = closeModal;
-  document.querySelectorAll('#modalBody .drawing-action-btn').forEach(attachFortniteHoverEffect);
-  document.querySelectorAll('#paintBrush,#paintEraser').forEach(attachFortniteHoverEffect);
   paintRefreshControls(); requestAnimationFrame(fitPaintCanvas);
 }
 
@@ -2886,9 +3106,9 @@ function openCropDialog(img, onComplete){
     ctx.fillRect(0, crop.y, crop.x, crop.h);
     ctx.fillRect(crop.x+crop.w, crop.y, cw-(crop.x+crop.w), crop.h);
     ctx.fillRect(0, crop.y+crop.h, cw, ch-(crop.y+crop.h));
-    ctx.strokeStyle = '#4cc2ff'; ctx.lineWidth = 2;
+    ctx.strokeStyle = '#4493f8'; ctx.lineWidth = 2;
     ctx.strokeRect(crop.x, crop.y, crop.w, crop.h);
-    ctx.fillStyle = '#4cc2ff';
+    ctx.fillStyle = '#4493f8';
     for(const point of [[crop.x,crop.y],[crop.x+crop.w,crop.y],[crop.x,crop.y+crop.h],[crop.x+crop.w,crop.y+crop.h]]){
       ctx.fillRect(point[0]-handleSize/2, point[1]-handleSize/2, handleSize, handleSize);
     }
@@ -3004,9 +3224,6 @@ function openCropDialog(img, onComplete){
   stage.addEventListener('contextmenu', e => e.preventDefault());
   back.addEventListener('click', onBackdropClick);
   window.addEventListener('keydown', onKeyDown);
-  // 裁剪弹窗按钮在运行时创建，需要在插入弹窗后绑定悬停动画。
-  attachFortniteHoverEffect(el('#cropSkip'));
-  attachFortniteHoverEffect(el('#cropConfirm'));
   el('#cropSkip').onclick = () => finish(null);
   el('#cropConfirm').onclick = () => finish(crop);
   draw(); applyCropTransform();
@@ -3123,11 +3340,15 @@ function setExportControlsEnabled(enabled){
   el('#selectExportLayer').disabled = !enabled;
   el('#btnExportSelected').disabled = !enabled;
   el('#mExport').classList.toggle('disabled', !enabled);
+  el('#mSave').disabled = !state.origin;
+  el('#mSave').classList.toggle('disabled', !state.origin);
 }
 function syncImportDrawingButton(){
   const button = el('#btnImport');
   if(!button) return;
   const hasSourceImage = !!state.origin;
+  el('#mSave').disabled = !hasSourceImage;
+  el('#mSave').classList.toggle('disabled', !hasSourceImage);
   const label = button.querySelector('.drawing-action-label');
   if(label){
     label.dataset.i18n = hasSourceImage ? 'importDrawingReplace' : 'importDrawing';
@@ -3557,6 +3778,7 @@ function syncEdgeUI(){
   const ctl = ai ? ai.closest('.ctl') : null;
   if(ctl) ctl.style.opacity = useMetal ? 0.4 : 1;
   el('#exposeMetalWrap').style.display = useMetal ? 'flex' : 'none';
+  refreshInterfaceControls();
 }
 
 function syncEdaImportProtectionMenu(){
@@ -3566,7 +3788,7 @@ function syncEdaImportProtectionMenu(){
 
 /* ---------------- 菜单 / 弹窗 ---------------- */
 function setupMenus(){
-  // 下拉菜单由悬浮控制；focus-within 规则让键盘聚焦时也能访问同一菜单。
+  // 菜单统一由点击和键盘操作控制。
 
   el('#mImport').onclick = () => el('#fileInput').click();
   el('#btnImport').onclick = () => el('#fileInput').click();
@@ -3625,8 +3847,6 @@ function openFilterDialog(){
     closeModal(); updateProcess();
   };
   el('#dlgFilterCancel').onclick = closeModal;
-  attachFortniteHoverEffect(el('#dlgFilterCancel'));
-  attachFortniteHoverEffect(el('#dlgFilterOk'));
 }
 function openDPDialog(){
   showModal(
@@ -3644,8 +3864,6 @@ function openDPDialog(){
     closeModal();
   };
   el('#dlgDPCancel').onclick = closeModal;
-  attachFortniteHoverEffect(el('#dlgDPCancel'));
-  attachFortniteHoverEffect(el('#dlgDPOk'));
 }
 function colorRow(nameKey, key){
   return '<div class="mrow"><label>' + t(nameKey) + '</label><input type="color" id="col_' + key + '" value="' + toHex(custom[key]) + '"></div>';
@@ -3734,23 +3952,8 @@ function loadLocalPrefs(){
 }
 
 /* ---------------- 初始化 ---------------- */
-function attachFortniteHoverEffect(button){
-  let leaveTimer;
-  button.addEventListener('pointerenter', function(){
-    clearTimeout(leaveTimer);
-    this.classList.remove('is-leaving');
-    if(!this.disabled && !this.classList.contains('active')) this.classList.add('is-hovered');
-  });
-  button.addEventListener('pointerleave', function(){
-    this.classList.remove('is-hovered');
-    if(this.disabled || this.classList.contains('active')) return;
-    this.classList.add('is-leaving');
-    // 退出动画独立于 hover，指针越过描边边缘时也能完整播放。
-    leaveTimer = setTimeout(() => this.classList.remove('is-leaving'), 150);
-  });
-}
-
 function init(){
+  try{localStorage.removeItem('pcblg_theme');}catch(_){}
   // 创建滑块
   createSlider('sliderGold', 'goldThreshold', 0, 359, 45);
   createSlider('sliderSilk', 'silkThreshold', 0, 255, 180);
@@ -3794,11 +3997,8 @@ function init(){
   el('#btnAutoLights').addEventListener('click', autoSuggestLights);
   el('#grayPreviewMask').addEventListener('change', function(){ state.gray.previewMaskId = this.value; updateProcess(); });
   document.querySelectorAll('[data-processing-mode]').forEach(btn => {
-    attachFortniteHoverEffect(btn);
     btn.addEventListener('click', function(){ setProcessingMode(this.dataset.processingMode, true); });
   });
-  attachFortniteHoverEffect(el('#btnStarProject'));
-  document.querySelectorAll('.drawing-action-btn').forEach(attachFortniteHoverEffect);
   document.querySelectorAll('[data-view-mode]').forEach(btn => {
     btn.addEventListener('click', function(){ setViewMode(this.dataset.viewMode); });
   });
@@ -3823,8 +4023,12 @@ function init(){
   pi.addEventListener('change', function(){ if(this.files[0]) importProjectFile(this.files[0]); this.value = ''; });
   document.body.appendChild(pi);
 
-  el('#modalBack').addEventListener('click', function(e){ if(e.target === this && !disclaimerCleanup) closeModal(); });
+  el('#modalBack').addEventListener('click', function(e){
+    if(e.target !== this || disclaimerCleanup)return;
+    e.stopImmediatePropagation();dismissModal();
+  });
 
+  initializeInterface();
   initializeRegions();
   setupMenus();
   try{ loadLocalPrefs(); }
