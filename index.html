@@ -390,10 +390,18 @@ button{border-width:1px!important;border-style:solid!important;border-radius:var
         <div class="region-list" id="regionList"></div>
         <span class="region-control-label" data-i18n="regionDrawing">区域划取</span>
         <div class="region-tools" id="regionTools" role="group" data-i18n-aria="regionDrawing" aria-label="区域划取">
+          <button type="button" class="paint-tool" data-region-tool="select" data-i18n="regionSelect">选择</button>
           <button type="button" class="paint-tool" data-region-tool="rect" data-i18n="regionRect">矩形</button>
           <button type="button" class="paint-tool" data-region-tool="lasso" data-i18n="regionLasso">套索</button>
           <button type="button" class="paint-tool" data-region-tool="brush" data-i18n="paintBrush">画笔</button>
+          <button type="button" class="paint-tool" data-region-tool="wand" data-i18n="regionWand">魔棒</button>
         </div>
+        <div id="regionWandControls" hidden>
+          <label class="ctl"><span id="regionWandToleranceLabel" class="lab" data-i18n-slider="regionWandTolerance">容差: 15</span><input id="regionWandTolerance" type="range" min="0" max="100" value="15" aria-labelledby="regionWandToleranceLabel"></label>
+          <label class="check"><input type="checkbox" id="regionWandGlobal"><span data-i18n="regionWandGlobal">全图同色</span></label>
+          <p class="note" id="regionWandStatus" role="status" hidden data-i18n="regionWandBusy">正在计算选区…</p>
+        </div>
+        <label class="ctl" id="regionBrushControl" hidden><span class="lab" data-i18n="paintSize">粗细</span><input id="regionBrushSize" type="range" min="1" max="160" value="24"></label>
         <span class="region-control-label" data-i18n="regionOperation">选区操作</span>
         <div class="region-tools" id="regionOperations" role="group" data-i18n-aria="regionOperation" aria-label="选区操作">
           <button type="button" class="paint-tool" data-region-operation="new" data-i18n="regionNew">新增区域</button>
@@ -403,7 +411,6 @@ button{border-width:1px!important;border-style:solid!important;border-radius:var
         <select id="regionOperation" data-ui="segmented">
           <option value="new" data-i18n="regionNew">新增区域</option><option value="add" data-i18n="regionAdd">增选</option><option value="subtract" data-i18n="regionSubtract">减选</option>
         </select>
-        <label class="ctl" id="regionBrushControl" hidden><span class="lab" data-i18n="paintSize">粗细</span><input id="regionBrushSize" type="range" min="1" max="160" value="24"></label>
         <label class="check"><input type="checkbox" id="regionHighlight" checked><span data-i18n="regionShowHighlight">显示选区高光</span></label>
         <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionRename" data-i18n="regionRename">重命名此选区</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionDelete" data-i18n="regionDelete">删除区域</button></div>
         <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionClear" data-i18n="regionClear">重置局部调整</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionCopy" data-i18n="regionCopy">复制局部调整至</button></div>
@@ -1796,7 +1803,10 @@ function setProcessingMode(mode, shouldRender){
 }
 
 function setViewMode(mode){
-  if(mode!=='overlay' && regionState.tool!=='none'){cancelRegionGesture();regionState.tool='none';refreshRegionUI();}
+  if(mode!==state.viewMode)cancelRegionGesture();
+  if(mode!=='overlay' && !['none','select'].includes(regionState.tool)){
+    regionState.tool=el('#groupRegions').classList.contains('open') ? 'select' : 'none';refreshRegionUI();
+  }
   state.viewMode = ['overlay', 'split', 'quad'].includes(mode) ? mode : 'overlay';
   const isQuad = state.viewMode === 'quad';
   el('#compositeWrap').hidden = isQuad;
@@ -1810,9 +1820,14 @@ function setViewMode(mode){
 }
 
 function setGroupOpen(groupId, open, withMaster){
-  if(groupId==='groupRegions' && !open){cancelRegionGesture();regionState.tool='none';refreshRegionUI();}
   const g = el('#'+groupId);
   if(open) g.classList.add('open'); else g.classList.remove('open');
+  if(groupId==='groupRegions'){
+    cancelRegionGesture();
+    regionState.tool=open && state.origin ? 'select' : 'none';
+    if(open)state.light.pendingStart=null;
+    refreshRegionUI();renderAllPreviews();
+  }
   if(withMaster){
     const k = g.getAttribute('data-master');
     if(k) masterState[k] = open;
@@ -1934,18 +1949,24 @@ function updateQuadPlaceholders(){
     node.style.display = previewStates[quadPreviewKey(node.dataset.quadPlaceholder)].img ? 'none' : 'flex';
   });
 }
+let pendingPreviewRender=0;
+// 连续鼠标事件只在下一帧绘制一次；提交、切换视图仍可立即刷新。
+function schedulePreviewRender(){
+  if(!pendingPreviewRender)pendingPreviewRender=requestAnimationFrame(()=>{pendingPreviewRender=0;renderAllPreviews();});
+}
 function renderAllPreviews(){
+  if(pendingPreviewRender){cancelAnimationFrame(pendingPreviewRender);pendingPreviewRender=0;}
   for(const k in previewStates){
     const st = previewStates[k];
     const c = el(st.canvas);
     const view = state.viewMode === 'split' ? splitCamera : st;
-    if(c.width > 0 && c.height > 0) renderPreviewCanvas(st, c, view, k === 'composite');
+    if(c.width > 0 && c.height > 0 && c.clientWidth > 0 && c.clientHeight > 0) renderPreviewCanvas(st, c, view, k === 'composite');
   }
   if(state.viewMode === 'quad'){
     for(const k in quadPreviewCanvases){
       const c = el(quadPreviewCanvases[k]);
       const previewKey = quadPreviewKey(k);
-      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[previewKey], c, quadCamera, previewKey === 'composite');
+      if(c.width > 0 && c.height > 0 && c.clientWidth > 0 && c.clientHeight > 0) renderPreviewCanvas(previewStates[previewKey], c, quadCamera, previewKey === 'composite');
     }
   }
 }
@@ -2006,8 +2027,7 @@ function attachPreviewInteraction(key){
     }
     clampPanForImage(view, st.img, c.width, c.height);
     syncPreviewImageMeta();
-    if(state.viewMode === 'split') renderAllPreviews();
-    else renderPreviewCanvas(st, c, st, key === 'composite');
+    schedulePreviewRender();
   }, { passive:false });
 
   c.addEventListener('pointerdown', function(e){
@@ -2024,11 +2044,10 @@ function attachPreviewInteraction(key){
     const view = state.viewMode === 'split' ? splitCamera : st;
     view.pan.x += dx; view.pan.y += dy;
     clampPanForImage(view, st.img, c.width, c.height);
-    if(state.viewMode === 'split') renderAllPreviews();
-    else renderPreviewCanvas(st, c, st, key === 'composite');
+    schedulePreviewRender();
   });
   window.addEventListener('pointerup', function(e){
-    if(panning){ panning = false; c.style.cursor = 'default'; }
+    if(panning){ panning = false; refreshRegionCursors(); }
   });
   c.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 }
@@ -2054,7 +2073,7 @@ function attachQuadPreviewInteraction(key){
     }
     clampPanForImage(quadCamera, st.img, c.width, c.height);
     syncPreviewImageMeta();
-    renderAllPreviews();
+    schedulePreviewRender();
   }, { passive:false });
   c.addEventListener('pointerdown', function(e){
     if(e.button === 1 || e.button === 2){
@@ -2067,9 +2086,9 @@ function attachQuadPreviewInteraction(key){
     quadCamera.pan.x += e.clientX - lastX; quadCamera.pan.y += e.clientY - lastY;
     lastX = e.clientX; lastY = e.clientY;
     clampPanForImage(quadCamera, st.img, c.width, c.height);
-    renderAllPreviews();
+    schedulePreviewRender();
   });
-  window.addEventListener('pointerup', function(){ if(panning){ panning = false; c.style.cursor = 'default'; } });
+  window.addEventListener('pointerup', function(){ if(panning){ panning = false; refreshRegionCursors(); } });
   c.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 }
 
@@ -2114,8 +2133,11 @@ const REGION_PARAMETERS = {
   sliderGrayThick:{mode:'gray',key:'thickRadius'}, sliderGrayBlur:{mode:'gray',key:'blurRadius'}
 };
 const regionState = {items:[],selected:0,nextId:1,revision:0,maskRevision:0,tool:'none',highlight:true,
-  gesture:null,undo:[],redo:[],sliderBefore:null,ownerCache:null,previewOwnerCache:null,overlayCache:null};
+  gesture:null,pointer:null,press:null,wandJob:null,undo:[],redo:[],sliderBefore:null,ownerCache:null,previewOwnerCache:null,overlayCache:null};
 function selectedRegion(){ return regionState.items.find(item => item.id === regionState.selected); }
+function effectiveRegionOperation(){
+  return selectedRegion() ? (regionState.press?.temporaryOperation || el('#regionOperation').value) : 'new';
+}
 for(const [language,words] of Object.entries({
   'zh-CN':['区域选择/编辑','全局','正在调整','选择','矩形','套索','选区操作','新增区域','增选','减选','显示选区高光','重命名此选区','删除区域','重置局部调整','复制局部调整至','区域 {id}','没有可用的选区像素'],
   'zh-TW':['區域選擇/編輯','全域','正在調整','選擇','矩形','套索','選區操作','新增區域','增選','減選','顯示選區高光','重新命名此選區','刪除區域','重置局部調整','複製局部調整至','區域 {id}','沒有可用的選區像素'],
@@ -2128,6 +2150,12 @@ for(const [language,words] of Object.entries({
 for(const [language,text] of Object.entries({'zh-CN':'重做','zh-TW':'重做',en:'Redo',ja:'やり直し'}))TRANSLATIONS[language].regionRedoLabel=text;
 for(const [language,text] of Object.entries({'zh-CN':'区域划取','zh-TW':'區域劃取',en:'Region selection',ja:'領域選択'}))TRANSLATIONS[language].regionDrawing=text;
 for(const [language,text] of Object.entries({'zh-CN':'区域参数','zh-TW':'區域參數',en:'Region parameters',ja:'領域パラメータ'}))TRANSLATIONS[language].regionParametersTitle=text;
+for(const [language,words] of Object.entries({
+  'zh-CN':['魔棒','容差','全图同色','正在计算选区…'],
+  'zh-TW':['魔棒','容差','全圖同色','正在計算選區…'],
+  en:['Wand','Tolerance','All matching colors','Calculating selection…'],
+  ja:['自動選択','許容値','画像全体の同色','選択範囲を計算中…']
+}))['regionWand','regionWandTolerance','regionWandGlobal','regionWandBusy'].forEach((key,index)=>TRANSLATIONS[language][key]=words[index]);
 for(const [language,words] of Object.entries({
   'zh-CN':['是否删除区域选择并将参数重置为全局？','是','否'],
   'zh-TW':['是否刪除區域選擇並將參數重置為全域？','是','否'],
@@ -2202,13 +2230,15 @@ function restoreRegionSnapshot(snapshot){
   touchRegionMasks(); refreshRegionUI(); updateProcess();
 }
 function undoRegionChange(redo){
+  cancelRegionGesture();
   const from = redo ? regionState.redo : regionState.undo, to = redo ? regionState.undo : regionState.redo;
   if(!from.length) return;
   to.push(captureRegionSnapshot()); restoreRegionSnapshot(from.pop());
 }
 function resetRegions(){
   cancelRegionGesture(); regionState.items=[]; regionState.selected=0; regionState.nextId=1;
-  regionState.undo=[]; regionState.redo=[]; regionState.sliderBefore=null; regionState.tool='none';
+  regionState.undo=[]; regionState.redo=[]; regionState.sliderBefore=null;
+  regionState.tool=el('#groupRegions').classList.contains('open') ? 'select' : 'none';
   touchRegionMasks(); refreshRegionUI();
   Object.assign(grayLumaCache,{source:null,base:null,radius:0,blurred:null});
 }
@@ -2312,20 +2342,31 @@ function refreshRegionUI(){
   el('#regionUndo').disabled=!regionState.undo.length;el('#regionRedo').disabled=!regionState.redo.length;
   el('#regionOperation').querySelectorAll('option').forEach(option=>option.disabled=option.value!=='new' && !selected);
   if(!selected) el('#regionOperation').value='new';
+  const activeOperation=effectiveRegionOperation();
   document.querySelectorAll('[data-region-operation]').forEach(button=>{
     const operation=el('#regionOperation'),option=[...operation.options].find(option=>option.value===button.dataset.regionOperation);
     button.disabled=!hasImage || option.disabled;
-    button.classList.toggle('active',operation.value===button.dataset.regionOperation);
-    button.setAttribute('aria-pressed',String(operation.value===button.dataset.regionOperation));
+    button.classList.toggle('active',activeOperation===button.dataset.regionOperation);
+    button.setAttribute('aria-pressed',String(activeOperation===button.dataset.regionOperation));
   });
   el('#regionBrushControl').hidden=regionState.tool!=='brush';
+  el('#regionWandControls').hidden=regionState.tool!=='wand';
+  el('#regionWandStatus').hidden=!regionState.wandJob;
+  el('#regionTools').setAttribute('aria-busy',String(!!regionState.wandJob));
   document.querySelectorAll('[data-region-tool]').forEach(button=>{
     button.disabled=!hasImage;button.classList.toggle('active',button.dataset.regionTool===regionState.tool);
     button.setAttribute('aria-pressed',String(button.dataset.regionTool===regionState.tool));
   });
-  el('#canvasComposite').style.cursor=regionState.tool==='none' ? '' : 'crosshair';
+  refreshRegionCursors();
   refreshRegionSliders();
   refreshInterfaceControls();
+}
+function refreshRegionCursors(){
+  for(const canvas of document.querySelectorAll('.preview-stage canvas,#colLayers canvas')){
+    canvas.style.cursor=regionState.pointer?.canvas===canvas && regionState.pointer.dragging ? 'grabbing' :
+      canvas.id==='canvasComposite' && regionState.wandJob ? 'wait' :
+      canvas.id==='canvasComposite' && !['none','select'].includes(regionState.tool) ? 'crosshair' : '';
+  }
 }
 function attachRegionSlider(id,globalInput,titleKey){
   if(!REGION_PARAMETERS[id]) return;
@@ -2337,10 +2378,12 @@ function attachRegionSlider(id,globalInput,titleKey){
   const section=id.startsWith('sliderBare') ? '#regionBareSliders' : (id.startsWith('sliderEdge') ? '#regionEdgeSliders' : '#regionBasicSliders');
   track.append(input,marker);label.appendChild(track);el(section).appendChild(label);
   input.addEventListener('pointerdown',()=>{
+    if(regionState.wandJob)cancelRegionGesture();
     regionState.sliderBefore=captureRegionSnapshot();draggingSlider=true;
     if(state.origin) prcSliderPressed({w:state.origin.width,h:state.origin.height});
   });
   input.addEventListener('input',()=>{
+    if(regionState.wandJob)cancelRegionGesture();
     const item=selectedRegion();if(!item) return;
     if(!regionState.sliderBefore) regionState.sliderBefore=captureRegionSnapshot();
     const def=REGION_PARAMETERS[id];item.offsets[def.mode][def.key]=Number((Number(input.value)-Number(globalInput.value)).toFixed(6));
@@ -2364,7 +2407,7 @@ function regionPoint(event,canvas,view,allowOutside){
   return {x:clamp((x-rect.x)/rect.w*state.origin.width,0,state.origin.width-.001),
     y:clamp((y-rect.y)/rect.h*state.origin.height,0,state.origin.height-.001)};
 }
-function rasterizeRegionGesture(gesture,scale,clip){
+function rasterizeRegionGesture(gesture,scale,clip,readPixels=true){
   const points=gesture.points,pad=gesture.tool==='brush' ? gesture.size/2+1 : 1;
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   for(const p of points){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
@@ -2372,7 +2415,8 @@ function rasterizeRegionGesture(gesture,scale,clip){
   const w=Math.min(state.origin.width,Math.ceil(maxX+pad),clip ? clip.x+clip.w : state.origin.width)-x;
   const h=Math.min(state.origin.height,Math.ceil(maxY+pad),clip ? clip.y+clip.h : state.origin.height)-y;
   if(w<=0 || h<=0)return null;
-  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.ceil(w*scale));canvas.height=Math.max(1,Math.ceil(h*scale));
+  const canvas=readPixels ? document.createElement('canvas') : (gesture.previewRaster ||= document.createElement('canvas'));
+  canvas.width=Math.max(1,Math.ceil(w*scale));canvas.height=Math.max(1,Math.ceil(h*scale));
   const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.scale(scale,scale);ctx.translate(-x,-y);ctx.fillStyle='#fff';ctx.strokeStyle='#fff';
   if(gesture.tool==='rect'){
     const a=points[0],b=points[points.length-1];ctx.fillRect(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(a.x-b.x),Math.abs(a.y-b.y));
@@ -2383,43 +2427,248 @@ function rasterizeRegionGesture(gesture,scale,clip){
     if(points.length===1){ctx.beginPath();ctx.arc(points[0].x,points[0].y,gesture.size/2,0,Math.PI*2);ctx.fill();}
     else {ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(const p of points.slice(1)) ctx.lineTo(p.x,p.y);ctx.stroke();}
   }
-  return {x,y,w,h,canvas,data:ctx.getImageData(0,0,canvas.width,canvas.height).data,scale};
+  return {x,y,w,h,canvas,data:readPixels ? ctx.getImageData(0,0,canvas.width,canvas.height).data : null,scale};
+}
+function releaseRegionPress(){
+  const press=regionState.press;regionState.press=null;
+  if(press && el('#canvasComposite').hasPointerCapture(press.pointerId))el('#canvasComposite').releasePointerCapture(press.pointerId);
+  if(press?.temporaryOperation)refreshRegionUI();
 }
 function cancelRegionGesture(){
-  const gesture=regionState.gesture;regionState.gesture=null;regionState.overlayCache=null;
+  const gesture=regionState.gesture;regionState.gesture=null;
+  if(regionState.overlayCache)regionState.overlayCache.live=null;
+  const pointer=regionState.pointer;regionState.pointer=null;
+  if(pointer && pointer.canvas.hasPointerCapture(pointer.pointerId))pointer.canvas.releasePointerCapture(pointer.pointerId);
+  releaseRegionPress();
   if(gesture && el('#canvasComposite').hasPointerCapture(gesture.pointerId)) el('#canvasComposite').releasePointerCapture(gesture.pointerId);
+  if(regionState.wandJob){regionState.wandJob=null;refreshRegionUI();}
+  refreshRegionCursors();
 }
-function finishRegionGesture(cancel){
-  const gesture=regionState.gesture;if(!gesture) return;
-  if(cancel){cancelRegionGesture();renderAllPreviews();return;}
+// 所有划取工具共用归属和提交规则；计算期间只修改副本，完成后才写回工程。
+function* buildRegionChange(selection,operation){
   const before=captureRegionSnapshot(), sw=state.origin.width,sh=state.origin.height;
-  const raster=rasterizeRegionGesture(gesture,1), prior=regionOwners(sw,sh), owners=prior ? prior.slice() : new Uint32Array(sw*sh);
+  const owners=regionOwners(sw,sh);
   let nextId=regionState.nextId>0xffffffff ? 1 : regionState.nextId;
   const existingIds=new Set(regionState.items.map(item=>item.id));while(existingIds.has(nextId))nextId++;
-  const target=gesture.operation==='new' ? nextId : regionState.selected;
-  let changed=false;
-  for(let y=0;y<raster.canvas.height;y++) for(let x=0;x<raster.canvas.width;x++){
-    if(raster.data[(y*raster.canvas.width+x)*4+3]<128) continue;
-    const px=(y+raster.y)*sw+x+raster.x,owner=owners[px];
-    if(gesture.operation==='subtract'){if(owner===target){owners[px]=0;changed=true;}}
-    else if(owner===0){owners[px]=target;changed=true;}
+  const target=operation==='new' ? nextId : regionState.selected;
+  if(operation!=='new' && !selectedRegion())return null;
+  // 只检查候选像素，再合并行区间，避免每次小笔画复制并扫描整张归属图。
+  const changes=[];let work=0;
+  for(const [y,start,end] of selection){
+    let run=-1;
+    for(let x=start;x<end;x++){
+      const owner=owners?.[y*sw+x] || 0,allowed=operation==='subtract' ? owner===target : owner===0;
+      if(allowed){if(run<0)run=x;}
+      else if(run>=0){changes.push([y,run,x]);run=-1;}
+      if(++work===16384){work=0;yield;}
+    }
+    if(run>=0)changes.push([y,run,end]);
   }
-  cancelRegionGesture();
-  if(!changed){toast(t('regionEmptySelection'));renderAllPreviews();return;}
+  if(!changes.length)return null;
   const spans=[];
-  for(let y=0;y<sh;y++){
-    let x=0;while(x<sw){if(owners[y*sw+x]!==target){x++;continue;}const start=x++;while(x<sw && owners[y*sw+x]===target)x++;spans.push([y,start,x]);}
+  if(operation==='subtract'){
+    let index=0;
+    for(const [y,start,end] of selectedRegion().spans){
+      let x=start;
+      while(index<changes.length && (changes[index][0]<y || (changes[index][0]===y && changes[index][2]<=x)))index++;
+      for(let j=index;j<changes.length && changes[j][0]===y && changes[j][1]<end;j++){
+        if(changes[j][1]>x)spans.push([y,x,Math.min(end,changes[j][1])]);
+        x=Math.max(x,changes[j][2]);if(x>=end)break;
+      }
+      if(x<end)spans.push([y,x,end]);
+      if(++work===16384){work=0;yield;}
+    }
+  }else{
+    const prior=operation==='add' ? selectedRegion().spans : [];
+    let a=0,b=0;
+    while(a<prior.length || b<changes.length){
+      const takePrior=b===changes.length || (a<prior.length && (prior[a][0]<changes[b][0] || (prior[a][0]===changes[b][0] && prior[a][1]<=changes[b][1])));
+      const span=takePrior ? prior[a++] : changes[b++],last=spans[spans.length-1];
+      if(last && last[0]===span[0] && last[2]>=span[1])last[2]=Math.max(last[2],span[2]);
+      else spans.push([...span]);
+      if(++work===16384){work=0;yield;}
+    }
   }
-  if(gesture.operation==='new'){
+  return {before,target,spans,operation};
+}
+function commitRegionChange(change){
+  if(!change){toast(t('regionEmptySelection'));renderAllPreviews();return;}
+  const {before,target,spans,operation}=change;
+  const changesProduction=operation!=='new' && Object.values(selectedRegion().offsets[state.processingMode]).some(value=>value!==0);
+  if(operation==='new'){
     regionState.items.push({id:target,name:t('regionDefaultName',{id:target}),spans,offsets:{gray:{},color:{}}});regionState.nextId=target+1;
   } else {
     const item=selectedRegion();if(spans.length) item.spans=spans;else regionState.items=regionState.items.filter(item=>item.id!==target);
   }
   regionState.selected=spans.length ? target : 0;
-  touchRegionMasks();recordRegionChange(before);refreshRegionUI();updateProcess();
+  touchRegionMasks();recordRegionChange(before);refreshRegionUI();
+  // 零偏移选区与全局处理完全一致，仅划取时复用图层；已有局部调参仍立即重算。
+  if(changesProduction)updateProcess();else renderAllPreviews();
+}
+function finishRegionGesture(cancel){
+  const gesture=regionState.gesture;if(!gesture)return;
+  if(cancel){cancelRegionGesture();renderAllPreviews();return;}
+  const raster=rasterizeRegionGesture(gesture,1),selection=[];
+  if(raster)for(let y=0;y<raster.canvas.height;y++){
+    let start=-1;
+    for(let x=0;x<raster.canvas.width;x++){
+      if(raster.data[(y*raster.canvas.width+x)*4+3]>=128){if(start<0)start=x;}
+      else if(start>=0){selection.push([y+raster.y,start+raster.x,x+raster.x]);start=-1;}
+    }
+    if(start>=0)selection.push([y+raster.y,start+raster.x,raster.canvas.width+raster.x]);
+  }
+  cancelRegionGesture();
+  const iterator=buildRegionChange(selection,gesture.operation);let result;
+  do{result=iterator.next();}while(!result.done);
+  commitRegionChange(result.value);
+}
+// 固定种子颜色，防止相邻渐变把连通区域不断扩散到容差之外。
+function* computeWandSpans(image,point,tolerance,global){
+  const {width:w,height:h,data}=image,seed=Math.floor(point.y)*w+Math.floor(point.x),offset=seed*4;
+  const red=data[offset],green=data[offset+1],blue=data[offset+2],transparent=data[offset+3]===0;
+  const limit=3*255*255*(tolerance/100)**2,flags=new Uint8Array(w*h);
+  let work=0;
+  const matches=p=>{
+    if(flags[p])return flags[p]!==3;
+    const i=p*4;
+    const match=transparent ? data[i+3]===0 : data[i+3]!==0 &&
+      (data[i]-red)**2+(data[i+1]-green)**2+(data[i+2]-blue)**2<=limit;
+    if(!match)flags[p]=3;
+    return match;
+  };
+  if(global){
+    for(let p=0;p<flags.length;p++){
+      if(matches(p))flags[p]=2;
+      if(++work===16384){work=0;yield;}
+    }
+  } else {
+    let stack=new Uint32Array(Math.min(flags.length,1024)),length=0;
+    const push=p=>{
+      if(flags[p]===1 || flags[p]===2 || !matches(p))return;
+      if(length===stack.length){const grown=new Uint32Array(Math.min(flags.length,stack.length*2));grown.set(stack);stack=grown;}
+      flags[p]=1;stack[length++]=p;
+    };
+    push(seed);
+    while(length){
+      const p=stack[--length];if(flags[p]===2)continue;
+      const y=Math.floor(p/w),row=y*w;let left=p-row;
+      while(left>0 && flags[row+left-1]!==2 && matches(row+left-1)){
+        left--;if(++work===16384){work=0;yield;}
+      }
+      let right=left;
+      while(right<w && flags[row+right]!==2 && matches(row+right)){
+        flags[row+right]=2;right++;if(++work===16384){work=0;yield;}
+      }
+      for(const neighbor of [y-1,y+1]){
+        if(neighbor<0 || neighbor>=h)continue;
+        let inRun=false;
+        for(let x=left;x<right;x++){
+          const q=neighbor*w+x;
+          if(flags[q]!==2 && matches(q)){if(!inRun)push(q);inRun=true;}else inRun=false;
+          if(++work===16384){work=0;yield;}
+        }
+      }
+    }
+  }
+  const spans=[];
+  for(let y=0;y<h;y++){
+    let start=-1;
+    for(let x=0;x<w;x++){
+      if(flags[y*w+x]===2){if(start<0)start=x;}
+      else if(start>=0){spans.push([y,start,x]);start=-1;}
+      if(++work===16384){work=0;yield;}
+    }
+    if(start>=0)spans.push([y,start,w]);
+  }
+  return spans;
+}
+function regionWandIsCurrent(job){
+  return regionState.wandJob===job && state.origin===job.origin && regionState.revision===job.revision &&
+    regionState.selected===job.selected && regionState.tool==='wand';
+}
+async function runRegionWork(iterator,job){
+  // 计算与归属合并都分批让出主线程，Esc、导入和工具切换可以取消任务。
+  while(regionWandIsCurrent(job)){
+    const deadline=performance.now()+8;
+    do{
+      const result=iterator.next();
+      if(result.done)return result.value;
+    }while(performance.now()<deadline);
+    await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  iterator.return();return null;
+}
+async function startRegionWand(point,operation=effectiveRegionOperation()){
+  if(regionState.wandJob || !state.origin || regionState.tool!=='wand')return;
+  if(operation!=='new' && !selectedRegion())return;
+  const job={origin:state.origin,revision:regionState.revision,selected:regionState.selected};
+  regionState.wandJob=job;refreshRegionUI();
+  try{
+    await new Promise(resolve=>setTimeout(resolve,0));
+    if(!regionWandIsCurrent(job))return;
+    const spans=await runRegionWork(computeWandSpans(job.origin,point,Number(el('#regionWandTolerance').value),el('#regionWandGlobal').checked),job);
+    if(!regionWandIsCurrent(job))return;
+    const change=await runRegionWork(buildRegionChange(spans,operation),job);
+    if(!regionWandIsCurrent(job))return;
+    regionState.wandJob=null;refreshRegionUI();commitRegionChange(change);
+  }catch(error){
+    if(regionWandIsCurrent(job))toast(t('runtimeError')+(error.message || t('unknownError')));
+  }finally{
+    if(regionState.wandJob===job){regionState.wandJob=null;refreshRegionUI();}
+  }
+}
+function attachRegionPointerSelection(canvas,st,getView){
+  canvas.addEventListener('pointerdown',event=>{
+    if(event.button!==0 || regionState.tool!=='select' || !state.origin || !st.img || regionState.pointer)return;
+    const view=getView();
+    regionState.pointer={canvas,view,pointerId:event.pointerId,x:event.clientX,y:event.clientY,
+      pan:{...view.pan},point:regionPoint(event,canvas,view,false),dragging:false};
+    canvas.setPointerCapture(event.pointerId);event.preventDefault();event.stopImmediatePropagation();
+  },true);
+  canvas.addEventListener('pointermove',event=>{
+    const pointer=regionState.pointer;if(pointer?.canvas!==canvas || pointer.pointerId!==event.pointerId)return;
+    const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y;
+    if(!pointer.dragging && Math.hypot(dx,dy)<=4)return;
+    pointer.dragging=true;
+    const bounds=canvas.getBoundingClientRect();
+    pointer.view.pan.x=pointer.pan.x+dx*canvas.width/bounds.width;
+    pointer.view.pan.y=pointer.pan.y+dy*canvas.height/bounds.height;
+    clampPanForImage(pointer.view,st.img,canvas.width,canvas.height);
+    schedulePreviewRender();refreshRegionCursors();event.preventDefault();
+  });
+  canvas.addEventListener('pointerup',event=>{
+    const pointer=regionState.pointer;if(pointer?.canvas!==canvas || pointer.pointerId!==event.pointerId)return;
+    cancelRegionGesture();
+    if(!pointer.dragging && pointer.point){
+      const owners=regionOwners(state.origin.width,state.origin.height),point=pointer.point;
+      selectRegion(owners?.[Math.floor(point.y)*state.origin.width+Math.floor(point.x)] || 0);
+    }
+  });
+  canvas.addEventListener('pointercancel',()=>{if(regionState.pointer?.canvas===canvas)cancelRegionGesture();});
+  canvas.addEventListener('lostpointercapture',()=>{if(regionState.pointer?.canvas===canvas)cancelRegionGesture();});
+}
+function regionGestureBounds(points,pad){
+  let x=Infinity,y=Infinity,right=-Infinity,bottom=-Infinity;
+  for(const p of points){x=Math.min(x,p.x);y=Math.min(y,p.y);right=Math.max(right,p.x);bottom=Math.max(bottom,p.y);}
+  return {x:Math.floor(x-pad),y:Math.floor(y-pad),right:Math.ceil(right+pad),bottom:Math.ceil(bottom+pad)};
+}
+function paintRegionOverlay(cache,active,canvas,bounds){
+  const w=canvas.width,h=canvas.height;
+  const x0=Math.max(0,bounds.x-cache.x),y0=Math.max(0,bounds.y-cache.y);
+  const x1=Math.min(w,bounds.right-cache.x),y1=Math.min(h,bounds.bottom-cache.y);
+  if(x1<=x0 || y1<=y0)return;
+  const image=makeImg(x1-x0,y1-y0),d=image.data,selection=uiCanvasColors().selection;
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
+    const px=y*w+x,type=active[px];if(!type)continue;
+    const edge=x===0 || y===0 || x===w-1 || y===h-1 || active[px-1]!==type || active[px+1]!==type || active[px-w]!==type || active[px+w]!==type;
+    const i=((y-y0)*image.width+x-x0)*4;
+    d[i]=type===3 ? 255 : selection[0];d[i+1]=type===3 ? 110 : selection[1];d[i+2]=type===3 ? 110 : selection[2];
+    d[i+3]=edge ? 220 : (type===2 ? 75 : 42);
+  }
+  canvas.getContext('2d').putImageData(image,x0,y0);
 }
 function drawRegionOverlay(ctx,rect){
-  if(!state.origin || (!regionState.gesture && (!regionState.highlight || !selectedRegion()))) return;
+  if(!state.origin || (!regionState.gesture && (!regionState.highlight || !selectedRegion())))return;
   if(rect.w<=0 || rect.h<=0)return;
   const sw=state.origin.width,sh=state.origin.height;
   // 高光按原图像素绘制；可见范围多取一圈，避免裁切处形成假边界。
@@ -2428,34 +2677,80 @@ function drawRegionOverlay(ctx,rect){
   const y1=clamp(Math.ceil((ctx.canvas.height-rect.y)*sh/rect.h)+1,0,sh);
   const w=x1-x0,h=y1-y0;if(w<=0 || h<=0)return;
   let cached=regionState.overlayCache;
-  if(!cached || cached.selected!==regionState.selected || cached.highlight!==regionState.highlight ||
-      cached.x!==x0 || cached.y!==y0 || cached.canvas.width!==w || cached.canvas.height!==h || regionState.gesture){
-    const owners=regionOwners(sw,sh), active=new Uint8Array(w*h),selected=regionState.selected;
-    if(regionState.highlight && selected)for(let y=0;y<h;y++)for(let x=0;x<w;x++){
-      if(owners?.[(y+y0)*sw+x+x0]===selected)active[y*w+x]=1;
-    }
-    const gesture=regionState.gesture;
-    if(gesture){
-      const raster=rasterizeRegionGesture(gesture,1,{x:x0,y:y0,w,h});
-      if(raster)for(let y=0;y<raster.canvas.height;y++)for(let x=0;x<raster.canvas.width;x++){
-        if(raster.data[(y*raster.canvas.width+x)*4+3]<128)continue;
-        const ox=raster.x+x-x0,oy=raster.y+y-y0;
-        const i=oy*w+ox, owner=owners?.[(oy+y0)*sw+ox+x0] || 0;
-        if(gesture.operation==='subtract'){if(owner===selected)active[i]=3;}
-        else if(!owner || (gesture.operation==='add' && owner===selected))active[i]=2;
+  if(!cached || cached.selected!==regionState.selected || cached.highlight!==regionState.highlight || cached.revision!==regionState.maskRevision ||
+      cached.x!==x0 || cached.y!==y0 || cached.canvas.width!==w || cached.canvas.height!==h){
+    const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+    cached={selected:regionState.selected,highlight:regionState.highlight,revision:regionState.maskRevision,x:x0,y:y0,canvas,active:new Uint8Array(w*h),live:null};
+    if(regionState.highlight && selectedRegion()){
+      const bounds={x:x1,y:y1,right:x0,bottom:y0};
+      for(const [y,start,end] of selectedRegion().spans){
+        if(y<y0 || y>=y1 || end<=x0 || start>=x1)continue;
+        const left=Math.max(start,x0),right=Math.min(end,x1);
+        cached.active.fill(1,(y-y0)*w+left-x0,(y-y0)*w+right-x0);
+        bounds.x=Math.min(bounds.x,left);bounds.y=Math.min(bounds.y,y);bounds.right=Math.max(bounds.right,right);bounds.bottom=Math.max(bounds.bottom,y+1);
       }
+      paintRegionOverlay(cached,cached.active,canvas,bounds);
     }
-    const image=makeImg(w,h),d=image.data,selection=uiCanvasColors().selection;
-    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
-      const px=y*w+x,type=active[px];if(!type)continue;
-      const edge=x===0 || y===0 || x===w-1 || y===h-1 || active[px-1]!==type || active[px+1]!==type || active[px-w]!==type || active[px+w]!==type;
-      const i=px*4;d[i]=type===3 ? 255 : selection[0];d[i+1]=type===3 ? 110 : selection[1];d[i+2]=type===3 ? 110 : selection[2];d[i+3]=edge ? 220 : (type===2 ? 75 : 42);
+    regionState.overlayCache=cached;
+  }
+  let canvas=cached.canvas;
+  const gesture=regionState.gesture;
+  if(gesture){
+    let live=cached.live;
+    if(!live || live.gesture!==gesture){
+      canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(cached.canvas,0,0);
+      live=cached.live={gesture,canvas,active:cached.active.slice(),count:0,bounds:null,signature:null};
     }
-    cached={selected,highlight:regionState.highlight,x:x0,y:y0,canvas:toCanvas(image)};
-    if(!gesture)regionState.overlayCache=cached;
+    const last=gesture.points[gesture.points.length-1],signature=gesture.points.length+':'+last.x+':'+last.y;
+    if(live.signature!==signature){
+      const pad=gesture.tool==='brush' ? gesture.size/2+1 : 1;
+      // 画笔重绘新增线段附近；仍用完整路径栅格化，保留交叉、圆角及抗锯齿的像素规则。
+      const points=gesture.tool==='brush' ? gesture.points.slice(Math.max(0,live.count-1)) : gesture.points;
+      const next=regionGestureBounds(points,pad),dirty={...next};
+      if(gesture.tool!=='brush' && live.bounds){
+        dirty.x=Math.min(dirty.x,live.bounds.x);dirty.y=Math.min(dirty.y,live.bounds.y);
+        dirty.right=Math.max(dirty.right,live.bounds.right);dirty.bottom=Math.max(dirty.bottom,live.bounds.bottom);
+      }
+      let patches=[dirty];
+      if(gesture.tool==='rect' && live.bounds){
+        const stable={x:Math.max(next.x,live.bounds.x)+2,y:Math.max(next.y,live.bounds.y)+2,
+          right:Math.min(next.right,live.bounds.right)-2,bottom:Math.min(next.bottom,live.bounds.bottom)-2};
+        // 矩形内部不变时只更新移动的边缘；留出抗锯齿和描边所需的邻居。
+        if(stable.right>stable.x && stable.bottom>stable.y)patches=[
+          {...dirty,bottom:stable.y},{...dirty,y:stable.bottom},
+          {x:dirty.x,y:stable.y,right:stable.x,bottom:stable.bottom},
+          {x:stable.right,y:stable.y,right:dirty.right,bottom:stable.bottom}];
+      }
+      patches=patches.map(p=>({x:Math.max(x0,p.x),y:Math.max(y0,p.y),right:Math.min(x1,p.right),bottom:Math.min(y1,p.bottom)}))
+        .filter(p=>p.right>p.x && p.bottom>p.y);
+      // 栅格画布保持完整可见路径的边界，仅回读脏区，避免裁短路径改变临界像素的抗锯齿。
+      const raster=patches.length ? rasterizeRegionGesture(gesture,1,{x:x0,y:y0,w,h},false) : null,owners=regionOwners(sw,sh);
+      for(const patch of patches){
+        for(let y=patch.y;y<patch.bottom;y++){
+          const start=(y-y0)*w+patch.x-x0,end=(y-y0)*w+patch.right-x0;
+          live.active.set(cached.active.subarray(start,end),start);
+        }
+        if(raster){
+          const left=Math.max(patch.x,raster.x),top=Math.max(patch.y,raster.y);
+          const right=Math.min(patch.right,raster.x+raster.w),bottom=Math.min(patch.bottom,raster.y+raster.h);
+          if(right<=left || bottom<=top)continue;
+          const image=raster.canvas.getContext('2d').getImageData(left-raster.x,top-raster.y,right-left,bottom-top);
+          for(let y=0;y<image.height;y++)for(let x=0;x<image.width;x++){
+            if(image.data[(y*image.width+x)*4+3]<128)continue;
+            const sx=left+x,sy=top+y,i=(sy-y0)*w+sx-x0,owner=owners?.[sy*sw+sx] || 0;
+            if(gesture.operation==='subtract'){if(owner===regionState.selected)live.active[i]=3;}
+            else if(!owner || (gesture.operation==='add' && owner===regionState.selected))live.active[i]=2;
+          }
+        }
+      }
+      // 所有掩膜更新后再绘制邻居，线段边界改变时不会留下旧描边。
+      for(const patch of patches)paintRegionOverlay(cached,live.active,live.canvas,{x:patch.x-1,y:patch.y-1,right:patch.right+1,bottom:patch.bottom+1});
+      live.count=gesture.points.length;live.bounds=next;live.signature=signature;
+    }
+    canvas=live.canvas;
   }
   ctx.save();ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(cached.canvas,rect.x+x0*rect.w/sw,rect.y+y0*rect.h/sh,w*rect.w/sw,h*rect.h/sh);ctx.restore();
+  ctx.drawImage(canvas,rect.x+x0*rect.w/sw,rect.y+y0*rect.h/sh,w*rect.w/sw,h*rect.h/sh);ctx.restore();
 }
 function openRegionRename(){
   const item=selectedRegion();if(!item)return;
@@ -2497,11 +2792,16 @@ function openRegionDelete(){
 function initializeRegions(){
   document.querySelectorAll('[data-region-tool]').forEach(button=>{
     button.onclick=()=>{
-      cancelRegionGesture();regionState.tool=regionState.tool===button.dataset.regionTool ? 'none' : button.dataset.regionTool;
-      if(regionState.tool!=='none'){state.light.pendingStart=null;setViewMode('overlay');}
+      cancelRegionGesture();regionState.tool=regionState.tool===button.dataset.regionTool ? 'select' : button.dataset.regionTool;
+      state.light.pendingStart=null;
+      if(regionState.tool!=='select')setViewMode('overlay');
       refreshRegionUI();renderAllPreviews();
     };
   });
+  el('#regionWandTolerance').addEventListener('input',function(){
+    cancelRegionGesture();refreshSliderLabel(el('#regionWandToleranceLabel'),this);refreshRegionUI();
+  });
+  el('#regionWandGlobal').addEventListener('change',()=>{cancelRegionGesture();refreshRegionUI();});
   document.querySelectorAll('[data-region-operation]').forEach(button=>{
     button.onclick=()=>{
       const operation=el('#regionOperation');if(operation.value===button.dataset.regionOperation)return;
@@ -2516,41 +2816,75 @@ function initializeRegions(){
   el('#regionClear').onclick=()=>{const item=selectedRegion();if(!item)return;const before=captureRegionSnapshot();item.offsets[state.processingMode]={};regionState.revision++;recordRegionChange(before);refreshRegionUI();updateProcess();};
   el('#regionUndo').onclick=()=>undoRegionChange(false);el('#regionRedo').onclick=()=>undoRegionChange(true);
   const canvas=el('#canvasComposite');
+  attachRegionPointerSelection(canvas,previewStates.composite,()=>state.viewMode==='split' ? splitCamera : previewStates.composite);
   canvas.addEventListener('pointerdown',event=>{
-    if(event.button!==0 || !state.origin)return;
+    if(![0,2].includes(event.button) || !state.origin)return;
+    if(regionState.tool==='select')return;
     const view=state.viewMode==='split' ? splitCamera : previewStates.composite;
     const point=regionPoint(event,canvas,view,false);if(!point)return;
     if(regionState.tool==='none'){
+      if(event.button!==0)return;
       if(masterState.light && state.processingMode==='color')return;
       if(!el('#groupRegions').classList.contains('open'))return;
       const owners=regionOwners(state.origin.width,state.origin.height);selectRegion(owners?.[Math.floor(point.y)*state.origin.width+Math.floor(point.x)] || 0);return;
     }
-    const operation=el('#regionOperation').value;if(operation!=='new' && !selectedRegion())return;
+    const defaultOperation=el('#regionOperation').value;
+    if(event.button===2 && (defaultOperation==='new' || !selectedRegion()))return;
+    event.preventDefault();event.stopImmediatePropagation();
+    if(regionState.press || regionState.gesture || regionState.wandJob)return;
+    const temporaryOperation=event.button===2 ? (defaultOperation==='add' ? 'subtract' : 'add') : null;
+    const operation=temporaryOperation || defaultOperation;
+    if(operation!=='new' && !selectedRegion())return;
+    // 默认操作不变；右键高亮只在本次按压期间显示，魔棒则固定使用按下时的操作。
+    regionState.press={pointerId:event.pointerId,buttonMask:event.button===2 ? 2 : 1,temporaryOperation};
+    canvas.setPointerCapture(event.pointerId);
+    if(temporaryOperation)refreshRegionUI();
+    if(regionState.tool==='wand'){
+      startRegionWand(point,operation);return;
+    }
     regionState.gesture={tool:regionState.tool,operation,size:Number(el('#regionBrushSize').value),points:[point],pointerId:event.pointerId};
-    // 仅绘制工具接管左键，选择状态仍允许原有布灯；缩放和平移不被拦截。
-    canvas.setPointerCapture(event.pointerId);event.preventDefault();event.stopImmediatePropagation();renderAllPreviews();
+    // 划取工具接管左键；选择工具在独立入口区分单击和平移。
+    renderAllPreviews();
   },true);
   canvas.addEventListener('pointermove',event=>{
+    const press=regionState.press;
+    // 双键组合的开始键松开时可能只有 pointermove，不能等到最后一个键松开才提交。
+    if(press?.pointerId===event.pointerId && !(event.buttons & press.buttonMask)){
+      if(regionState.gesture)finishRegionGesture(false);else releaseRegionPress();
+      return;
+    }
     const gesture=regionState.gesture;if(!gesture || gesture.pointerId!==event.pointerId)return;
     const point=regionPoint(event,canvas,previewStates.composite,true);if(!point)return;
     if(gesture.tool==='rect')gesture.points=[gesture.points[0],point];
     else {const last=gesture.points[gesture.points.length-1];if(Math.hypot(last.x-point.x,last.y-point.y)<.5)return;gesture.points.push(point);}
-    renderAllPreviews();event.preventDefault();
+    schedulePreviewRender();event.preventDefault();
   });
-  canvas.addEventListener('pointerup',event=>{if(regionState.gesture?.pointerId===event.pointerId)finishRegionGesture(false);});
-  canvas.addEventListener('pointercancel',()=>finishRegionGesture(true));
+  canvas.addEventListener('pointerup',event=>{
+    if(regionState.gesture?.pointerId===event.pointerId)finishRegionGesture(false);
+    else if(regionState.press?.pointerId===event.pointerId)releaseRegionPress();
+  });
+  canvas.addEventListener('pointercancel',()=>{cancelRegionGesture();renderAllPreviews();});
+  canvas.addEventListener('lostpointercapture',event=>{
+    if(regionState.press?.pointerId===event.pointerId || regionState.gesture?.pointerId===event.pointerId){cancelRegionGesture();renderAllPreviews();}
+  });
   const selectable=[...Object.entries(previewStates).filter(([key])=>key!=='composite').map(([,st])=>({canvas:el(st.canvas),st,view:()=>state.viewMode==='split' ? splitCamera : st})),
     ...Object.keys(quadPreviewCanvases).map(key=>({canvas:el(quadPreviewCanvases[key]),st:previewStates[quadPreviewKey(key)],view:()=>quadCamera}))];
+  for(const surface of selectable)attachRegionPointerSelection(surface.canvas,surface.st,surface.view);
   for(const surface of selectable)surface.canvas.addEventListener('pointerdown',event=>{
     if(event.button!==0 || regionState.tool!=='none' || !surface.st.img || !el('#groupRegions').classList.contains('open'))return;
     const point=regionPoint(event,surface.canvas,surface.view(),false);if(!point)return;
     const owners=regionOwners(state.origin.width,state.origin.height);selectRegion(owners?.[Math.floor(point.y)*state.origin.width+Math.floor(point.x)] || 0);
   });
   window.addEventListener('keydown',event=>{
-    if(event.key==='Escape' && !el('#modalBack').classList.contains('show')){cancelRegionGesture();regionState.tool='none';refreshRegionUI();renderAllPreviews();}
+    if(event.key==='Escape' && !el('#modalBack').classList.contains('show')){
+      cancelRegionGesture();regionState.tool=state.origin && el('#groupRegions').classList.contains('open') ? 'select' : 'none';refreshRegionUI();renderAllPreviews();
+    }
     if((event.ctrlKey || event.metaKey) && ['z','y'].includes(event.key.toLowerCase()) && !el('#modalBack').classList.contains('show') && !['INPUT','TEXTAREA','SELECT'].includes(event.target.tagName)){
       event.preventDefault();undoRegionChange(event.key.toLowerCase()==='y' || event.shiftKey);
     }
+  });
+  window.addEventListener('blur',()=>{
+    if(regionState.press || regionState.pointer || regionState.gesture || regionState.wandJob){cancelRegionGesture();renderAllPreviews();}
   });
   refreshRegionUI();
 }
@@ -2571,6 +2905,7 @@ function createSlider(containerId, titleKey, min, max, def, step, onValueChange)
   attachRegionSlider(containerId,input,titleKey);
 
   function onInput(){
+    if(regionState.wandJob)cancelRegionGesture();
     if(REGION_PARAMETERS[containerId] && !regionState.sliderBefore){
       regionState.sliderBefore=captureRegionSnapshot();regionState.sliderBefore.globals[containerId]=input._lastValue;
     }
@@ -2584,6 +2919,7 @@ function createSlider(containerId, titleKey, min, max, def, step, onValueChange)
   }
   input.addEventListener('input', onInput);
   input.addEventListener('pointerdown', function(){
+    if(regionState.wandJob)cancelRegionGesture();
     if(REGION_PARAMETERS[containerId]) regionState.sliderBefore=captureRegionSnapshot();
     draggingSlider = true;
     if(state.origin) prcSliderPressed({w:state.origin.width, h:state.origin.height});
@@ -2777,6 +3113,7 @@ function paintFoldOldestStroke(){
   session.base = ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
 function replaceProjectOrigin(imageData, sourceCanvas){
+  cancelRegionGesture();
   // 仅替换原图与相关缓存，分层参数、视图相机和灯条坐标保持不变。
   if(state.origin && (state.origin.width!==imageData.width || state.origin.height!==imageData.height))resetRegions();
   state.origin = imageData; state.originCanvas = sourceCanvas;
@@ -2866,6 +3203,7 @@ function cancelPaintEditor(){
   closeModal();
 }
 function openPaintEditor(){
+  cancelRegionGesture();
   if(!state.origin){ toast(t('liveEditNeedImage')); return; }
   showModal(
     '<h3>' + t('liveEdit') + '</h3>' +
@@ -3261,6 +3599,7 @@ function importDecodedImage(img, rect, fileSize=null){
   toast(t('imageTooLarge'));
 }
 function loadImageFile(file){
+  cancelRegionGesture();
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = function(){
@@ -3752,6 +4091,7 @@ async function importLegacyProjectFile(file){
   applyImportedProject({image, controls:root.controls, experimental:root.experimental, ledStrips:root.ledStrips, regions:root.regions});
 }
 async function importProjectFile(file){
+  cancelRegionGesture();
   try {
     const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
     const isArchive = file.name.toLowerCase().endsWith('.pcblg') || (header.length === 4 && header[0] === 0x50 && header[1] === 0x4b);
@@ -3885,6 +4225,7 @@ function openColorDialog(){
   el('#dlgColorCancel').onclick = closeModal;
 }
 function resetAllSettings(){
+  cancelRegionGesture();
   localStorage.removeItem('pcblg_scale');
   localStorage.removeItem('pcblg_prefs');
   localStorage.removeItem('pcblg_language');
