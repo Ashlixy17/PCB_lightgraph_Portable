@@ -57,6 +57,11 @@ async function test(name, run) {
     await page.goto(pathToFileURL(path.join(root, 'PCB_lightgraph_portable.html')).href);
     await old.goto(pathToFileURL(baseline).href);
     for (const p of [page, old]) if (await p.locator('#disclaimerClose').isVisible()) await p.locator('#disclaimerClose').click();
+    await test('all five region tools are disabled without an image', async () => {
+      assert.equal(await page.locator('[data-region-tool]').count(), 5);
+      assert.equal(await page.locator('[data-region-tool]:disabled').count(), 5);
+      assert.equal(await page.locator('#regionWandControls').isVisible(), false);
+    });
     await source(page); await source(old);
 
     await test('unchanged baseline in gray/color, including edge styles and transparent source pixels', async () => {
@@ -324,15 +329,38 @@ async function test(name, run) {
       for (const p of points.slice(1)) { const target = await imagePoint(...p); await page.mouse.move(target.x, target.y, { steps: 4 }); }
       await page.mouse.up();
     }
-    await test('three selection tools toggle off without a separate Select button', async () => {
+    await test('five ordered tools return to Select, including Escape and view switches', async () => {
       assert.equal(await page.locator('[data-region-tool=none]').count(), 0);
-      assert.equal(await page.locator('[data-region-tool]').count(), 3);
-      for (const tool of ['rect', 'lasso', 'brush']) {
+      assert.deepEqual(await page.locator('[data-region-tool]').evaluateAll(buttons => buttons.map(button => button.dataset.regionTool)),
+        ['select', 'rect', 'lasso', 'brush', 'wand']);
+      assert.equal(await page.evaluate(() => regionState.tool), 'select');
+      for (const tool of ['rect', 'lasso', 'brush', 'wand']) {
         const button = page.locator('[data-region-tool=' + tool + ']');
         await button.click(); assert.equal(await page.evaluate(() => regionState.tool), tool);
-        await button.click(); assert.equal(await page.evaluate(() => regionState.tool), 'none');
-        assert.equal(await page.locator('#regionTools .active').count(), 0);
+        await button.click(); assert.equal(await page.evaluate(() => regionState.tool), 'select');
+        assert.equal(await page.locator('#regionTools .active').count(), 1);
       }
+      await page.locator('[data-region-tool=wand]').click();
+      assert.ok(await page.locator('#regionWandControls').isVisible());
+      assert.equal(await page.locator('#regionWandTolerance').inputValue(), '15');
+      assert.equal(await page.locator('#regionWandGlobal').isChecked(), false);
+      await page.keyboard.press('Escape'); assert.equal(await page.evaluate(() => regionState.tool), 'select');
+      assert.equal(await page.locator('#regionWandControls').isVisible(), false);
+      await page.locator('[data-region-tool=rect]').click(); await page.evaluate(() => setViewMode('quad'));
+      assert.equal(await page.evaluate(() => regionState.tool), 'select');
+      await page.locator('[data-region-tool=select]').click(); assert.equal(await page.evaluate(() => state.viewMode), 'quad');
+      await page.locator('[data-region-tool=wand]').click(); assert.equal(await page.evaluate(() => state.viewMode), 'overlay');
+      await page.keyboard.press('Escape');
+      await page.locator('[data-region-tool=brush]').click();
+      assert.ok(await page.locator('#regionBrushControl').isVisible());
+      assert.equal(await page.locator('#regionBrushControl').evaluate(control =>
+        control.nextElementSibling.dataset.i18n === 'regionOperation'), true);
+      await page.setViewportSize({ width: 1000, height: 1000 });
+      const size = await page.locator('#regionBrushControl').boundingBox(), operations = await page.locator('#regionOperations').boundingBox();
+      assert.ok(size.y + size.height <= operations.y);
+      await page.screenshot({ path: path.join(temp, 'brush-controls-1000.png') });
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      await page.keyboard.press('Escape'); assert.equal(await page.locator('#regionBrushControl').isVisible(), false);
     });
     await test('real rectangle/lasso/brush gestures, exclusion, range edits and empty subtract undo', async () => {
       await gesture('rect', 'new', [[20, 20], [90, 80]]);
@@ -346,7 +374,7 @@ async function test(name, run) {
       assert.equal(await page.evaluate(() => regionState.items.length), 1);
       await page.evaluate(() => undoRegionChange(false)); assert.equal(await page.evaluate(() => regionState.items.length), 2);
     });
-    await test('zoom/pan keep selection coordinates; disabled tool restores LED placement', async () => {
+    await test('zoom/pan keep selection coordinates; Select blocks LEDs and folding restores placement', async () => {
       const canvas = page.locator('#canvasComposite'), b = await canvas.boundingBox();
       await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.mouse.wheel(0, -240);
       await page.mouse.down({ button: 'right' }); await page.mouse.move(b.x + b.width / 2 + 30, b.y + b.height / 2 + 15); await page.mouse.up({ button: 'right' });
@@ -357,7 +385,11 @@ async function test(name, run) {
       await page.evaluate(() => { setProcessingMode('color', true); setGroupOpen('groupLight', true, true); });
       const a = await imagePoint(25, 25), c = await imagePoint(70, 70);
       await page.mouse.click(a.x, a.y); await page.mouse.click(c.x, c.y);
+      assert.equal(await page.evaluate(() => state.light.strips.length), 0);
+      await page.evaluate(() => setGroupOpen('groupRegions', false, false));
+      await page.mouse.click(a.x, a.y); await page.mouse.click(c.x, c.y);
       assert.equal(await page.evaluate(() => state.light.strips.length), 1);
+      await page.evaluate(() => setGroupOpen('groupRegions', true, false));
     });
     await test('quick paint preserves region masks; four views and all UI languages render', async () => {
       const masks = await page.evaluate(() => serializeRegions());
@@ -478,6 +510,204 @@ async function test(name, run) {
       console.log('PERF ' + JSON.stringify(timing));
       await source(page, 32, 32);
       assert.equal(await page.evaluate(() => regionState.ownerCache), null);
+    });
+    async function reverseFixture(tool = 'rect', operation = 'add') {
+      await source(page, 256, 192);
+      await page.evaluate(({ tool, operation }) => {
+        setViewMode('overlay'); setProcessingMode('gray', false); masterState.light = false;
+        regionState.items = [{ id: 1, name: 'Target', spans: Array.from({ length: 60 }, (_, y) => [y + 40, 40, 100]), offsets: { gray: {}, color: {} } }];
+        regionState.nextId = 2; regionState.selected = 1; touchRegionMasks();
+        setGroupOpen('groupRegions', true, false); regionState.tool = tool;
+        el('#regionOperation').value = operation; el('#regionBrushSize').value = '6';
+        previewStates.composite.zoom = 1; previewStates.composite.pan = { x: 0, y: 0 };
+        refreshRegionUI(); renderAllPreviews();
+      }, { tool, operation });
+    }
+    async function reverseDown(x = 50, y = 50) {
+      const point = await imagePoint(x, y); await page.mouse.move(point.x, point.y); await page.mouse.down({ button: 'right' });
+    }
+    async function movePoint(x, y) {
+      const point = await imagePoint(x, y); await page.mouse.move(point.x, point.y, { steps: 4 });
+    }
+    await test('rectangle/lasso/brush right button reverses operation, restores highlight and records one step', async () => {
+      for (const tool of ['rect', 'lasso', 'brush']) for (const operation of ['add', 'subtract']) {
+        await reverseFixture(tool, operation);
+        const before = await page.evaluate(() => ({ regions: serializeRegions(), pan: { ...previewStates.composite.pan }, history: regionState.undo.length }));
+        const base = operation === 'add' ? 50 : 110;
+        await reverseDown(base, 50);
+        assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), operation === 'add' ? 'subtract' : 'add');
+        assert.equal(await page.locator('#regionOperation').inputValue(), operation);
+        assert.equal(await page.evaluate(() => regionState.undo.length), before.history);
+        if (tool === 'lasso') {
+          await movePoint(base + 20, 50); await movePoint(base + 20, 70); await movePoint(base, 70); await movePoint(base, 50);
+        } else await movePoint(base + 20, 70);
+        await page.mouse.up({ button: 'right' });
+        const after = await page.evaluate(() => ({ regions: serializeRegions(), pan: { ...previewStates.composite.pan }, history: regionState.undo.length,
+          owner: regionOwners(256, 192)[60 * 256 + (el('#regionOperation').value === 'add' ? 60 : 120)], press: regionState.press }));
+        assert.equal(after.owner, operation === 'add' ? 0 : 1, tool + '/' + operation);
+        assert.deepEqual(after.pan, before.pan); assert.equal(after.history, before.history + 1); assert.equal(after.press, null);
+        assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), operation);
+        await page.evaluate(() => undoRegionChange(false)); assert.deepEqual(await page.evaluate(() => serializeRegions()), before.regions);
+        await page.evaluate(() => undoRegionChange(true)); assert.deepEqual(await page.evaluate(() => serializeRegions()), after.regions);
+      }
+    });
+    await test('drawing chords finish on the starting button release without switching or panning', async () => {
+      for (const first of ['left', 'right']) {
+        await reverseFixture('brush', 'add');
+        const second = first === 'left' ? 'right' : 'left', a = await imagePoint(60, 60), b = await imagePoint(70, 65);
+        const pan = await page.evaluate(() => ({ ...previewStates.composite.pan }));
+        await page.mouse.move(a.x, a.y); await page.mouse.down({ button: first });
+        await page.mouse.down({ button: second }); await page.mouse.move(b.x, b.y, { steps: 3 });
+        assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), first === 'left' ? 'add' : 'subtract');
+        await page.mouse.up({ button: first });
+        assert.equal(await page.evaluate(() => regionState.press), null);
+        assert.equal(await page.evaluate(() => regionState.gesture), null);
+        assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), 'add');
+        const regions = await page.evaluate(() => serializeRegions());
+        await page.mouse.move(b.x + 15, b.y + 10); await page.mouse.up({ button: second });
+        assert.deepEqual(await page.evaluate(() => serializeRegions()), regions);
+        assert.deepEqual(await page.evaluate(() => ({ ...previewStates.composite.pan })), pan);
+      }
+    });
+    await test('reverse capture restores outside canvas; cancellation and empty subtract clear temporary state', async () => {
+      await reverseFixture(); await reverseDown();
+      const canvas = await page.locator('#canvasComposite').boundingBox();
+      await page.mouse.move(canvas.x + 20, canvas.y - 15, { steps: 3 }); await page.mouse.up({ button: 'right' });
+      assert.equal(await page.evaluate(() => regionState.press), null);
+      assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), 'add');
+      for (const action of ['escape', 'blur', 'tool', 'fold', 'cancel', 'lost']) {
+        await reverseFixture(); const regions = await page.evaluate(() => serializeRegions());
+        await reverseDown(); await movePoint(70, 70);
+        if (action === 'escape') await page.keyboard.press('Escape');
+        else await page.evaluate(action => {
+          if (action === 'blur') window.dispatchEvent(new Event('blur'));
+          if (action === 'tool') el('[data-region-tool=select]').click();
+          if (action === 'fold') setGroupOpen('groupRegions', false, false);
+          if (action === 'cancel') el('#canvasComposite').dispatchEvent(new PointerEvent('pointercancel', { pointerId: regionState.press.pointerId }));
+          if (action === 'lost') el('#canvasComposite').releasePointerCapture(regionState.press.pointerId);
+        }, action);
+        await page.mouse.move(canvas.x + 100, canvas.y + 100); await page.mouse.up({ button: 'right' });
+        assert.equal(await page.evaluate(() => regionState.press), null, action);
+        assert.deepEqual(await page.evaluate(() => serializeRegions()), regions, action);
+        assert.equal(await page.evaluate(() => regionState.undo.length), 0, action);
+        assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), 'add', action);
+      }
+      await reverseFixture(); await reverseDown(0, 0); await movePoint(255.9, 191.9); await page.mouse.up({ button: 'right' });
+      assert.equal(await page.evaluate(() => regionState.items.length), 0);
+      assert.equal(await page.evaluate(() => regionState.selected), 0);
+      assert.equal(await page.locator('#regionOperation').inputValue(), 'new');
+      assert.equal(await page.locator('#regionOperations .active').getAttribute('data-region-operation'), 'new');
+      assert.equal(await page.locator('[data-region-operation=add]').isDisabled(), true);
+      assert.equal(await page.locator('[data-region-operation=subtract]').isDisabled(), true);
+    });
+    await test('new-region/Select right pan and middle pan remain available without selection edits', async () => {
+      for (const [tool, operation, button] of [['rect', 'new', 'right'], ['select', 'add', 'right'], ['brush', 'subtract', 'middle']]) {
+        await reverseFixture(tool, operation);
+        await page.evaluate(() => { previewStates.composite.zoom = 2; renderAllPreviews(); });
+        const regions = await page.evaluate(() => serializeRegions()), before = await page.evaluate(() => ({ ...previewStates.composite.pan }));
+        const start = await imagePoint(128, 96); await page.mouse.move(start.x, start.y); await page.mouse.down({ button });
+        await page.mouse.move(start.x + 25, start.y + 20, { steps: 3 }); await page.mouse.up({ button });
+        assert.notDeepEqual(await page.evaluate(() => ({ ...previewStates.composite.pan })), before);
+        assert.deepEqual(await page.evaluate(() => serializeRegions()), regions);
+        assert.equal(await page.evaluate(() => regionState.press), null);
+        assert.equal(await page.evaluate(() => regionState.undo.length), 0);
+      }
+    });
+    await test('interval commits match a pixel oracle without mutating cached ownership', async () => {
+      await source(page, 48, 32);
+      const result = await page.evaluate(() => {
+        let seed = 7231; const random = n => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) % n);
+        function spansOf(owners, id) {
+          const spans = [];
+          for (let y = 0; y < 32; y++) {
+            let start = -1;
+            for (let x = 0; x <= 48; x++) {
+              if (x < 48 && owners[y * 48 + x] === id) { if (start < 0) start = x; }
+              else if (start >= 0) { spans.push([y, start, x]); start = -1; }
+            }
+          }
+          return spans;
+        }
+        for (let trial = 0; trial < 150; trial++) {
+          const pixels = Uint32Array.from({ length: 48 * 32 }, () => random(4));
+          regionState.items = [1, 2, 3].map(id => ({ id, name: String(id), offsets: { gray: {}, color: {} }, spans: spansOf(pixels, id) }));
+          regionState.selected = 1 + random(3); regionState.nextId = 4; touchRegionMasks();
+          const operation = ['new', 'add', 'subtract'][trial % 3], target = operation === 'new' ? 4 : regionState.selected;
+          const selection = [];
+          for (let y = 0; y < 32; y++) if (random(3) === 0) { const x = random(48); selection.push([y, x, x + 1 + random(48 - x)]); }
+          const expected = pixels.slice(); let changed = false;
+          for (const [y, start, end] of selection) for (let x = start; x < end; x++) {
+            const i = y * 48 + x;
+            if (operation === 'subtract' && expected[i] === target) { expected[i] = 0; changed = true; }
+            else if (operation !== 'subtract' && expected[i] === 0) { expected[i] = target; changed = true; }
+          }
+          const iterator = buildRegionChange(selection, operation); let next; do { next = iterator.next(); } while (!next.done);
+          if (JSON.stringify(next.value?.spans ?? null) !== JSON.stringify(changed ? spansOf(expected, target) : null)) return { trial, operation, error: 'spans' };
+          if (regionOwners(48, 32).some((owner, i) => owner !== pixels[i])) return { trial, error: 'ownership mutation' };
+        }
+        return null;
+      });
+      assert.equal(result, null);
+    });
+    await test('incremental highlights match the full reference across long, crossing and shrinking gestures', async () => {
+      for (const p of [page, old]) await source(p, 256, 192);
+      const renderSequence = () => {
+        regionState.items = [1, 2].map(id => ({ id, name: String(id), offsets: { gray: {}, color: {} },
+          spans: Array.from({ length: 130 }, (_, y) => [y + 20, id === 1 ? 30 : 150, id === 1 ? 125 : 210]) }));
+        regionState.selected = 1; touchRegionMasks();
+        const canvas = document.createElement('canvas'); canvas.width = 96; canvas.height = 72;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true }), frames = [];
+        const points = [{ x: 60.3, y: 50.7 }, { x: 180.6, y: 145.2 }, { x: 78.2, y: 55.4 }, { x: 25.5, y: 160.6 }, { x: 235.9, y: 26.2 }, { x: 60.7, y: 80.6 }];
+        for (const highlight of [false, true]) for (const tool of ['rect', 'lasso', 'brush']) for (const operation of ['new', 'add', 'subtract']) {
+          cancelRegionGesture(); regionState.highlight = highlight;
+          regionState.gesture = { tool, operation, size: 11.5, points: [points[0]], pointerId: 999 };
+          for (const point of points.slice(1)) {
+            if (tool === 'rect') regionState.gesture.points = [points[0], point]; else regionState.gesture.points.push(point);
+            ctx.clearRect(0, 0, 96, 72); drawRegionOverlay(ctx, { x: -125, y: -95, w: 512, h: 384 });
+            frames.push(Array.from(ctx.getImageData(0, 0, 96, 72).data));
+          }
+        }
+        cancelRegionGesture(); regionState.highlight = true; return frames;
+      };
+      const expected = await old.evaluate(renderSequence), actual = await page.evaluate(renderSequence);
+      assert.equal(actual.length, expected.length);
+      for (let i = 0; i < expected.length; i++) assert.deepEqual(actual[i], expected[i], 'frame ' + i);
+    });
+    await test('zero-offset edits reuse production layers while adjusted regions still regenerate them', async () => {
+      await source(page, 96, 64);
+      const result = await page.evaluate(() => {
+        setProcessingMode('gray', true);
+        const commit = (selection, operation) => { const iterator = buildRegionChange(selection, operation); let next; do { next = iterator.next(); } while (!next.done); commitRegionChange(next.value); };
+        const initial = state.layers, generation = prc.generation;
+        commit([[10, 10, 20]], 'new'); commit([[10, 20, 30]], 'add'); commit([[10, 12, 15]], 'subtract');
+        const reused = state.layers === initial && generation === prc.generation;
+        selectedRegion().offsets.color.silkThresh = 15; // 当前灰度模式不受另一模式的偏移影响。
+        commit([[11, 10, 20]], 'add'); const independent = state.layers === initial;
+        selectedRegion().offsets.gray.silkThreshold = 30; updateProcess(); const adjusted = state.layers;
+        commit([[10, 10, 30], [11, 10, 20]], 'subtract');
+        return { reused, independent, regenerated: state.layers !== adjusted, empty: regionState.selected === 0, history: regionState.undo.length };
+      });
+      assert.deepEqual(result, { reused: true, independent: true, regenerated: true, empty: true, history: 5 });
+    });
+    await test('only visible canvases render and burst pointer moves share one frame', async () => {
+      await source(page, 512, 384);
+      const result = await page.evaluate(async () => {
+        setGroupOpen('groupRegions', true, false); setViewMode('overlay'); regionState.tool = 'brush'; refreshRegionUI();
+        const original = renderPreviewCanvas, draws = []; renderPreviewCanvas = (...args) => { draws.push(args[1].id); return original(...args); };
+        try {
+          renderAllPreviews(); const visible = [...draws]; draws.length = 0;
+          const c = el('#canvasComposite'), bounds = c.getBoundingClientRect();
+          // 使用实际 pointermove 入口，覆盖事件合帧而不仅是调度器本身。
+          regionState.press = { pointerId: 999, buttonMask: 1, temporaryOperation: null };
+          regionState.gesture = { tool: 'brush', operation: 'new', size: 8, points: [{ x: 200, y: 150 }], pointerId: 999 };
+          for (let i = 0; i < 20; i++) c.dispatchEvent(new PointerEvent('pointermove', { pointerId: 999, buttons: 1, clientX: bounds.left + bounds.width / 2 + i, clientY: bounds.top + bounds.height / 2 + i }));
+          const immediate = draws.length; await new Promise(requestAnimationFrame);
+          const deferred = [...draws], pointCount = regionState.gesture.points.length; cancelRegionGesture(); renderAllPreviews();
+          return { visible, immediate, deferred, pointCount, liveCleared: !regionState.overlayCache.live };
+        } finally { renderPreviewCanvas = original; }
+      });
+      assert.deepEqual(result.visible, ['canvasComposite']); assert.equal(result.immediate, 0);
+      assert.deepEqual(result.deferred, ['canvasComposite']); assert.ok(result.pointCount > 10); assert.equal(result.liveCleared, true);
     });
     assert.deepEqual(errors, [], 'browser runtime errors');
     console.log(JSON.stringify({ passed, failures, artifacts: temp }));

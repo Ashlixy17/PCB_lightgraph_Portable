@@ -161,7 +161,7 @@ async function bounds(page, selector) {
       await page.keyboard.press('Escape');
       assert.equal(await page.evaluate(() => regionState.tool), 'rect');
       assert.equal(await page.evaluate(() => document.activeElement.dataset.selectId), 'grayPreviewMask');
-      await page.keyboard.press('Escape'); assert.equal(await page.evaluate(() => regionState.tool), 'none');
+      await page.keyboard.press('Escape'); assert.equal(await page.evaluate(() => regionState.tool), 'select');
     });
     await test('GitHub modal traps/restores focus, red Yes and gray No default', async () => {
       await page.locator('#regionDelete').click();
