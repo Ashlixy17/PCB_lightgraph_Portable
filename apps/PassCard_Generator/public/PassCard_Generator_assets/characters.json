@@ -1,0 +1,7688 @@
+[
+  {
+    "chinese_name": "Lancet-2",
+    "english_name": "Lancet-2",
+    "english_name2": "",
+    "id": "RCX2",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Lancet-2",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "Castle-3",
+    "english_name": "Castle-3",
+    "english_name2": "",
+    "id": "RCX3",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Castle-3",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "夜刀",
+    "english_name": "Yato",
+    "english_name2": "",
+    "id": "A41",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Yato",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动组A4",
+    "faction_display": "罗德岛-行动组A4"
+  },
+  {
+    "chinese_name": "黑角",
+    "english_name": "Noir Corne",
+    "english_name2": "",
+    "id": "A43",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Noir Corne",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动组A4",
+    "faction_display": "罗德岛-行动组A4"
+  },
+  {
+    "chinese_name": "巡林者",
+    "english_name": "Rangers",
+    "english_name2": "",
+    "id": "A42",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Rangers",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动组A4",
+    "faction_display": "罗德岛-行动组A4"
+  },
+  {
+    "chinese_name": "杜林",
+    "english_name": "Durin",
+    "english_name2": "",
+    "id": "A44",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Durin",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动组A4",
+    "faction_display": "罗德岛-行动组A4"
+  },
+  {
+    "chinese_name": "12F",
+    "english_name": "12F",
+    "english_name2": "",
+    "id": "R303",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "12F",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "芬",
+    "english_name": "Fang",
+    "english_name2": "",
+    "id": "PA11",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Fang",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A1",
+    "faction_display": "罗德岛-行动预备组A1"
+  },
+  {
+    "chinese_name": "香草",
+    "english_name": "Vanilla",
+    "english_name2": "",
+    "id": "BS04",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Vanilla",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "翎羽",
+    "english_name": "Plume",
+    "english_name2": "",
+    "id": "LT05",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Plume",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "玫兰莎",
+    "english_name": "Melantha",
+    "english_name2": "",
+    "id": "PA41",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Melantha",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A4",
+    "faction_display": "罗德岛-行动预备组A4"
+  },
+  {
+    "chinese_name": "卡缇",
+    "english_name": "Cardigan",
+    "english_name2": "",
+    "id": "PA45",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Cardigan",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A4",
+    "faction_display": "罗德岛-行动预备组A4"
+  },
+  {
+    "chinese_name": "米格鲁",
+    "english_name": "Beagle",
+    "english_name2": "",
+    "id": "PA14",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Beagle",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A1",
+    "faction_display": "罗德岛-行动预备组A1"
+  },
+  {
+    "chinese_name": "克洛丝",
+    "english_name": "Kroos",
+    "english_name2": "",
+    "id": "PA12",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Kroos",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A1",
+    "faction_display": "罗德岛-行动预备组A1"
+  },
+  {
+    "chinese_name": "安德切尔",
+    "english_name": "Adnachiel",
+    "english_name2": "",
+    "id": "PA44",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Adnachiel",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A4",
+    "faction_display": "罗德岛-行动预备组A4"
+  },
+  {
+    "chinese_name": "炎熔",
+    "english_name": "Lava",
+    "english_name2": "",
+    "id": "PA15",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Lava",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A1",
+    "faction_display": "罗德岛-行动预备组A1"
+  },
+  {
+    "chinese_name": "芙蓉",
+    "english_name": "Hibiscus",
+    "english_name2": "",
+    "id": "PA13",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Hibiscus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A1",
+    "faction_display": "罗德岛-行动预备组A1"
+  },
+  {
+    "chinese_name": "安赛尔",
+    "english_name": "Ansel",
+    "english_name2": "",
+    "id": "PA43",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Ansel",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A4",
+    "faction_display": "罗德岛-行动预备组A4"
+  },
+  {
+    "chinese_name": "史都华德",
+    "english_name": "Steward",
+    "english_name2": "",
+    "id": "PA42",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Steward",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A4",
+    "faction_display": "罗德岛-行动预备组A4"
+  },
+  {
+    "chinese_name": "梓兰",
+    "english_name": "Orchid",
+    "english_name2": "",
+    "id": "PA61",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Orchid",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "夜烟",
+    "english_name": "Haze",
+    "english_name2": "",
+    "id": "VC02",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Haze",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "远山",
+    "english_name": "Gitano",
+    "english_name2": "",
+    "id": "SI01",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Gitano",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨米",
+    "faction_display": "萨米"
+  },
+  {
+    "chinese_name": "杰西卡",
+    "english_name": "Jessica",
+    "english_name2": "",
+    "id": "BS03",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Jessica",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "流星",
+    "english_name": "Meteor",
+    "english_name2": "",
+    "id": "ST02",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Meteor",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "白雪",
+    "english_name": "ShiraYuki",
+    "english_name2": "",
+    "id": "LM10",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "ShiraYuki",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "讯使",
+    "english_name": "Courier",
+    "english_name2": "",
+    "id": "JC04",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Courier",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "喀兰贸易",
+    "faction_display": "谢拉格-喀兰贸易"
+  },
+  {
+    "chinese_name": "清道夫",
+    "english_name": "Scavenger",
+    "english_name2": "",
+    "id": "SW02",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Scavenger",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "S.W.E.E.P.",
+    "faction_display": "罗德岛-S.W.E.E.P."
+  },
+  {
+    "chinese_name": "红豆",
+    "english_name": "Vigna",
+    "english_name2": "",
+    "id": "R105",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Vigna",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "杜宾",
+    "english_name": "Dobermann",
+    "english_name2": "",
+    "id": "R100",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Dobermann",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "缠丸",
+    "english_name": "Matoimaru",
+    "english_name2": "",
+    "id": "HK01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Matoimaru",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "霜叶",
+    "english_name": "Frostleaf",
+    "english_name2": "",
+    "id": "R123",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Frostleaf",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "艾丝黛尔",
+    "english_name": "Estelle",
+    "english_name2": "",
+    "id": "IU04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Estelle",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "慕斯",
+    "english_name": "Mousse",
+    "english_name2": "",
+    "id": "VC04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Mousse",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "砾",
+    "english_name": "Gravel",
+    "english_name2": "",
+    "id": "KZ04",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Gravel",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "暗索",
+    "english_name": "Rope",
+    "english_name2": "",
+    "id": "RB02",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Rope",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "末药",
+    "english_name": "Myrrh",
+    "english_name2": "",
+    "id": "R104",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Myrrh",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "嘉维尔",
+    "english_name": "Gavial",
+    "english_name2": "",
+    "id": "IU07",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Gavial",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "调香师",
+    "english_name": "Perfumer",
+    "english_name2": "",
+    "id": "MN03",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Perfumer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "角峰",
+    "english_name": "Matterhorn",
+    "english_name2": "",
+    "id": "JC03",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Matterhorn",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "喀兰贸易",
+    "faction_display": "谢拉格-喀兰贸易"
+  },
+  {
+    "chinese_name": "蛇屠箱",
+    "english_name": "Cuora",
+    "english_name2": "",
+    "id": "IU05",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Cuora",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "古米",
+    "english_name": "Гум",
+    "english_name2": "",
+    "id": "USS3",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Гум",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "深海色",
+    "english_name": "Deepcolor",
+    "english_name2": "",
+    "id": "AA04",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Deepcolor",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "阿戈尔",
+    "faction_display": "阿戈尔"
+  },
+  {
+    "chinese_name": "地灵",
+    "english_name": "Earthspirit",
+    "english_name2": "",
+    "id": "LN01",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Earthspirit",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "阿消",
+    "english_name": "Shaw",
+    "english_name2": "",
+    "id": "LM11",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Shaw",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "白面鸮",
+    "english_name": "Ptilopsis",
+    "english_name2": "",
+    "id": "RL04",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Ptilopsis",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "凛冬",
+    "english_name": "Зима",
+    "english_name2": "",
+    "id": "USS1",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Зима",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "德克萨斯",
+    "english_name": "Texas",
+    "english_name2": "",
+    "id": "PL02",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Texas",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "企鹅物流",
+    "faction_display": "炎-龙门-企鹅物流"
+  },
+  {
+    "chinese_name": "芙兰卡",
+    "english_name": "Franka",
+    "english_name2": "",
+    "id": "BS01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Franka",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "因陀罗",
+    "english_name": "Indra",
+    "english_name2": "",
+    "id": "GG03",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Indra",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "格拉斯哥帮",
+    "faction_display": "维多利亚-格拉斯哥帮"
+  },
+  {
+    "chinese_name": "拉普兰德",
+    "english_name": "Lappland",
+    "english_name2": "",
+    "id": "SR01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Lappland",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "幽灵鲨",
+    "english_name": "Specter",
+    "english_name2": "",
+    "id": "AA02",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Specter",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "深海猎人",
+    "faction_display": "阿戈尔-深海猎人"
+  },
+  {
+    "chinese_name": "蓝毒",
+    "english_name": "Blue Poison",
+    "english_name2": "",
+    "id": "AA03",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Blue Poison",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "白金",
+    "english_name": "Platinum",
+    "english_name2": "",
+    "id": "KZ03",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Platinum",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "陨星",
+    "english_name": "Meteorite",
+    "english_name2": "",
+    "id": "ST03",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Meteorite",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "阿米娅（术师）",
+    "english_name": "Amiya",
+    "english_name2": "",
+    "id": "R001",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Amiya",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "天火",
+    "english_name": "Skyfire",
+    "english_name2": "",
+    "id": "SK01",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Skyfire",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "梅尔",
+    "english_name": "Mayer",
+    "english_name2": "",
+    "id": "RL05",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Mayer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "赫默",
+    "english_name": "Silence",
+    "english_name2": "",
+    "id": "RL01",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Silence",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "华法琳",
+    "english_name": "Warfarin",
+    "english_name2": "",
+    "id": "R106",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Warfarin",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "临光",
+    "english_name": "Nearl",
+    "english_name2": "",
+    "id": "FO02",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Nearl",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "使徒",
+    "faction_display": "使徒"
+  },
+  {
+    "chinese_name": "红",
+    "english_name": "Projekt Red",
+    "english_name2": "",
+    "id": "SW01",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Projekt Red",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "S.W.E.E.P.",
+    "faction_display": "罗德岛-S.W.E.E.P."
+  },
+  {
+    "chinese_name": "雷蛇",
+    "english_name": "Liskarm",
+    "english_name2": "",
+    "id": "BS02",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Liskarm",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "可颂",
+    "english_name": "Croissant",
+    "english_name2": "",
+    "id": "PL04",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Croissant",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "企鹅物流",
+    "faction_display": "炎-龙门-企鹅物流"
+  },
+  {
+    "chinese_name": "火神",
+    "english_name": "Vulcan",
+    "english_name2": "",
+    "id": "MN02",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Vulcan",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "米诺斯",
+    "faction_display": "米诺斯"
+  },
+  {
+    "chinese_name": "普罗旺斯",
+    "english_name": "Provence",
+    "english_name2": "",
+    "id": "SR03",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Provence",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "守林人",
+    "english_name": "Firewatch",
+    "english_name2": "",
+    "id": "ST01",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Firewatch",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "崖心",
+    "english_name": "Cliffheart",
+    "english_name2": "",
+    "id": "JC06",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Cliffheart",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "初雪",
+    "english_name": "Pramanix",
+    "english_name2": "",
+    "id": "JC05",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Pramanix",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "真理",
+    "english_name": "Истина",
+    "english_name2": "",
+    "id": "USS2",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Истина",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "空",
+    "english_name": "Sora",
+    "english_name2": "",
+    "id": "PL05",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Sora",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "企鹅物流",
+    "faction_display": "炎-龙门-企鹅物流"
+  },
+  {
+    "chinese_name": "狮蝎",
+    "english_name": "Manticore",
+    "english_name2": "",
+    "id": "SG01",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Manticore",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "食铁兽",
+    "english_name": "FEater",
+    "english_name2": "",
+    "id": "YD01",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "FEater",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "能天使",
+    "english_name": "Exusiai",
+    "english_name2": "",
+    "id": "PL03",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Exusiai",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "企鹅物流",
+    "faction_display": "炎-龙门-企鹅物流"
+  },
+  {
+    "chinese_name": "推进之王",
+    "english_name": "Siege",
+    "english_name2": "",
+    "id": "GG01",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Siege",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "格拉斯哥帮",
+    "faction_display": "维多利亚-格拉斯哥帮"
+  },
+  {
+    "chinese_name": "伊芙利特",
+    "english_name": "Ifrit",
+    "english_name2": "",
+    "id": "RL03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Ifrit",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "艾雅法拉",
+    "english_name": "Eyjafjalla",
+    "english_name2": "",
+    "id": "LN02",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Eyjafjalla",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "安洁莉娜",
+    "english_name": "Angelina",
+    "english_name2": "",
+    "id": "SR02",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Angelina",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "闪灵",
+    "english_name": "Shining",
+    "english_name2": "",
+    "id": "FO01",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Shining",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "使徒",
+    "faction_display": "使徒"
+  },
+  {
+    "chinese_name": "夜莺",
+    "english_name": "Nightingale",
+    "english_name2": "",
+    "id": "FO03",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Nightingale",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "使徒",
+    "faction_display": "使徒"
+  },
+  {
+    "chinese_name": "星熊",
+    "english_name": "Hoshiguma",
+    "english_name2": "",
+    "id": "LM05",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Hoshiguma",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "龙门近卫局",
+    "faction_display": "炎-龙门-龙门近卫局"
+  },
+  {
+    "chinese_name": "塞雷娅",
+    "english_name": "Saria",
+    "english_name2": "",
+    "id": "RL02",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Saria",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "银灰",
+    "english_name": "SilverAsh",
+    "english_name2": "",
+    "id": "JC01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "SilverAsh",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "喀兰贸易",
+    "faction_display": "谢拉格-喀兰贸易"
+  },
+  {
+    "chinese_name": "暴行",
+    "english_name": "Savage",
+    "english_name2": "",
+    "id": "RB01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Savage",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "空爆",
+    "english_name": "Catapult",
+    "english_name2": "",
+    "id": "PA63",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Catapult",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "月见夜",
+    "english_name": "Midnight",
+    "english_name2": "",
+    "id": "PA62",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Midnight",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "猎蜂",
+    "english_name": "Beehunter",
+    "english_name2": "",
+    "id": "US10",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Beehunter",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "夜魔",
+    "english_name": "Nightmare",
+    "english_name2": "",
+    "id": "VC03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Nightmare",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "格拉尼",
+    "english_name": "Grani",
+    "english_name2": "",
+    "id": "VC05",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Grani",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "斯卡蒂",
+    "english_name": "Skadi",
+    "english_name2": "",
+    "id": "AA01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Skadi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "深海猎人",
+    "faction_display": "阿戈尔-深海猎人"
+  },
+  {
+    "chinese_name": "泡普卡",
+    "english_name": "Popukar",
+    "english_name2": "",
+    "id": "PA65",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Popukar",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "斑点",
+    "english_name": "Spot",
+    "english_name2": "",
+    "id": "PA64",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Spot",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "格雷伊",
+    "english_name": "Greyy",
+    "english_name2": "",
+    "id": "R119",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Greyy",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "诗怀雅",
+    "english_name": "Swire",
+    "english_name2": "",
+    "id": "LM08",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Swire",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "龙门近卫局",
+    "faction_display": "炎-龙门-龙门近卫局"
+  },
+  {
+    "chinese_name": "陈",
+    "english_name": "Ch'en",
+    "english_name2": "",
+    "id": "LM04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Ch'en",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "龙门近卫局",
+    "faction_display": "炎-龙门-龙门近卫局"
+  },
+  {
+    "chinese_name": "苏苏洛",
+    "english_name": "Sussurro",
+    "english_name2": "",
+    "id": "R107",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Sussurro",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "锡兰",
+    "english_name": "Ceylon",
+    "english_name2": "",
+    "id": "SS01",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Ceylon",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "汐斯塔",
+    "faction_display": "哥伦比亚-汐斯塔"
+  },
+  {
+    "chinese_name": "格劳克斯",
+    "english_name": "Glaucus",
+    "english_name2": "",
+    "id": "R128",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Glaucus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "黑",
+    "english_name": "Schwarz",
+    "english_name2": "",
+    "id": "SS02",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Schwarz",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "汐斯塔",
+    "faction_display": "哥伦比亚-汐斯塔"
+  },
+  {
+    "chinese_name": "桃金娘",
+    "english_name": "Myrtle",
+    "english_name2": "",
+    "id": "R108",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Myrtle",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "星极",
+    "english_name": "Astesia",
+    "english_name2": "",
+    "id": "RR01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Astesia",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "赫拉格",
+    "english_name": "Hellagur",
+    "english_name2": "",
+    "id": "AZ01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Hellagur",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "坚雷",
+    "english_name": "Dur-nar",
+    "english_name2": "",
+    "id": "R124",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Dur-nar",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "红云",
+    "english_name": "Vermeil",
+    "english_name2": "",
+    "id": "R122",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Vermeil",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "炎客",
+    "english_name": "Flamebringer",
+    "english_name2": "",
+    "id": "R137",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Flamebringer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "送葬人",
+    "english_name": "Executor",
+    "english_name2": "",
+    "id": "LT01",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Executor",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "麦哲伦",
+    "english_name": "Magallan",
+    "english_name2": "",
+    "id": "RL06",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Magallan",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "伊桑",
+    "english_name": "Ethan",
+    "english_name2": "",
+    "id": "R130",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Ethan",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "微风",
+    "english_name": "Breeze",
+    "english_name2": "",
+    "id": "R132",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Breeze",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "梅",
+    "english_name": "May",
+    "english_name2": "",
+    "id": "VC01",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "May",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "拜松",
+    "english_name": "Bison",
+    "english_name2": "",
+    "id": "LM15",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Bison",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "槐琥",
+    "english_name": "Waai Fu",
+    "english_name2": "",
+    "id": "LM12",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Waai Fu",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "鲤氏侦探事务所",
+    "faction_display": "炎-龙门-鲤氏侦探事务所"
+  },
+  {
+    "chinese_name": "莫斯提马",
+    "english_name": "Mostima",
+    "english_name2": "",
+    "id": "LT77",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Mostima",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "苇草",
+    "english_name": "Reed",
+    "english_name2": "",
+    "id": "HT03",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Reed",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "布洛卡",
+    "english_name": "Broca",
+    "english_name2": "",
+    "id": "SR27",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Broca",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "贾维团伙",
+    "faction_display": "叙拉古-贾维团伙"
+  },
+  {
+    "chinese_name": "安比尔",
+    "english_name": "Ambriel",
+    "english_name2": "",
+    "id": "LT02",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Ambriel",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "灰喉",
+    "english_name": "GreyThroat",
+    "english_name2": "",
+    "id": "R110",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "GreyThroat",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "煌",
+    "english_name": "Blaze",
+    "english_name2": "",
+    "id": "RE41",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Blaze",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "雪雉",
+    "english_name": "Snowsant",
+    "english_name2": "",
+    "id": "LM16",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Snowsant",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "吽",
+    "english_name": "Hung",
+    "english_name2": "",
+    "id": "LM19",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Hung",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "鲤氏侦探事务所",
+    "faction_display": "炎-龙门-鲤氏侦探事务所"
+  },
+  {
+    "chinese_name": "阿",
+    "english_name": "Aak",
+    "english_name2": "",
+    "id": "LM20",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Aak",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "鲤氏侦探事务所",
+    "faction_display": "炎-龙门-鲤氏侦探事务所"
+  },
+  {
+    "chinese_name": "年",
+    "english_name": "Nian",
+    "english_name2": "",
+    "id": "NM01",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Nian",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "惊蛰",
+    "english_name": "Leizi",
+    "english_name2": "",
+    "id": "YD05",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Leizi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "刻俄柏",
+    "english_name": "Ceobe",
+    "english_name2": "",
+    "id": "R155",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Ceobe",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "清流",
+    "english_name": "Purestream",
+    "english_name2": "",
+    "id": "R160",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Purestream",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "宴",
+    "english_name": "Utage",
+    "english_name2": "",
+    "id": "HK03",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Utage",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "柏喙",
+    "english_name": "Bibeak",
+    "english_name2": "",
+    "id": "R138",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Bibeak",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨米",
+    "faction_display": "萨米"
+  },
+  {
+    "chinese_name": "慑砂",
+    "english_name": "Sesa",
+    "english_name2": "",
+    "id": "R158",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Sesa",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "风笛",
+    "english_name": "Bagpipe",
+    "english_name2": "",
+    "id": "RV02",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Bagpipe",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "断罪者",
+    "english_name": "Conviction",
+    "english_name2": "",
+    "id": "MN01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Conviction",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "米诺斯",
+    "faction_display": "米诺斯"
+  },
+  {
+    "chinese_name": "刻刀",
+    "english_name": "Cutter",
+    "english_name2": "",
+    "id": "R144",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Cutter",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "铸铁",
+    "english_name": "Sideroca",
+    "english_name2": "",
+    "id": "R126",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Sideroca",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "米诺斯",
+    "faction_display": "米诺斯"
+  },
+  {
+    "chinese_name": "巫恋",
+    "english_name": "Shamare",
+    "english_name2": "",
+    "id": "R148",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Shamare",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "傀影",
+    "english_name": "Phantom",
+    "english_name2": "",
+    "id": "R109",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Phantom",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "THRM-EX",
+    "english_name": "Thermal-EX",
+    "english_name2": "",
+    "id": "RCX4",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Thermal-EX",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "极境",
+    "english_name": "Elysium",
+    "english_name2": "",
+    "id": "R131",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Elysium",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "温蒂",
+    "english_name": "Weedy",
+    "english_name2": "",
+    "id": "R117",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Weedy",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "W",
+    "english_name": "W",
+    "english_name2": "",
+    "id": "B214",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "W",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "巴别塔",
+    "faction_display": "巴别塔"
+  },
+  {
+    "chinese_name": "石棉",
+    "english_name": "Asbestos",
+    "english_name2": "",
+    "id": "RB05",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Asbestos",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "月禾",
+    "english_name": "Tsukinogi",
+    "english_name2": "",
+    "id": "R129",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Tsukinogi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "波登可",
+    "english_name": "Podenco",
+    "english_name2": "",
+    "id": "R157",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Podenco",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "苦艾",
+    "english_name": "Absinthe",
+    "english_name2": "",
+    "id": "US11",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Absinthe",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "莱恩哈特",
+    "english_name": "Leonhardt",
+    "english_name2": "",
+    "id": "RB03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Leonhardt",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "早露",
+    "english_name": "Роса",
+    "english_name2": "",
+    "id": "USS4",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Роса",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "卡达",
+    "english_name": "Click",
+    "english_name2": "",
+    "id": "R140",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Click",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "亚叶",
+    "english_name": "Folinic",
+    "english_name2": "",
+    "id": "R133",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Folinic",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "断崖",
+    "english_name": "Ayerscarpe",
+    "english_name2": "",
+    "id": "RB04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Ayerscarpe",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "铃兰",
+    "english_name": "Suzuran",
+    "english_name2": "",
+    "id": "R172",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Suzuran",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "稀音",
+    "english_name": "Scene",
+    "english_name2": "",
+    "id": "R162",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Scene",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "蜜蜡",
+    "english_name": "Beeswax",
+    "english_name2": "",
+    "id": "R147",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Beeswax",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "贾维",
+    "english_name": "Chiave",
+    "english_name2": "",
+    "id": "SR26",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Chiave",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "贾维团伙",
+    "faction_display": "叙拉古-贾维团伙"
+  },
+  {
+    "chinese_name": "孑",
+    "english_name": "Jaye",
+    "english_name2": "",
+    "id": "LM14",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Jaye",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "安哲拉",
+    "english_name": "Andreana",
+    "english_name2": "",
+    "id": "II04",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Andreana",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "深海猎人",
+    "faction_display": "阿戈尔-深海猎人"
+  },
+  {
+    "chinese_name": "棘刺",
+    "english_name": "Thorns",
+    "english_name2": "",
+    "id": "II01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Thorns",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "酸糖",
+    "english_name": "Aciddrop",
+    "english_name2": "",
+    "id": "R139",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Aciddrop",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "特米米",
+    "english_name": "Tomimi",
+    "english_name2": "",
+    "id": "SG05",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Tomimi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "燧石",
+    "english_name": "Flint",
+    "english_name2": "",
+    "id": "SG06",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Flint",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "森蚺",
+    "english_name": "Eunectes",
+    "english_name2": "",
+    "id": "SG03",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Eunectes",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "芳汀",
+    "english_name": "Arene",
+    "english_name2": "",
+    "id": "LT06",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Arene",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "薄绿",
+    "english_name": "Mint",
+    "english_name2": "",
+    "id": "VC08",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Mint",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "四月",
+    "english_name": "April",
+    "english_name2": "",
+    "id": "RB07",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "April",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "史尔特尔",
+    "english_name": "Surtr",
+    "english_name2": "",
+    "id": "R111",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Surtr",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "泡泡",
+    "english_name": "Bubble",
+    "english_name2": "",
+    "id": "R146",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Bubble",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "鞭刃",
+    "english_name": "Whislash",
+    "english_name2": "",
+    "id": "KZ07",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Whislash",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "奥斯塔",
+    "english_name": "Aosta",
+    "english_name2": "",
+    "id": "SR28",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Aosta",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "贾维团伙",
+    "faction_display": "叙拉古-贾维团伙"
+  },
+  {
+    "chinese_name": "瑕光",
+    "english_name": "Blemishine",
+    "english_name2": "",
+    "id": "KZ09",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Blemishine",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "杰克",
+    "english_name": "Jackie",
+    "english_name2": "",
+    "id": "R166",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Jackie",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "絮雨",
+    "english_name": "Whisperain",
+    "english_name2": "",
+    "id": "R163",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Whisperain",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "泥岩",
+    "english_name": "Mudrock",
+    "english_name2": "",
+    "id": "R159",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Mudrock",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "迷迭香",
+    "english_name": "Rosmontis",
+    "english_name2": "",
+    "id": "RE45",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Rosmontis",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "阿米娅（近卫）",
+    "english_name": "Amiya",
+    "english_name2": "",
+    "id": "R001",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Amiya",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "松果",
+    "english_name": "Pinecone",
+    "english_name2": "",
+    "id": "CB09",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Pinecone",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "罗宾",
+    "english_name": "Robin",
+    "english_name2": "",
+    "id": "CB08",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Robin",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "卡夫卡",
+    "english_name": "Kafka",
+    "english_name2": "",
+    "id": "CB06",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Kafka",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "山",
+    "english_name": "Mountain",
+    "english_name2": "",
+    "id": "CB05",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Mountain",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "豆苗",
+    "english_name": "Beanstalk",
+    "english_name2": "",
+    "id": "CB16",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Beanstalk",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "爱丽丝",
+    "english_name": "Iris",
+    "english_name2": "",
+    "id": "VC12",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Iris",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "空弦",
+    "english_name": "Archetto",
+    "english_name2": "",
+    "id": "LT08",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Archetto",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "图耶",
+    "english_name": "Tuye",
+    "english_name2": "",
+    "id": "SG08",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Tuye",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "炎狱炎熔",
+    "english_name": "Lava",
+    "english_name2": "the Purgatory",
+    "id": "RF01",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Lava",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "乌有",
+    "english_name": "Mr.Nothing",
+    "english_name2": "",
+    "id": "YD11",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Mr.Nothing",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "嵯峨",
+    "english_name": "Saga",
+    "english_name2": "",
+    "id": "HK13",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Saga",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "夕",
+    "english_name": "Dusk",
+    "english_name2": "",
+    "id": "NM02",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Dusk",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "战车",
+    "english_name": "Tachanka",
+    "english_name2": "",
+    "id": "RS04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Tachanka",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "闪击",
+    "english_name": "Blitz",
+    "english_name2": "",
+    "id": "RS02",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Blitz",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "霜华",
+    "english_name": "Frost",
+    "english_name2": "",
+    "id": "RS03",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Frost",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "灰烬",
+    "english_name": "Ash",
+    "english_name2": "",
+    "id": "RS01",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Ash",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "暴雨",
+    "english_name": "Heavyrain",
+    "english_name2": "",
+    "id": "R164",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Heavyrain",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "熔泉",
+    "english_name": "Toddifons",
+    "english_name2": "",
+    "id": "VC11",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Toddifons",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "异客",
+    "english_name": "Passenger",
+    "english_name2": "",
+    "id": "SG07",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Passenger",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "赤冬",
+    "english_name": "Akafuyu",
+    "english_name2": "",
+    "id": "HK04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Akafuyu",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "歌蕾蒂娅",
+    "english_name": "Gladiia",
+    "english_name2": "",
+    "id": "AA05",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Gladiia",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "深海猎人",
+    "faction_display": "阿戈尔-深海猎人"
+  },
+  {
+    "chinese_name": "凯尔希",
+    "english_name": "Kal'tsit",
+    "english_name2": "",
+    "id": "B003",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Kal'tsit",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "浊心斯卡蒂",
+    "english_name": "Skadi",
+    "english_name2": "the Corrupting Heart",
+    "id": "CR01",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Skadi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "阿戈尔",
+    "faction_display": "阿戈尔"
+  },
+  {
+    "chinese_name": "深靛",
+    "english_name": "Indigo",
+    "english_name2": "",
+    "id": "II05",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Indigo",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "贝娜",
+    "english_name": "Bena",
+    "english_name2": "",
+    "id": "VC14",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Bena",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "绮良",
+    "english_name": "Kirara",
+    "english_name2": "",
+    "id": "HK05",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Kirara",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "卡涅利安",
+    "english_name": "Carnelian",
+    "english_name2": "",
+    "id": "LN04",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Carnelian",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "帕拉斯",
+    "english_name": "Pallas",
+    "english_name2": "",
+    "id": "MN04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Pallas",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "米诺斯",
+    "faction_display": "米诺斯"
+  },
+  {
+    "chinese_name": "龙舌兰",
+    "english_name": "Tequila",
+    "english_name2": "",
+    "id": "BV12",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Tequila",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "羽毛笔",
+    "english_name": "La Pluma",
+    "english_name2": "",
+    "id": "BV13",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "La Pluma",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "水月",
+    "english_name": "Mizuki",
+    "english_name2": "",
+    "id": "HK07",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Mizuki",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "假日威龙陈",
+    "english_name": "Ch'en",
+    "english_name2": "the Holungday",
+    "id": "R112",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Ch'en",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "罗比菈塔",
+    "english_name": "Roberta",
+    "english_name2": "",
+    "id": "CB11",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Roberta",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "桑葚",
+    "english_name": "Mulberry",
+    "english_name2": "",
+    "id": "YD03",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Mulberry",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "琴柳",
+    "english_name": "Saileach",
+    "english_name2": "",
+    "id": "VC10",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Saileach",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "灰毫",
+    "english_name": "Ashlock",
+    "english_name2": "",
+    "id": "KZ12",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Ashlock",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "红松骑士团",
+    "faction_display": "卡西米尔-红松骑士团"
+  },
+  {
+    "chinese_name": "远牙",
+    "english_name": "Fartooth",
+    "english_name2": "",
+    "id": "KZ13",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Fartooth",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "红松骑士团",
+    "faction_display": "卡西米尔-红松骑士团"
+  },
+  {
+    "chinese_name": "正义骑士号",
+    "english_name": "\"Justice Knight\"",
+    "english_name2": "",
+    "id": "KZ15",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "\"Justice Knight\"",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "红松骑士团",
+    "faction_display": "卡西米尔-红松骑士团"
+  },
+  {
+    "chinese_name": "布丁",
+    "english_name": "Pudding",
+    "english_name2": "",
+    "id": "CB03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Pudding",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "蜜莓",
+    "english_name": "Honeyberry",
+    "english_name2": "",
+    "id": "RB06",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Honeyberry",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "野鬃",
+    "english_name": "Wild Mane",
+    "english_name2": "",
+    "id": "KZ14",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Wild Mane",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "红松骑士团",
+    "faction_display": "卡西米尔-红松骑士团"
+  },
+  {
+    "chinese_name": "蚀清",
+    "english_name": "Corroserum",
+    "english_name2": "",
+    "id": "CB12",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Corroserum",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "焰尾",
+    "english_name": "Flametail",
+    "english_name2": "",
+    "id": "KZ11",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Flametail",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "红松骑士团",
+    "faction_display": "卡西米尔-红松骑士团"
+  },
+  {
+    "chinese_name": "耀骑士临光",
+    "english_name": "Nearl",
+    "english_name2": "the Radiant Knight",
+    "id": "KZ01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Nearl",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "耶拉",
+    "english_name": "Kjera",
+    "english_name2": "",
+    "id": "JC00",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Kjera",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "极光",
+    "english_name": "Aurora",
+    "english_name2": "",
+    "id": "JC09",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Aurora",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "灵知",
+    "english_name": "Gnosis",
+    "english_name2": "",
+    "id": "JC02",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Gnosis",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "喀兰贸易",
+    "faction_display": "谢拉格-喀兰贸易"
+  },
+  {
+    "chinese_name": "暮落",
+    "english_name": "Shalem",
+    "english_name2": "",
+    "id": "VC07",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Shalem",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "九色鹿",
+    "english_name": "Nine-Colored Deer",
+    "english_name2": "",
+    "id": "YD09",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Nine-Colored Deer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "寒芒克洛丝",
+    "english_name": "Kroos",
+    "english_name2": "the Keen Glint",
+    "id": "RF02",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Kroos",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "夜半",
+    "english_name": "Blacknight",
+    "english_name2": "",
+    "id": "RB12",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Blacknight",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "老鲤",
+    "english_name": "Lee",
+    "english_name2": "",
+    "id": "LM18",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Lee",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "鲤氏侦探事务所",
+    "faction_display": "炎-龙门-鲤氏侦探事务所"
+  },
+  {
+    "chinese_name": "令",
+    "english_name": "Ling",
+    "english_name2": "",
+    "id": "NM03",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Ling",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "夏栎",
+    "english_name": "Quercus",
+    "english_name2": "",
+    "id": "R121",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Quercus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "澄闪",
+    "english_name": "Goldenglow",
+    "english_name2": "",
+    "id": "VC09",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Goldenglow",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "见行者",
+    "english_name": "Enforcer",
+    "english_name2": "",
+    "id": "LT10",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Enforcer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "风丸",
+    "english_name": "Kazemaru",
+    "english_name2": "",
+    "id": "HK09",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Kazemaru",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "菲亚梅塔",
+    "english_name": "Fiammetta",
+    "english_name2": "",
+    "id": "LT11",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Fiammetta",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "褐果",
+    "english_name": "Chestnut",
+    "english_name2": "",
+    "id": "R134",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Chestnut",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "海蒂",
+    "english_name": "Heidi",
+    "english_name2": "",
+    "id": "VC19",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Heidi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "洛洛",
+    "english_name": "Rockrock",
+    "english_name2": "",
+    "id": "VC18",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Rockrock",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "号角",
+    "english_name": "Horn",
+    "english_name2": "",
+    "id": "VC16",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Horn",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "掠风",
+    "english_name": "Windflit",
+    "english_name2": "",
+    "id": "CB19",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Windflit",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "流明",
+    "english_name": "Lumen",
+    "english_name2": "",
+    "id": "II09",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Lumen",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "艾丽妮",
+    "english_name": "Irene",
+    "english_name2": "",
+    "id": "II07",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Irene",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "归溟幽灵鲨",
+    "english_name": "Specter",
+    "english_name2": "the Unchained",
+    "id": "CR02",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Specter",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "深海猎人",
+    "faction_display": "阿戈尔-深海猎人"
+  },
+  {
+    "chinese_name": "埃拉托",
+    "english_name": "Erato",
+    "english_name2": "",
+    "id": "MN07",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Erato",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "米诺斯",
+    "faction_display": "米诺斯"
+  },
+  {
+    "chinese_name": "车尔尼",
+    "english_name": "Czerny",
+    "english_name2": "",
+    "id": "LN06",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Czerny",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "濯尘芙蓉",
+    "english_name": "Hibiscus",
+    "english_name2": "the Purifier",
+    "id": "RF03",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Hibiscus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "黑键",
+    "english_name": "Ebenholz",
+    "english_name2": "",
+    "id": "LN05",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Ebenholz",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "星源",
+    "english_name": "Astgenne",
+    "english_name2": "",
+    "id": "RL08",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Astgenne",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "承曦格雷伊",
+    "english_name": "Greyy",
+    "english_name2": "the Lightningbearer",
+    "id": "RF23",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Greyy",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "多萝西",
+    "english_name": "Dorothy",
+    "english_name2": "",
+    "id": "RL07",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Dorothy",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "至简",
+    "english_name": "Minimalist",
+    "english_name2": "",
+    "id": "SG09",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Minimalist",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "晓歌",
+    "english_name": "Cantabile",
+    "english_name2": "",
+    "id": "R143",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Cantabile",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "鸿雪",
+    "english_name": "Позёмка",
+    "english_name2": "",
+    "id": "R145",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Позёмка",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "百炼嘉维尔",
+    "english_name": "Gavial",
+    "english_name2": "the Invincible",
+    "id": "RF22",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Gavial",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "但书",
+    "english_name": "Proviso",
+    "english_name2": "",
+    "id": "KZ10",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Proviso",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "玛恩纳",
+    "english_name": "Młynar",
+    "english_name2": "",
+    "id": "KZ08",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Młynar",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "卡西米尔",
+    "faction_display": "卡西米尔"
+  },
+  {
+    "chinese_name": "罗小黑",
+    "english_name": "Luo Xiaohei",
+    "english_name2": "",
+    "id": "R161",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Luo Xiaohei",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "海沫",
+    "english_name": "Highmore",
+    "english_name2": "",
+    "id": "II10",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Highmore",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "铅踝",
+    "english_name": "Totter",
+    "english_name2": "",
+    "id": "SG11",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Totter",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "达格达",
+    "english_name": "Dagda",
+    "english_name2": "",
+    "id": "GG04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Dagda",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "格拉斯哥帮",
+    "faction_display": "维多利亚-格拉斯哥帮"
+  },
+  {
+    "chinese_name": "明椒",
+    "english_name": "Paprika",
+    "english_name2": "",
+    "id": "R175",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Paprika",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "白铁",
+    "english_name": "Stainless",
+    "english_name2": "",
+    "id": "VC17",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Stainless",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "石英",
+    "english_name": "Quartz",
+    "english_name2": "",
+    "id": "CB18",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Quartz",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "雪绒",
+    "english_name": "Qanipalaat",
+    "english_name2": "",
+    "id": "SI03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Qanipalaat",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨米",
+    "faction_display": "萨米"
+  },
+  {
+    "chinese_name": "子月",
+    "english_name": "Lunacub",
+    "english_name2": "",
+    "id": "SR37",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Lunacub",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "伺夜",
+    "english_name": "Vigil",
+    "english_name2": "",
+    "id": "SR36",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Vigil",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "斥罪",
+    "english_name": "Penance",
+    "english_name2": "",
+    "id": "SR35",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Penance",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "缄默德克萨斯",
+    "english_name": "Texas",
+    "english_name2": "the Omertosa",
+    "id": "PL07",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Texas",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "企鹅物流",
+    "faction_display": "炎-龙门-企鹅物流"
+  },
+  {
+    "chinese_name": "谜图",
+    "english_name": "Puzzle",
+    "english_name2": "",
+    "id": "VC21",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Puzzle",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "和弦",
+    "english_name": "Harmonie",
+    "english_name2": "",
+    "id": "DB03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Harmonie",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "塔拉",
+    "faction_display": "维多利亚-塔拉"
+  },
+  {
+    "chinese_name": "焰影苇草",
+    "english_name": "Reed",
+    "english_name2": "The Flame Shadow",
+    "id": "DB02",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Reed",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "塔拉",
+    "faction_display": "维多利亚-塔拉"
+  },
+  {
+    "chinese_name": "截云",
+    "english_name": "Jieyun",
+    "english_name2": "",
+    "id": "YD15",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Jieyun",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "火哨",
+    "english_name": "Firewhistle",
+    "english_name2": "",
+    "id": "RB09",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Firewhistle",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "林",
+    "english_name": "Lin",
+    "english_name2": "",
+    "id": "LM21",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Lin",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "重岳",
+    "english_name": "Chongyue",
+    "english_name2": "",
+    "id": "NM04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Chongyue",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "铎铃",
+    "english_name": "Wind Chimes",
+    "english_name2": "",
+    "id": "YD17",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Wind Chimes",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "仇白",
+    "english_name": "Qiubai",
+    "english_name2": "",
+    "id": "YD20",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Qiubai",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "泰拉大陆调查团",
+    "english_name": "Terra Research Commission",
+    "english_name2": "",
+    "id": "MH01",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Terra Research Commission",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "火龙S黑角",
+    "english_name": "Rathalos S Noir Corne",
+    "english_name2": "",
+    "id": "MH03",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Rathalos S Noir Corne",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动组A4",
+    "faction_display": "罗德岛-行动组A4"
+  },
+  {
+    "chinese_name": "麒麟R夜刀",
+    "english_name": "Kirin R Yato",
+    "english_name2": "",
+    "id": "MH02",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Kirin R Yato",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动组A4",
+    "faction_display": "罗德岛-行动组A4"
+  },
+  {
+    "chinese_name": "U-Official",
+    "english_name": "U-Official",
+    "english_name2": "",
+    "id": "U007",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "U-Official",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "休谟斯",
+    "english_name": "Humus",
+    "english_name2": "",
+    "id": "R171",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Humus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "摩根",
+    "english_name": "Morgan",
+    "english_name2": "",
+    "id": "GG02",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Morgan",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "格拉斯哥帮",
+    "faction_display": "维多利亚-格拉斯哥帮"
+  },
+  {
+    "chinese_name": "洋灰",
+    "english_name": "Cement",
+    "english_name2": "",
+    "id": "RB11",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Cement",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "伊内丝",
+    "english_name": "Ines",
+    "english_name2": "",
+    "id": "B215",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Ines",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "巴别塔",
+    "faction_display": "巴别塔"
+  },
+  {
+    "chinese_name": "玫拉",
+    "english_name": "Melanite",
+    "english_name2": "",
+    "id": "CB22",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Melanite",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "淬羽赫默",
+    "english_name": "Silence",
+    "english_name2": "the Paradigmatic",
+    "id": "RL10",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Silence",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "霍尔海雅",
+    "english_name": "Ho'olheyak",
+    "english_name2": "",
+    "id": "CB88",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Ho'olheyak",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "缪尔赛思",
+    "english_name": "Muelsyse",
+    "english_name2": "",
+    "id": "RL09",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Muelsyse",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "Friston-3",
+    "english_name": "Friston-3",
+    "english_name2": "",
+    "id": "RCX5",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Friston-3",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "隐现",
+    "english_name": "Insider",
+    "english_name2": "",
+    "id": "LT13",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Insider",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "空构",
+    "english_name": "Spuria",
+    "english_name2": "",
+    "id": "LT12",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Spuria",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "圣约送葬人",
+    "english_name": "Executor",
+    "english_name2": "the Ex Foedere",
+    "id": "LT40",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Executor",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "寒檀",
+    "english_name": "Santalla",
+    "english_name2": "",
+    "id": "SI02",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Santalla",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨米",
+    "faction_display": "萨米"
+  },
+  {
+    "chinese_name": "提丰",
+    "english_name": "Typhon",
+    "english_name2": "",
+    "id": "SI07",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Typhon",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨米",
+    "faction_display": "萨米"
+  },
+  {
+    "chinese_name": "凛视",
+    "english_name": "Valarqvin",
+    "english_name2": "",
+    "id": "SI06",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Valarqvin",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨米",
+    "faction_display": "萨米"
+  },
+  {
+    "chinese_name": "苍苔",
+    "english_name": "Bryophyta",
+    "english_name2": "",
+    "id": "SS03",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Bryophyta",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "汐斯塔",
+    "faction_display": "哥伦比亚-汐斯塔"
+  },
+  {
+    "chinese_name": "青枳",
+    "english_name": "Poncirus",
+    "english_name2": "",
+    "id": "SS04",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Poncirus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "汐斯塔",
+    "faction_display": "哥伦比亚-汐斯塔"
+  },
+  {
+    "chinese_name": "琳琅诗怀雅",
+    "english_name": "Swire",
+    "english_name2": "the Elegant Wit",
+    "id": "LM22",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Swire",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-龙门",
+    "faction_display": "炎-龙门"
+  },
+  {
+    "chinese_name": "纯烬艾雅法拉",
+    "english_name": "Eyjafjalla",
+    "english_name2": "the Hvít Aska",
+    "id": "LN10",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Eyjafjalla",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "冰酿",
+    "english_name": "Coldshot",
+    "english_name2": "",
+    "id": "CB28",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Coldshot",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "杏仁",
+    "english_name": "Almond",
+    "english_name2": "",
+    "id": "BS05",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Almond",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "涤火杰西卡",
+    "english_name": "Jessica",
+    "english_name2": "the Liberated",
+    "id": "BS30",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Jessica",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "维荻",
+    "english_name": "Verdant",
+    "english_name2": "",
+    "id": "VC25",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Verdant",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "戴菲恩",
+    "english_name": "Delphine",
+    "english_name2": "",
+    "id": "VC23",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Delphine",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "刺玫",
+    "english_name": "Vendela",
+    "english_name2": "",
+    "id": "VC24",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Vendela",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "赫德雷",
+    "english_name": "Hoederer",
+    "english_name2": "",
+    "id": "B216",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Hoederer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "巴别塔",
+    "faction_display": "巴别塔"
+  },
+  {
+    "chinese_name": "跃跃",
+    "english_name": "Caper",
+    "english_name2": "",
+    "id": "BV32",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Caper",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "折光",
+    "english_name": "Diamante",
+    "english_name2": "",
+    "id": "LN21",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Diamante",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "深律",
+    "english_name": "Bassline",
+    "english_name2": "",
+    "id": "LN13",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Bassline",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "止颂",
+    "english_name": "Lessing",
+    "english_name2": "",
+    "id": "LN07",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Lessing",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "薇薇安娜",
+    "english_name": "Viviana",
+    "english_name2": "",
+    "id": "LN11",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Viviana",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "塑心",
+    "english_name": "Virtuosa",
+    "english_name2": "",
+    "id": "LT22",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Virtuosa",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "哈洛德",
+    "english_name": "Harold",
+    "english_name2": "",
+    "id": "VC27",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Harold",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "烈夏",
+    "english_name": "Лето",
+    "english_name2": "",
+    "id": "USS5",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Лето",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "锏",
+    "english_name": "Degenbrecher",
+    "english_name2": "",
+    "id": "JC07",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Degenbrecher",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "喀兰贸易",
+    "faction_display": "谢拉格-喀兰贸易"
+  },
+  {
+    "chinese_name": "温米",
+    "english_name": "Warmy",
+    "english_name2": "",
+    "id": "RB14",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Warmy",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "莱伊",
+    "english_name": "Ray",
+    "english_name2": "",
+    "id": "RB15",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Ray",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "万顷",
+    "english_name": "Wanqing",
+    "english_name2": "",
+    "id": "YD13",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Wanqing",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "小满",
+    "english_name": "Grain Buds",
+    "english_name2": "",
+    "id": "YD14",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Grain Buds",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "左乐",
+    "english_name": "Zuo Le",
+    "english_name2": "",
+    "id": "YD06",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Zuo Le",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "黍",
+    "english_name": "Shu",
+    "english_name2": "",
+    "id": "NM05",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Shu",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "红隼",
+    "english_name": "Kestrel",
+    "english_name2": "",
+    "id": "SG12",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Kestrel",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "导火索",
+    "english_name": "Fuze",
+    "english_name2": "",
+    "id": "RS08",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Fuze",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "双月",
+    "english_name": "Iana",
+    "english_name2": "",
+    "id": "RS07",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Iana",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "医生",
+    "english_name": "Doc",
+    "english_name2": "",
+    "id": "RS06",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Doc",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "艾拉",
+    "english_name": "Ela",
+    "english_name2": "",
+    "id": "RS05",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Ela",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "彩虹小队",
+    "faction_display": "彩虹小队"
+  },
+  {
+    "chinese_name": "露托",
+    "english_name": "Lutonada",
+    "english_name2": "",
+    "id": "BV33",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Lutonada",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "奥达",
+    "english_name": "Odda",
+    "english_name2": "",
+    "id": "R167",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Odda",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "阿罗玛",
+    "english_name": "Aroma",
+    "english_name2": "",
+    "id": "SR39",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Aroma",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "阿斯卡纶",
+    "english_name": "Ascalon",
+    "english_name2": "",
+    "id": "SW00",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Ascalon",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "S.W.E.E.P.",
+    "faction_display": "罗德岛-S.W.E.E.P."
+  },
+  {
+    "chinese_name": "PhonoR-0",
+    "english_name": "PhonoR-0",
+    "english_name2": "",
+    "id": "RCX6",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "PhonoR-0",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "历阵锐枪芬",
+    "english_name": "Fang",
+    "english_name2": "the Fire-sharpened",
+    "id": "RF04",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Fang",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "魔王",
+    "english_name": "Civilight Eterna",
+    "english_name2": "",
+    "id": "DWDB",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Civilight Eterna",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "逻各斯",
+    "english_name": "Logos",
+    "english_name2": "",
+    "id": "RE03",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Logos",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "维什戴尔",
+    "english_name": "Wiš'adel",
+    "english_name2": "",
+    "id": "B00W",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Wiš'adel",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "巴别塔",
+    "faction_display": "巴别塔"
+  },
+  {
+    "chinese_name": "阿米娅（医疗）",
+    "english_name": "Amiya",
+    "english_name2": "",
+    "id": "R001",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Amiya",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "深巡",
+    "english_name": "Underflow",
+    "english_name2": "",
+    "id": "AE03",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Underflow",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "阿戈尔",
+    "faction_display": "阿戈尔"
+  },
+  {
+    "chinese_name": "海霓",
+    "english_name": "Lucilla",
+    "english_name2": "",
+    "id": "AE05",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Lucilla",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "阿戈尔",
+    "faction_display": "阿戈尔"
+  },
+  {
+    "chinese_name": "乌尔比安",
+    "english_name": "Ulpianus",
+    "english_name2": "",
+    "id": "AA00",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Ulpianus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "深海猎人",
+    "faction_display": "阿戈尔-深海猎人"
+  },
+  {
+    "chinese_name": "渡桥",
+    "english_name": "Mitm",
+    "english_name2": "",
+    "id": "R184",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Mitm",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "妮芙",
+    "english_name": "Nymph",
+    "english_name2": "",
+    "id": "R182",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Nymph",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "锡人",
+    "english_name": "Tin Man",
+    "english_name2": "",
+    "id": "CB30",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Tin Man",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "莎草",
+    "english_name": "Papyrus",
+    "english_name2": "",
+    "id": "SG19",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Papyrus",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "衡沙",
+    "english_name": "Sand Reckoner",
+    "english_name2": "",
+    "id": "SG23",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Sand Reckoner",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "娜仁图亚",
+    "english_name": "Narantuya",
+    "english_name2": "",
+    "id": "SG17",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Narantuya",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "佩佩",
+    "english_name": "Pepe",
+    "english_name2": "",
+    "id": "SG14",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Pepe",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "森西",
+    "english_name": "Senshi",
+    "english_name2": "",
+    "id": "DD04",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Senshi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱欧斯小队",
+    "faction_display": "莱欧斯小队"
+  },
+  {
+    "chinese_name": "齐尔查克",
+    "english_name": "Chilchuck",
+    "english_name2": "",
+    "id": "DD03",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Chilchuck",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱欧斯小队",
+    "faction_display": "莱欧斯小队"
+  },
+  {
+    "chinese_name": "莱欧斯",
+    "english_name": "Laios",
+    "english_name2": "",
+    "id": "DD01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Laios",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱欧斯小队",
+    "faction_display": "莱欧斯小队"
+  },
+  {
+    "chinese_name": "玛露西尔",
+    "english_name": "Marcille",
+    "english_name2": "",
+    "id": "DD02",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Marcille",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱欧斯小队",
+    "faction_display": "莱欧斯小队"
+  },
+  {
+    "chinese_name": "凯瑟琳",
+    "english_name": "Catherine",
+    "english_name2": "",
+    "id": "VC20",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Catherine",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "波卜",
+    "english_name": "Bobbing",
+    "english_name2": "",
+    "id": "CB32",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Bobbing",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "维娜·维多利亚",
+    "english_name": "Vina Victoria",
+    "english_name2": "",
+    "id": "VC00",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Vina Victoria",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "云迹",
+    "english_name": "Contrail",
+    "english_name2": "",
+    "id": "CB33",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Contrail",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "菲莱",
+    "english_name": "Philae",
+    "english_name2": "",
+    "id": "SG10",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Philae",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "裁度",
+    "english_name": "Figurino",
+    "english_name2": "",
+    "id": "SR41",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Figurino",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "弑君者",
+    "english_name": "Crownslayer",
+    "english_name2": "",
+    "id": "R315",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Crownslayer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "忍冬",
+    "english_name": "Vulpisfoglia",
+    "english_name2": "",
+    "id": "SR40",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Vulpisfoglia",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "荒芜拉普兰德",
+    "english_name": "Lappland",
+    "english_name2": "the Decadenza",
+    "id": "SR04",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Lappland",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "瑰盐",
+    "english_name": "Rose Salt",
+    "english_name2": "",
+    "id": "II11",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Rose Salt",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "特克诺",
+    "english_name": "Tecno",
+    "english_name2": "",
+    "id": "BV23",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Tecno",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "引星棘刺",
+    "english_name": "Thorns",
+    "english_name2": "the Lodestar",
+    "id": "II02",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Thorns",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "伊比利亚",
+    "faction_display": "伊比利亚"
+  },
+  {
+    "chinese_name": "行箸",
+    "english_name": "Xingzhu",
+    "english_name2": "",
+    "id": "YD18",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Xingzhu",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "寻澜",
+    "english_name": "Surfer",
+    "english_name2": "",
+    "id": "BS07",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Surfer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "黑钢国际",
+    "faction_display": "哥伦比亚-黑钢国际"
+  },
+  {
+    "chinese_name": "烛煌",
+    "english_name": "Blaze",
+    "english_name2": "the Igniting Spark",
+    "id": "REX1",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Blaze",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "余",
+    "english_name": "Yu",
+    "english_name2": "",
+    "id": "NM06",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Yu",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "诺威尔",
+    "english_name": "Nowell",
+    "english_name2": "",
+    "id": "VC29",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Nowell",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "隐德来希",
+    "english_name": "Entelechia",
+    "english_name2": "",
+    "id": "R169",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Entelechia",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "水灯心",
+    "english_name": "Brigid",
+    "english_name2": "",
+    "id": "DB04",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Brigid",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "塔拉",
+    "faction_display": "维多利亚-塔拉"
+  },
+  {
+    "chinese_name": "钼铅",
+    "english_name": "Wulfenite",
+    "english_name2": "",
+    "id": "SG27",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Wulfenite",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "死芒",
+    "english_name": "Necrass",
+    "english_name2": "",
+    "id": "DB01",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Necrass",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "塔拉",
+    "faction_display": "维多利亚-塔拉"
+  },
+  {
+    "chinese_name": "骋风",
+    "english_name": "Windscoot",
+    "english_name2": "",
+    "id": "YD22",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Windscoot",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "阿兰娜",
+    "english_name": "Alanna",
+    "english_name2": "",
+    "id": "RB17",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Alanna",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "Mon3tr",
+    "english_name": "Mon3tr",
+    "english_name2": "",
+    "id": "R003",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Mon3tr",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "CONFESS-47",
+    "english_name": "CONFESS-47",
+    "english_name2": "",
+    "id": "LT47",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "CONFESS-47",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "聆音",
+    "english_name": "Gracebearer",
+    "english_name2": "",
+    "id": "BV27",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Gracebearer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "信仰搅拌机",
+    "english_name": "Sankta Miksaparato",
+    "english_name2": "",
+    "id": "LT32",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Sankta Miksaparato",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "蕾缪安",
+    "english_name": "Lemuen",
+    "english_name2": "",
+    "id": "LT17",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Lemuen",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "拉特兰",
+    "faction_display": "拉特兰"
+  },
+  {
+    "chinese_name": "新约能天使",
+    "english_name": "Exusiai",
+    "english_name2": "the New Covenant",
+    "id": "PL08",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Exusiai",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "企鹅物流",
+    "faction_display": "炎-龙门-企鹅物流"
+  },
+  {
+    "chinese_name": "Miss.Christine",
+    "english_name": "Miss.Christine",
+    "english_name2": "",
+    "id": "MEOW",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Miss.Christine",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "蒂比",
+    "english_name": "Tippi",
+    "english_name2": "",
+    "id": "CB25",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Tippi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "酒神",
+    "english_name": "Tragodia",
+    "english_name2": "",
+    "id": "CT01",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Tragodia",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "维多利亚",
+    "faction_display": "维多利亚"
+  },
+  {
+    "chinese_name": "录武官",
+    "english_name": "Record Keeper",
+    "english_name2": "",
+    "id": "YD26",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Record Keeper",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "司霆惊蛰",
+    "english_name": "Leizi",
+    "english_name2": "the Thunderbringer",
+    "id": "YD25",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Leizi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "电弧",
+    "english_name": "Raidian",
+    "english_name2": "",
+    "id": "RE10",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Raidian",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "松桐",
+    "english_name": "Matsukiri",
+    "english_name2": "",
+    "id": "HK17",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Matsukiri",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "吉星",
+    "english_name": "Kichisei",
+    "english_name2": "",
+    "id": "HK16",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Kichisei",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "遥",
+    "english_name": "Haruka",
+    "english_name2": "",
+    "id": "HK15",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Haruka",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "东",
+    "faction_display": "东"
+  },
+  {
+    "chinese_name": "斩业星熊",
+    "english_name": "Hoshiguma",
+    "english_name2": "the Breacher",
+    "id": "LM23",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Hoshiguma",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "龙门近卫局",
+    "faction_display": "炎-龙门-龙门近卫局"
+  },
+  {
+    "chinese_name": "祐天寺若麦",
+    "english_name": "Yūtenji Nyamu",
+    "english_name2": "",
+    "id": "AM04",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Yūtenji Nyamu",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "Ave Mujica",
+    "faction_display": "Ave Mujica"
+  },
+  {
+    "chinese_name": "八幡海铃",
+    "english_name": "Yahata Umiri",
+    "english_name2": "",
+    "id": "AM02",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Yahata Umiri",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "Ave Mujica",
+    "faction_display": "Ave Mujica"
+  },
+  {
+    "chinese_name": "若叶睦",
+    "english_name": "Wakaba Mutsumi",
+    "english_name2": "",
+    "id": "AM05",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Wakaba Mutsumi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "Ave Mujica",
+    "faction_display": "Ave Mujica"
+  },
+  {
+    "chinese_name": "三角初华",
+    "english_name": "Misumi Uika",
+    "english_name2": "",
+    "id": "AM03",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Misumi Uika",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "Ave Mujica",
+    "faction_display": "Ave Mujica"
+  },
+  {
+    "chinese_name": "丰川祥子",
+    "english_name": "Togawa Sakiko",
+    "english_name2": "",
+    "id": "AM01",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Togawa Sakiko",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "Ave Mujica",
+    "faction_display": "Ave Mujica"
+  },
+  {
+    "chinese_name": "冬时",
+    "english_name": "Снегyрочка",
+    "english_name2": "",
+    "id": "US38",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Снегyрочка",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "折桠",
+    "english_name": "Веточки",
+    "english_name2": "",
+    "id": "US35",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Веточки",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "真言",
+    "english_name": "Mantra",
+    "english_name2": "",
+    "id": "RE06",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Mantra",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "协律",
+    "english_name": "Akkord",
+    "english_name2": "",
+    "id": "LN22",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Akkord",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱塔尼亚",
+    "faction_display": "莱塔尼亚"
+  },
+  {
+    "chinese_name": "哈蒂娅",
+    "english_name": "Hadiya",
+    "english_name2": "",
+    "id": "SG28",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Hadiya",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "雪猎",
+    "english_name": "Snow Hunter",
+    "english_name2": "",
+    "id": "KJ07",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Snow Hunter",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "溯光星源",
+    "english_name": "Astgenne",
+    "english_name2": "the Lightchaser",
+    "id": "RL12",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Astgenne",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "圣聆初雪",
+    "english_name": "Pramanix",
+    "english_name2": "the Prerita",
+    "id": "KJ02",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Pramanix",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "凛御银灰",
+    "english_name": "SilverAsh",
+    "english_name2": "the Reignfrost",
+    "id": "KJ01",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "SilverAsh",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "谢拉格",
+    "faction_display": "谢拉格"
+  },
+  {
+    "chinese_name": "天空盒",
+    "english_name": "Skybox",
+    "english_name2": "",
+    "id": "CB54",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Skybox",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "响石",
+    "english_name": "Cairn",
+    "english_name2": "",
+    "id": "CB31",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Cairn",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "娜斯提",
+    "english_name": "Nasti",
+    "english_name2": "",
+    "id": "RL11",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Nasti",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "莱茵生命",
+    "faction_display": "哥伦比亚-莱茵生命"
+  },
+  {
+    "chinese_name": "摆渡人",
+    "english_name": "Varkáris",
+    "english_name2": "",
+    "id": "MN08",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Varkáris",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "米诺斯",
+    "faction_display": "米诺斯"
+  },
+  {
+    "chinese_name": "撷英调香师",
+    "english_name": "Perfumer",
+    "english_name2": "the Distilled",
+    "id": "RF31",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Perfumer",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "缇缇",
+    "english_name": "Titi",
+    "english_name2": "",
+    "id": "SG15",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Titi",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "萨尔贡",
+    "faction_display": "萨尔贡"
+  },
+  {
+    "chinese_name": "矩",
+    "english_name": "Ju",
+    "english_name2": "",
+    "id": "YD28",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Ju",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "风絮",
+    "english_name": "Taraxacum",
+    "english_name2": "",
+    "id": "YD29",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Taraxacum",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "赤刃明霄陈",
+    "english_name": "Ch'en",
+    "english_name2": "the Dawnstreak",
+    "id": "YD30",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Ch'en",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎",
+    "faction_display": "炎"
+  },
+  {
+    "chinese_name": "望",
+    "english_name": "Wang",
+    "english_name2": "",
+    "id": "NM07",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Wang",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "炎-岁",
+    "faction_display": "炎-炎-岁"
+  },
+  {
+    "chinese_name": "复奏",
+    "english_name": "Ripresa",
+    "english_name2": "",
+    "id": "SR43",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Ripresa",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "贝洛内",
+    "english_name": "Bellone",
+    "english_name2": "",
+    "id": "SR42",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Bellone",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "叙拉古",
+    "faction_display": "叙拉古"
+  },
+  {
+    "chinese_name": "伯塔尼",
+    "english_name": "Ботани",
+    "english_name2": "",
+    "id": "US40",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Ботани",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "乌啾",
+    "english_name": "Укусик",
+    "english_name2": "",
+    "id": "US39",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Укусик",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "怒潮凛冬",
+    "english_name": "Zima",
+    "english_name2": "the Raging Tide",
+    "id": "USS0",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Zima",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯学生自治团",
+    "faction_display": "乌萨斯-乌萨斯学生自治团"
+  },
+  {
+    "chinese_name": "GALLUS²",
+    "english_name": "GALLUS²",
+    "english_name2": "",
+    "id": "RCX7",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "GALLUS²",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "裂响",
+    "english_name": "Crackborne",
+    "english_name2": "",
+    "id": "US42",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Crackborne",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "维伊",
+    "english_name": "Вий",
+    "english_name2": "",
+    "id": "US53",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Вий",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "乌萨斯",
+    "faction_display": "乌萨斯"
+  },
+  {
+    "chinese_name": "可露希尔",
+    "english_name": "Closure",
+    "english_name2": "",
+    "id": "R00A",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Closure",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "凯尔希·思衡托",
+    "english_name": "Kal'tsit",
+    "english_name2": "Esperanta",
+    "id": "R002",
+    "profession": "医疗",
+    "profession_en": "MEDIC",
+    "barcode_text": "Kal'tsit",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "罗德岛隐秘队",
+    "english_name": "Rhodes Island Recon",
+    "english_name2": "",
+    "id": "MH04",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Rhodes Island Recon",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  },
+  {
+    "chinese_name": "雷狼龙S空爆",
+    "english_name": "Zinogre S Catapult",
+    "english_name2": "",
+    "id": "MH06",
+    "profession": "近卫",
+    "profession_en": "GUARD",
+    "barcode_text": "Zinogre S Catapult",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "焰狐龙梓兰",
+    "english_name": "Violet Mizutsune Orchid",
+    "english_name2": "",
+    "id": "MH05",
+    "profession": "狙击",
+    "profession_en": "SNIPER",
+    "barcode_text": "Violet Mizutsune Orchid",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "行动预备组A6",
+    "faction_display": "罗德岛-行动预备组A6"
+  },
+  {
+    "chinese_name": "佩德洛",
+    "english_name": "Pedro",
+    "english_name2": "",
+    "id": "BV02",
+    "profession": "辅助",
+    "profession_en": "SUPPORTER",
+    "barcode_text": "Pedro",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "玻利瓦尔",
+    "faction_display": "玻利瓦尔"
+  },
+  {
+    "chinese_name": "谬因",
+    "english_name": "Aphrissa",
+    "english_name2": "",
+    "id": "CB35",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Aphrissa",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "哥伦比亚",
+    "faction_display": "哥伦比亚"
+  },
+  {
+    "chinese_name": "机械师",
+    "english_name": "Mechanist",
+    "english_name2": "",
+    "id": "RE21",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Mechanist",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛-精英干员",
+    "faction_display": "罗德岛-罗德岛-精英干员"
+  },
+  {
+    "chinese_name": "时隙",
+    "english_name": "Timeslot",
+    "english_name2": "",
+    "id": "RB21",
+    "profession": "术士",
+    "profession_en": "CASTER",
+    "barcode_text": "Timeslot",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "嘉辛塔",
+    "english_name": "Jacinta",
+    "english_name2": "",
+    "id": "RB20",
+    "profession": "先锋",
+    "profession_en": "VANGUARD",
+    "barcode_text": "Jacinta",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "珊比",
+    "english_name": "Thumpy",
+    "english_name2": "",
+    "id": "RB19",
+    "profession": "重装",
+    "profession_en": "DEFENDER",
+    "barcode_text": "Thumpy",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "雷姆必拓",
+    "faction_display": "雷姆必拓"
+  },
+  {
+    "chinese_name": "予愿安洁莉娜",
+    "english_name": "Angelina",
+    "english_name2": "the Mellow Wish",
+    "id": "R102",
+    "profession": "特种",
+    "profession_en": "SPECIALIST",
+    "barcode_text": "Angelina",
+    "back_color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "show_icon": true,
+    "faction": "罗德岛",
+    "faction_display": "罗德岛"
+  }
+]

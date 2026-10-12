@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --color-slate-950: #0d1117;
+  --color-slate-900: #151b23;
+  --color-slate-800: #212830;
+  --color-slate-700: #3d444d;
+  --color-slate-600: #656c76;
+  --color-slate-500: #9198a1;
+  --color-slate-400: #9198a1;
+  --color-slate-300: #b1bac4;
+  --color-slate-200: #d1d9e0;
+  --color-slate-100: #f0f6fc;
+  --color-blue-400: #4493f8;
+  --color-blue-500: #4493f8;
+  --color-blue-600: #1f6feb;
+}
+
+@font-face {
+  font-family: 'BebasNeue';
+  src: url('/PassCard_Generator_assets/fonts/BebasNeue-Regular.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NotoSansHans-Bold';
+  src: url('/PassCard_Generator_assets/fonts/NotoSansHans-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AdobeHeitiStd';
+  src: url('/PassCard_Generator_assets/fonts/AdobeHeitiStd-Regular.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NotoSansHans-Medium';
+  src: url('/PassCard_Generator_assets/fonts/AdobeHeitiStd-Regular.otf') format('opentype');
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --panel: #151b23;
+  --panel2: #212830;
+  --border: #3d444d;
+  --text: #f0f6fc;
+  --text-dim: #9198a1;
+  --accent: #4493f8;
+  --gh-hover: #262c36;
+  --gh-active: #2a313c;
+  --gh-primary: #238636;
+  --gh-primary-hover: #29903b;
+  --gh-danger: #f85149;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  scrollbar-color: var(--border) var(--bg);
+}
+
+body { margin: 0; }
+.passcard-app { font-family: inherit; }
+.passcard-app header { background: #010409; backdrop-filter: none; }
+.passcard-app h1 { overflow-wrap: anywhere; }
+.passcard-app :is([class*='rounded-2xl'], [class*='rounded-xl']) { border-radius: 6px; }
+.passcard-app :is(button, input:not([type='range']):not([type='checkbox']), select, textarea) {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  box-shadow: none;
+}
+.passcard-app button {
+  background: var(--panel2);
+  color: var(--text);
+  font-weight: 500;
+  cursor: pointer;
+  background-image: none;
+  transition: background-color 80ms linear, border-color 80ms linear;
+}
+.passcard-app button:hover:not(:disabled) { background: var(--gh-hover); border-color: #8b949e; }
+.passcard-app button:active:not(:disabled) { background: var(--gh-active); }
+.passcard-app button.pcg-primary {
+  background: var(--gh-primary);
+  color: #fff;
+  border-color: rgba(240, 246, 252, .1);
+}
+.passcard-app button.pcg-primary:hover:not(:disabled) { background: var(--gh-primary-hover); }
+.passcard-app button[class*='bg-blue-600'],
+.passcard-app button[class*='bg-indigo-600'],
+.passcard-app button[class*='bg-purple-600'],
+.passcard-app button[class*='bg-teal-600'],
+.passcard-app button[class*='bg-emerald-600'] {
+  background: var(--gh-primary);
+  color: #fff;
+  border-color: rgba(240, 246, 252, .1);
+}
+.passcard-app button:is([class*='bg-blue-600'], [class*='bg-indigo-600'], [class*='bg-purple-600'], [class*='bg-teal-600'], [class*='bg-emerald-600']):hover:not(:disabled) {
+  background: var(--gh-primary-hover);
+}
+.passcard-app button:disabled { color: #656c76; background: #161b22; cursor: not-allowed; opacity: 1; }
+.passcard-app :is(input, select, textarea) { color: var(--text); background-color: var(--bg); }
+.passcard-app :is(input[type='range'], input[type='checkbox']) { accent-color: #1f6feb; }
+.passcard-app :is(button, input, select, textarea, a):focus-visible { outline: 2px solid #1f6feb; outline-offset: 2px; }
+.passcard-app [class*='shadow-'] { box-shadow: none; }
+.passcard-app :is([class*='text-blue-'], [class*='text-cyan-'], [class*='text-teal-'], [class*='text-indigo-'], [class*='text-purple-']) { color: var(--accent); }
+.passcard-app [class*='border-blue-'] { border-color: var(--border); }
+.passcard-app .pcg-selected { background: rgba(56, 139, 253, .12); border-color: var(--accent); color: var(--text); }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: var(--bg); }
+*::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+@media (prefers-reduced-motion: reduce) {
+  .passcard-app * { transition: none !important; }
+}

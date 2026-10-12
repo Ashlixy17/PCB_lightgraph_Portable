@@ -1,0 +1,6 @@
+/PassCard_Generator.html
+/PassCard_Generator_assets/
+/.cache/
+/apps/PassCard_Generator/node_modules/
+/apps/PassCard_Generator/dist/
+*.log

@@ -293,6 +293,16 @@ select{display:none;}
 button{border-width:1px!important;border-style:solid!important;border-radius:var(--radius)!important;}
 @media(max-width:1120px){.star-link{margin-left:0;flex:0 1 auto;order:0;}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important;animation:none!important;}}
+.generator-entry{position:absolute;left:50%;transform:translateX(-50%);display:flex;justify-content:center;}
+.generator-entry .generator-link{margin:0;white-space:nowrap;}
+.generator-confirm .generator-confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
+.generator-confirm .generator-confirm-actions .generator-yes{background:#da3633;color:#fff;border-color:rgba(240,246,252,.1);}
+.generator-confirm .generator-confirm-actions .generator-yes:hover{background:#b62324;}
+/* 顶栏空间不足时独占一行，避免居中入口压住菜单或 Star 按钮。 */
+@media(max-width:1360px){
+  .topbar{flex-wrap:wrap;}
+  .generator-entry{position:static;transform:none;flex:0 0 100%;order:3;}
+}
 </style>
 </head>
 <body>
@@ -366,6 +376,7 @@ button{border-width:1px!important;border-style:solid!important;border-radius:var
       </div>
     </div>
   </div>
+  <div class="generator-entry"><button type="button" class="btn generator-link" id="btnTemplateDesign" data-i18n="templateDesign">通过模板设计</button></div>
   <button type="button" class="star-link" id="btnStarProject" data-i18n="starProject">你觉得好用就给我点一个Star吧(ﾉ&gt;ω&lt;)ﾉ</button>
 </div>
 
@@ -646,6 +657,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（便携版
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（便攜版）', brandName:'PCB圖片分層器', brandEdition:'便攜版' });
 Object.assign(TRANSLATIONS.en, { pageTitle:'PCB_lightgraph_Portable', brandName:'PCB_lightgraph', brandEdition:'Portable' });
 Object.assign(TRANSLATIONS.ja, { pageTitle:'PCB画像レイヤー分離器（ポータブル版）', brandName:'PCB画像レイヤー分離器', brandEdition:'ポータブル版' });
+Object.assign(TRANSLATIONS['zh-CN'], { templateDesign:'通过模板设计', templateLeaveWarning:'将跳转至通行证模板设计页面，离开将会丢失现有工程，建议先导出保存', templateYes:'是', templateNo:'否' });
+Object.assign(TRANSLATIONS['zh-TW'], { templateDesign:'透過範本設計', templateLeaveWarning:'將跳轉至通行證範本設計頁面，離開將會遺失現有工程，建議先匯出儲存', templateYes:'是', templateNo:'否' });
+Object.assign(TRANSLATIONS.en, { templateDesign:'Design from Template', templateLeaveWarning:'You will open the pass card template designer. Leaving will lose the current project. Export and save it first.', templateYes:'Yes', templateNo:'No' });
+Object.assign(TRANSLATIONS.ja, { templateDesign:'テンプレートでデザイン', templateLeaveWarning:'通行証テンプレートのデザインページに移動します。現在のプロジェクトは失われるため、先に書き出して保存してください。', templateYes:'はい', templateNo:'いいえ' });
 const PRODUCT_NAME = 'PCB_lightgraph_Portable';
 const APP_VERSION = 'v0.1.0';
 const GITHUB_REPOSITORY = 'Ashlixy17/PCB_lightgraph_portable';
@@ -2972,6 +2987,20 @@ function closeModal(){
   }
   finishModal();
 }
+function showTemplateNavigation(){
+  showModal(`
+    <h3>${t('templateDesign')}</h3>
+    <p>${t('templateLeaveWarning')}</p>
+    <div class="generator-confirm-actions">
+      <button type="button" class="drawing-action-btn generator-yes" id="templateYes">${t('templateYes')}</button>
+      <button type="button" class="drawing-action-btn" id="templateNo">${t('templateNo')}</button>
+    </div>
+  `, 'generator-confirm');
+  el('#templateNo').onclick = closeModal;
+  // 仅显式确认后离开；不修改工程或自动导出文件。
+  el('#templateYes').onclick = () => window.location.assign(new URL('./PassCard_Generator.html', window.location.href).href);
+  el('#templateNo').focus();
+}
 function hasReadDisclaimer(){
   try{ return localStorage.getItem(DISCLAIMER_STORAGE_KEY) === DISCLAIMER_VERSION; }
   catch(_){ return false; }
@@ -4147,6 +4176,7 @@ function setupMenus(){
   el('#mColor').onclick = openColorDialog;
   el('#mReset').onclick = resetAllSettings;
   el('#mCheckUpdates').onclick = checkForUpdates;
+  el('#btnTemplateDesign').onclick = showTemplateNavigation;
   el('#btnStarProject').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_Portable', '_blank', 'noopener');
   el('#mGitHub').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable', '_blank', 'noopener');
   el('#mIssueFeedback').onclick = () => window.open('https://github.com/Ashlixy17/PCB_lightgraph_portable/issues/new', '_blank', 'noopener');
