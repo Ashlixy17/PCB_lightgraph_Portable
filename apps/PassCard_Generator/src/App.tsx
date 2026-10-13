@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {IdCard, Archive} from 'lucide-react';
+import {Archive} from 'lucide-react';
 import { CharacterRecord, E1Options, PassCardInfo, PreviewKind } from './types';
 import { DEFAULT_CHARACTERS } from './data/defaultCharacters';
 import { CharacterDatabasePanel } from './components/CharacterDatabasePanel';
@@ -187,9 +187,6 @@ export default function App() {
       <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400">
-              <IdCard className="w-6 h-6" />
-            </div>
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight">
                 PassCard_Generator

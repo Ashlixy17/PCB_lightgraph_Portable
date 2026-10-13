@@ -70,32 +70,28 @@ export const CharacterDatabasePanel: React.FC<CharacterDatabasePanelProps> = ({
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl text-white space-y-4">
       {/* Title & Mode Switch */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-y-3 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Database className="w-5 h-5 text-amber-400" />
           <h3 className="text-base font-bold">角色与数据来源</h3>
         </div>
 
         {/* Radio Mode Tabs */}
-        <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+        <div className="mode-switch" role="group" aria-label="角色数据来源">
           <button
+            type="button"
             onClick={() => onModeChange('existing')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition ${
-              mode === 'existing'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 font-medium ${mode === 'existing' ? 'active' : ''}`}
+            aria-pressed={mode === 'existing'}
           >
             <UserCheck className="w-3.5 h-3.5" />
             原版干员
           </button>
           <button
+            type="button"
             onClick={() => onModeChange('custom')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition ${
-              mode === 'custom'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 font-medium ${mode === 'custom' ? 'active' : ''}`}
+            aria-pressed={mode === 'custom'}
           >
             <PlusCircle className="w-3.5 h-3.5" />
             自定义

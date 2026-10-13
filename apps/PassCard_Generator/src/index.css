@@ -55,6 +55,8 @@
   --gh-primary: #238636;
   --gh-primary-hover: #29903b;
   --gh-danger: #f85149;
+  --radius: 6px;
+  --segment-padding: 3px;
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
@@ -108,6 +110,37 @@ body { margin: 0; }
 .passcard-app :is([class*='text-blue-'], [class*='text-cyan-'], [class*='text-teal-'], [class*='text-indigo-'], [class*='text-purple-']) { color: var(--accent); }
 .passcard-app [class*='border-blue-'] { border-color: var(--border); }
 .passcard-app .pcg-selected { background: rgba(56, 139, 253, .12); border-color: var(--accent); color: var(--text); }
+.passcard-app .mode-switch {
+  --segment-padding: 4px;
+  display: flex;
+  width: max-content;
+  flex-shrink: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + var(--segment-padding) + 1px);
+  padding: var(--segment-padding);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text);
+}
+.passcard-app .mode-switch-preview { --segment-padding: 2px; }
+.passcard-app .mode-switch button[type='button'] {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--text);
+  transition: background-color 80ms linear;
+}
+.passcard-app .mode-switch button:hover { background: var(--gh-hover); border-color: transparent; }
+.passcard-app .mode-switch button.active {
+  background: var(--gh-primary);
+  border-color: rgba(240, 246, 252, .1);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(1, 4, 9, .04);
+}
+.passcard-app .mode-switch button.active:not(:disabled):hover { background: var(--gh-primary-hover); }
+.passcard-app .mode-switch button.active:not(:disabled):active { background: #1c6e2e; }
+.passcard-app .mode-switch button:disabled { color: #656c76; background: transparent; border-color: transparent; cursor: not-allowed; }
 *::-webkit-scrollbar { width: 10px; height: 10px; }
 *::-webkit-scrollbar-track { background: var(--bg); }
 *::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }

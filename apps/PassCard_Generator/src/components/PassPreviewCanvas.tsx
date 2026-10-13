@@ -198,25 +198,21 @@ export const PassPreviewCanvas: React.FC<PassPreviewCanvasProps> = ({
           </div>
 
           {/* 2D vs 3D Mode Selector */}
-          <div className="flex bg-slate-950 p-0.5 rounded-xl border border-slate-800/80">
+          <div className="mode-switch mode-switch-preview" role="group" aria-label="效果预览模式">
             <button
+              type="button"
               onClick={() => setTab('2d')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-                tab === '2d'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 font-semibold ${tab === '2d' ? 'active' : ''}`}
+              aria-pressed={tab === '2d'}
             >
               <Sparkles className="w-3.5 h-3.5" />
               2D 平面贴图
             </button>
             <button
+              type="button"
               onClick={() => setTab('3d')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-                tab === '3d'
-                  ? 'bg-purple-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 font-semibold ${tab === '3d' ? 'active' : ''}`}
+              aria-pressed={tab === '3d'}
             >
               <Layers className="w-3.5 h-3.5" />
               3D 真实亚克力
