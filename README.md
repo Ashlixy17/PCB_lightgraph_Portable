@@ -28,9 +28,7 @@
 <p align="center">
 PCB图片拆分编辑器页面
 
-![PassCard_Generator 通行证模板设计界面](assets/PassCard_Generator-preview.png)
-<p align="center">
-按照通行证模板设计页面
+通行证模板设计已独立到 [PCB-PassCard-Generator](https://github.com/Ashlixy17/PCB-PassCard-Generator)。本页入口暂未接入独立网站。
 
 ---
 - **单文件离线运行**：`PCB_lightgraph_portable.html` 内置全部界面与算法，支持双击直接打开。
@@ -72,7 +70,6 @@ PCB图片拆分编辑器页面
 - 基于 Canvas `ImageData` 在浏览器本地逐像素处理，不依赖外部运行时。
 - 移植桌面版的主要分层、边缘处理、工程包兼容与渐进式渲染思路。
 - 本项目采用 [MIT License](https://opensource.org/licenses/MIT) 开源；素材版权与后续制板合规性由使用者自行确认。
-- 通行证模板设计功能（PassCard_Generator）部分代码借鉴自 [SusieGlitter/txz](https://github.com/SusieGlitter/txz)，感谢原作者的开源分享。
 ## 支持
 
 

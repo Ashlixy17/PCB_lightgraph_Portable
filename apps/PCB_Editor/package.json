@@ -1,0 +1,17 @@
+{
+  "name": "pcb-editor",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=20.11" },
+  "scripts": {
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json && node scripts/build.mjs",
+    "test": "node scripts/test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3",
+    "playwright": "1.62.1",
+    "pngjs": "7.0.0"
+  }
+}

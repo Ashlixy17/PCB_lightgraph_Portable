@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCB_lightgraph_Portable</title>
+<style>
+:root{color-scheme:dark;--bg:#0d1117;--panel:#151b23;--panel2:#212830;--border:#3d444d;--text:#f0f6fc;--text-dim:#9198a1;--accent:#4493f8;--accent-hover:#79b8ff;--control-accent:#1f6feb;--control-accent-text:#fff;--radius:6px;--gh-hover:#262c36;--gh-active:#2a313c;--gh-primary:#238636;--gh-primary-hover:#29903b;--gh-danger:#f85149;--gh-focus:#1f6feb;--gh-selected:rgba(56,139,253,.12);--segment-padding:3px;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size:14px;overflow:hidden;display:flex;flex-direction:column;
+  user-select:none;
+}
+/* ---- top bar ---- */
+.topbar{
+  display:flex;align-items:center;gap:8px;padding:6px 12px;position:relative;
+  background:var(--panel);border-bottom:1px solid var(--border);flex:0 0 auto;
+}
+.brand{display:inline-flex;align-items:center;gap:5px;font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap;}
+.brand-badge{display:inline-flex;align-items:center;align-self:center;color:var(--text-dim);padding:2px 5px;font-size:10px;font-weight:700;letter-spacing:.03em;line-height:1.2;transform:translateY(1px);}
+.brand-badge[hidden]{display:none;}
+.brand .dot{color:var(--accent);}
+.brand .edition{color:var(--text-dim);font-weight:400;font-size:12.5px;}
+.menubar{display:flex;gap:2px;}
+.menu{position:relative;}
+.menu>button{
+  background:transparent;border:none;color:var(--text);padding:6px 12px;border-radius:6px;
+  cursor:pointer;font-size:14px;font-family:inherit;
+}
+.menu>button:hover,.menu:focus-within>button{background:var(--panel2);}
+.star-link{cursor:pointer;font:inherit;font-size:12.5px;white-space:nowrap;}
+/* 窄窗口允许页头换行，避免菜单和 Star 按钮重叠。 */
+@media (max-width:1120px){
+  .topbar{flex-wrap:wrap;}
+  .menubar{flex-wrap:wrap;}
+}
+.dropdown{
+  display:none;position:absolute;top:100%;left:0;min-width:200px;z-index:100;
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:4px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.dropdown button{
+  display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--text);
+  padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13.5px;font-family:inherit;
+}
+.dropdown button.disabled,.dropdown button:disabled{color:#666;cursor:not-allowed;}
+.dropdown button:disabled:hover{background:transparent;}
+.dropdown .menu-check{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13.5px;
+}
+.dropdown .menu-check input{accent-color:var(--control-accent);width:16px;height:16px;cursor:pointer;}
+.dropdown .sep{height:1px;background:var(--border);margin:4px 6px;}
+.submenu{position:relative;}
+.submenu>.dropdown{left:100%;top:0;}
+/* ---- main ---- */
+.main{flex:1 1 auto;display:flex;min-height:0;}
+.col-preview{flex:4 4 0;display:flex;flex-direction:column;padding:10px;min-width:0;gap:6px;}
+.hint{color:var(--text-dim);font-size:12.5px;flex:0 0 auto;}
+.preview-wrap{
+  flex:1 1 auto;min-height:0;position:relative;background:var(--bg);
+  border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;
+}
+.preview-wrap canvas{display:block;width:100%;height:100%;}
+.preview-wrap .placeholder{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--text-dim);pointer-events:none;font-size:14px;
+}
+.preview-image-meta{flex:0 0 auto;text-align:center;color:var(--text-dim);font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-stage{flex:1 1 auto;min-height:0;display:flex;}
+.preview-stage>.preview-wrap{width:100%;}
+.quad-grid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px;}
+/* display:grid 会覆盖浏览器的 hidden 默认样式，必须显式隐藏非四分视图。 */
+.quad-grid[hidden]{display:none;}
+.quad-cell{display:flex;flex-direction:column;min-width:0;min-height:0;}
+.quad-cell .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
+.quad-cell .w{flex:1 1 auto;min-height:0;position:relative;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.quad-cell canvas{display:block;width:100%;height:100%;}
+.quad-cell .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);pointer-events:none;font-size:13px;}
+.col-controls{flex:1.1 1 0;min-width:280px;max-width:420px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;padding:10px;border-left:1px solid var(--border);border-right:1px solid var(--border);}
+/* 隐藏滚动条但保留滚轮滚动，避免过长设置被裁切。 */
+.col-controls::-webkit-scrollbar{width:0;height:0;}
+.col-layers{flex:3 3 0;overflow:hidden;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0;}
+/* groups */
+.group{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:10px;overflow:hidden;
+}
+.group>.group-header{
+  padding:9px 12px;cursor:pointer;font-weight:600;font-size:13.5px;
+  display:flex;align-items:center;gap:8px;background:transparent;border:none;width:100%;text-align:left;
+  color:var(--text);font-family:inherit;
+}
+.group>.group-header:hover{background:var(--panel2);}
+.group>.group-header .chev{transition:transform .18s cubic-bezier(.33,1,.68,1);font-size:11px;color:var(--text-dim);}
+.group.open>.group-header .chev{transform:rotate(90deg);}
+.group .content{max-height:0;overflow:hidden;transition:max-height .18s cubic-bezier(.33,1,.68,1);}
+.group.open .content{max-height:1200px;}
+.group .inner{padding:4px 12px 12px;}
+/* controls */
+label.ctl{display:block;margin:9px 0;font-size:13px;}
+label.ctl .lab{display:block;color:var(--text-dim);font-size:12.5px;margin-bottom:4px;}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;
+  background:var(--panel2);outline:none;border:1px solid var(--border);cursor:grab;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--control-accent);cursor:grab;border:none;
+}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--control-accent);cursor:grab;border:none;}
+/* 按住滑杆期间与画布拖动一致，显示正在抓取的光标。 */
+input[type=range]:not(:disabled):active,input[type=range]:not(:disabled):active::-webkit-slider-thumb,input[type=range]:not(:disabled):active::-moz-range-thumb{cursor:grabbing;}
+input[type=range]:disabled,input[type=range]:disabled::-webkit-slider-thumb,input[type=range]:disabled::-moz-range-thumb{opacity:.4;cursor:not-allowed;}
+.check,.radio{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;cursor:pointer;}
+.check input,.radio input{accent-color:var(--control-accent);width:16px;height:16px;cursor:pointer;}
+.btn-row{display:flex;gap:6px;}
+.btn-row.centered{justify-content:center;}
+.flex-fill{flex:1;}
+.note{margin:9px 0 0;color:var(--text-dim);font-size:12px;line-height:1.5;}
+.mode-switch{display:flex;margin-bottom:10px;}
+.mode-switch button{flex:1;cursor:pointer;font:inherit;}
+.mode-specific[hidden]{display:none;}
+/* layer previews grid */
+.layers-grid{
+  flex:1 1 auto;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));gap:8px;min-height:0;
+}
+/* 两种算法共用 2×2 预览格；灰度模式的第四格明确标为无输出。 */
+.layers-grid .lp[hidden]{display:none;}
+.layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
+.layers-grid .lp .t{color:var(--text-dim);font-size:12px;margin-bottom:4px;flex:0 0 auto;}
+.layers-grid .lp .w{
+  flex:1 1 auto;min-height:0;background:var(--bg);border:1px dashed var(--border);border-radius:8px;
+  overflow:hidden;position:relative;
+}
+.layers-grid .lp canvas{display:block;width:100%;height:100%;}
+/* modal */
+.modal-back{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;
+}
+.modal-back.show{display:flex;}
+.modal{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;
+  min-width:320px;max-width:520px;box-shadow:0 12px 40px rgba(0,0,0,.6);max-height:86vh;overflow:auto;
+}
+.modal h3{margin:0 0 12px;font-size:16px;}
+.modal .mrow{margin:10px 0;display:flex;align-items:center;gap:10px;}
+.modal .mrow label{flex:0 0 180px;font-size:13px;color:var(--text-dim);}
+.modal input[type=number]{width:90px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;}
+.modal input[type=color]{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
+.modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+/* 声明正文单独滚动，标题与关闭操作始终可见。 */
+.disclaimer-modal{width:min(720px,calc(100vw - 32px));min-width:0;max-width:720px;max-height:calc(100vh - 32px);height:min(82vh,780px);padding:0;display:flex;flex-direction:column;overflow:hidden;}
+.disclaimer-header{flex:none;padding:18px 22px;background:var(--panel2);border-bottom:1px solid var(--border);}
+.disclaimer-header h3{margin:0;font-size:18px;}
+.disclaimer-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:4px 22px 18px;line-height:1.8;font-size:13px;user-select:text;}
+.disclaimer-content h4{margin:20px 0 6px;color:var(--text);font-size:14px;}
+.disclaimer-content p{margin:0;color:var(--text-dim);}
+.disclaimer-content strong{color:var(--text);font-weight:600;}
+.disclaimer-content a,.disclaimer-content a:visited{color:var(--accent);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;}
+.disclaimer-content a:hover{color:var(--accent-hover);}
+.disclaimer-content a:focus-visible,.disclaimer-content:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.disclaimer-footer{flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-top:1px solid var(--border);background:var(--panel2);}
+.disclaimer-remember{display:flex;align-items:flex-start;gap:8px;line-height:1.6;font-size:12px;color:var(--text-dim);cursor:pointer;}
+.disclaimer-remember input{flex:none;margin:3px 0 0;accent-color:var(--accent);}
+.disclaimer-footer .drawing-action-btn{flex:none;min-width:82px;}
+@media (max-width:480px){.disclaimer-header{padding:16px;}.disclaimer-content{padding:0 16px 16px;}.disclaimer-footer{padding:14px 16px;gap:12px;}.disclaimer-remember{max-width:220px;}}
+/* 内置画板直接编辑原图像素；显示尺寸仅用于适配窗口，不改变源图分辨率。 */
+.paint-modal{width:min(1120px,94vw);max-width:1120px;height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;}
+.paint-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.paint-toolbar label{display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12.5px;}
+.paint-toolbar input[type=color]{width:34px;height:28px;}
+.paint-toolbar input[type=range]{width:120px;}
+.paint-tool-switch{display:flex;}
+/* 画笔与橡皮擦共用分段控件。 */
+.paint-tool{cursor:pointer;font:inherit;}
+#paintBrushModeWrap{flex:0 0 auto;flex-wrap:nowrap;white-space:nowrap;}
+.paint-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-top:10px;}
+.paint-stage canvas{display:block;flex:none;touch-action:none;cursor:crosshair;box-shadow:0 0 0 1px rgb(255 255 255 / 10%);will-change:transform;}
+.paint-size-indicator{position:absolute;border:1.5px solid var(--control-accent);border-radius:50%;box-sizing:border-box;pointer-events:none;z-index:1;opacity:0;transition:opacity .15s ease;box-shadow:0 0 3px rgb(0 0 0 / 82%);}
+.paint-size-indicator.show{opacity:1;}
+.paint-image-meta{margin-left:auto;color:var(--text-dim);font-size:12px;white-space:nowrap;}
+@media (max-width:680px){.paint-modal{width:98vw;height:94vh;padding:12px;}.paint-toolbar{gap:5px;}.paint-toolbar input[type=range]{width:86px;}}
+/* 裁剪画布按图片实际比例绘制，坐标直接映射回原图，避免预览缩放带来裁切偏差。 */
+.crop-modal{width:min(900px,calc(100vw - 32px));max-width:none;height:min(82vh,720px);max-height:calc(100vh - 32px);overflow:hidden;}
+.crop-modal>div{display:flex;flex-direction:column;min-height:0;height:100%;}
+.crop-hint{margin:0 0 12px;color:var(--text-dim);font-size:12.5px;line-height:1.5;}
+.crop-stage{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;overflow:hidden;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;}
+.crop-stage canvas{display:block;flex:none;max-width:none;touch-action:none;cursor:default;will-change:transform;}
+/* toast */
+.region-list{display:flex;flex-direction:column;gap:3px;max-height:180px;overflow-x:hidden;overflow-y:auto;margin:8px 0;padding:4px;}
+.region-tools{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;}
+.region-tools .paint-tool{flex:1;padding:7px 5px;}
+.region-control-label{display:block;color:var(--text-dim);font-size:12.5px;margin:9px 0 4px;}
+.region-local[hidden]{display:none;}
+#regionalControls[hidden],.region-param-section[hidden]{display:none;}
+#regionBrushControl[hidden]{display:none;}
+.region-slider-track{position:relative;display:flex;align-items:center;height:16px;}
+.region-slider-track input{display:block;margin:0;}
+/* 圆点与槽共用中心线；尺寸等于槽高，颜色沿用手柄，并且不接收事件。 */
+.region-baseline{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--control-accent);top:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.region-name-input{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font:inherit;}
+#canvasComposite{touch-action:none;}
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--border);border-radius:8px;padding:10px 18px;z-index:300;
+  display:none;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.5);
+}
+/* GitHub 黑色界面：控件、菜单与弹窗共用配色。 */
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";}
+.topbar{background:#010409;min-height:48px;padding:8px 12px;}
+.brand-badge{background:transparent;color:var(--text-dim);border:1px solid var(--border);border-radius:20px;padding:1px 6px;}
+.star-link{position:static;transform:none;margin-left:auto;font-weight:500;color:var(--text);animation:none;border:1px solid var(--border);background:var(--panel2);border-radius:6px;min-height:32px;padding:5px 12px;display:inline-flex;align-items:center;gap:6px;}
+.star-link:hover{background:var(--gh-hover);}
+.star-link .github-icon{color:#e3b341;}
+.menu>button{min-height:32px;padding:5px 10px;}
+.menu>button:hover,.menu.menu-open>button{background:var(--panel2);}
+.dropdown{position:fixed;background:var(--panel);border-radius:12px;padding:4px;box-shadow:0 8px 24px rgba(1,4,9,.65);min-width:210px;max-width:none;overflow-y:auto;overscroll-behavior:contain;}
+.menu.menu-open>.dropdown,.submenu.menu-open>.dropdown{display:block;}
+.dropdown button{font-size:14px;min-height:32px;padding:5px 8px;display:flex;align-items:center;gap:8px;}
+.dropdown button:hover,.dropdown button:focus-visible,.dropdown .menu-check:hover{background:var(--gh-hover);}
+.dropdown .menu-check{min-height:32px;font-size:14px;padding:5px 8px;}
+.dropdown button.disabled,.dropdown button:disabled{color:#656c76;background:transparent;}
+.github-menu-check{margin-left:auto;}
+.github-menu-check:not(.active-check){visibility:hidden;}
+.github-menu-chevron{margin-left:auto;}
+.preview-wrap,.quad-cell .w,.paint-stage,.crop-stage{background:var(--bg);}
+.group{background:var(--bg);}
+.group>.group-header{min-height:36px;background:var(--panel);padding:8px 12px;}
+.group>.group-header:hover{background:var(--panel2);}
+.group .inner{padding-top:6px;}
+button.btn,button.drawing-action-btn{min-height:32px;padding:5px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;margin:3px 2px;box-shadow:0 1px 0 rgba(1,4,9,.04);transition:background-color 80ms linear,border-color 80ms linear;}
+button.btn:hover,button.drawing-action-btn:hover{background:var(--gh-hover);border-color:#8b949e;}
+button.btn:active,button.drawing-action-btn:active{background:var(--gh-active);}
+button.btn.accent,button.drawing-action-btn.action-selected{background:var(--gh-primary);border-color:rgba(240,246,252,.1);color:#fff;}
+button.btn.accent:not(:disabled):hover,button.drawing-action-btn.action-selected:not(:disabled):hover{background:var(--gh-primary-hover);}
+button.btn.accent:not(:disabled):active,button.drawing-action-btn.action-selected:not(:disabled):active{background:#1c6e2e;}
+button.btn:disabled,button.drawing-action-btn:disabled{opacity:1;color:#656c76;background:#161b22;border-color:rgba(61,68,77,.6);cursor:not-allowed;}
+.region-choice{display:flex;align-items:center;gap:8px;min-height:32px;padding:6px 0;cursor:pointer;}
+.region-choice input{margin:0;}
+.region-choice span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#regionDelete,#regionDeleteYes{color:var(--gh-danger);}
+#regionDelete:not(:disabled):hover,#regionDeleteYes:hover{background:#b62324;border-color:#b62324;color:#fff;}
+#regionDeleteYes{background:#da3633;border-color:rgba(240,246,252,.1);color:#fff;}
+#regionDeleteYes:active{background:#a40e26;}
+#regionDeleteNo{background:var(--panel2);border-color:var(--border);color:var(--text);}
+#regionDeleteNo:hover{background:var(--gh-hover);}
+#regionDelete:disabled{color:#656c76;}
+/* 外框圆角包含留白和边框厚度，与内侧按钮的圆角同心。 */
+.mode-switch,.paint-tool-switch,.region-tools{background:var(--panel);border:1px solid var(--border);border-radius:calc(var(--radius) + var(--segment-padding) + 1px);padding:var(--segment-padding);gap:2px;}
+.mode-switch button,.paint-tool{background:transparent;border:1px solid transparent;border-radius:var(--radius);min-height:32px;padding:5px 8px;font-size:13px;color:var(--text);transition:background-color 80ms linear;}
+.mode-switch button:hover,.paint-tool:hover{background:var(--gh-hover);}
+.paint-tool.active{background:#323a44;border-color:var(--border);color:var(--text);box-shadow:0 1px 2px rgba(1,4,9,.3);}
+.mode-switch button.active{background:var(--gh-primary);border-color:rgba(240,246,252,.1);color:#fff;box-shadow:0 1px 0 rgba(1,4,9,.04);}
+.mode-switch button.active:not(:disabled):hover{background:var(--gh-primary-hover);}
+.mode-switch button.active:not(:disabled):active{background:#1c6e2e;}
+.mode-switch button:disabled,.paint-tool:disabled{color:#656c76;background:transparent;cursor:not-allowed;}
+:is(button,a,input,.disclaimer-content):focus-visible{outline:2px solid var(--gh-focus);outline-offset:2px;}
+:is(input[type=text],input[type=number],.region-name-input){color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:6px;min-height:32px;padding:5px 8px;}
+input[type=color]{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px;}
+input[type=range]{background:var(--panel2);border-color:var(--border);}
+:is(input[type=checkbox],input[type=radio]){appearance:none;flex-shrink:0;width:16px;height:16px;border:1px solid #656c76;background:var(--bg);border-radius:3px;vertical-align:middle;cursor:pointer;}
+input[type=checkbox]:checked{border-color:var(--control-accent);background:var(--control-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='white' d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'/%3E%3C/svg%3E") center/14px no-repeat;}
+input[type=radio]{border-radius:50%;}
+input[type=radio]:checked{border:4px solid var(--control-accent);background:#fff;}
+:is(input[type=checkbox],input[type=radio]):disabled{opacity:.45;cursor:not-allowed;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px rgba(1,4,9,.65);}
+.modal-back{background:rgba(1,4,9,.65);}
+.modal h3{font-size:16px;}
+.disclaimer-header,.disclaimer-footer{background:var(--panel);}
+.paint-size-indicator{border-color:var(--accent);box-shadow:none;}
+#toast{background:var(--panel);border-radius:6px;}
+select{display:none;}
+.ui-select-button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;min-height:32px;margin:0;padding:5px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text);background:var(--panel2);font:inherit;font-size:13px;cursor:pointer;}
+.ui-select-button:hover{background:var(--gh-hover);}
+.ui-select-button:disabled{color:#656c76;background:var(--bg);cursor:not-allowed;}
+.ui-select-button[aria-expanded=true]{border-color:var(--accent);}
+.ui-select-button[hidden]{display:none;}
+.ui-select-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.github-icon{width:16px;height:16px;flex-shrink:0;fill:currentColor;vertical-align:middle;}
+.ui-select-popover{position:fixed;z-index:250;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px;overflow:auto;overscroll-behavior:contain;box-shadow:0 8px 24px rgba(1,4,9,.65);}
+.ui-select-popover[hidden]{display:none;}
+.ui-select-option{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;border:0;border-radius:6px;background:transparent;color:var(--text);padding:5px 8px;text-align:left;font:inherit;font-size:14px;cursor:pointer;}
+.ui-select-option:hover,.ui-select-option:focus-visible{background:var(--gh-hover);}
+.ui-select-option[aria-selected=true]{background:var(--gh-selected);}
+.ui-select-option:disabled{color:#656c76;cursor:not-allowed;background:transparent;}
+.ui-select-option .github-icon{margin-left:auto;}
+:is(.menu>button,.dropdown button,.group>.group-header,.ui-select-option){border:1px solid transparent;}
+/* 控件只改变边框颜色与填充；菜单、工具和弹窗按钮共用同一边框宽度及圆角。 */
+button{border-width:1px!important;border-style:solid!important;border-radius:var(--radius)!important;}
+@media(max-width:1120px){.star-link{margin-left:0;flex:0 1 auto;order:0;}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important;animation:none!important;}}
+.generator-entry{position:absolute;left:50%;transform:translateX(-50%);display:flex;justify-content:center;}
+.generator-entry .generator-link{margin:0;white-space:nowrap;}
+/* 顶栏空间不足时独占一行，避免居中入口压住菜单或 Star 按钮。 */
+@media(max-width:1360px){
+  .topbar{flex-wrap:wrap;}
+  .generator-entry{position:static;transform:none;flex:0 0 100%;order:3;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span data-i18n="brandName">PCB图片分层器</span><span class="brand-badge" id="brandBadge">便携版</span></div>
+  <div class="menubar" id="menubar">
+    <div class="menu" id="menuFile">
+      <button type="button" data-i18n="menuFile">File</button>
+      <div class="dropdown">
+        <button type="button" id="mImport" data-i18n="importImage">导入图片</button>
+        <button type="button" id="mExport" class="disabled" data-i18n="exportDrawing">导出全部图纸</button>
+        <button type="button" id="mSave" class="disabled" disabled data-i18n="saveProject">保存工程</button>
+        <button type="button" id="mLoad" data-i18n="loadProject">导入工程</button>
+      </div>
+    </div>
+    <div class="menu" id="menuEdit">
+      <button type="button" data-i18n="menuEdit">编辑</button>
+      <div class="dropdown">
+        <button type="button" id="mPaint" data-i18n="liveEdit" disabled>图纸快捷编辑</button>
+      </div>
+    </div>
+    <div class="menu" id="menuOption">
+      <button type="button" data-i18n="menuOption">Option</button>
+      <div class="dropdown">
+        <div class="submenu" id="subEdge">
+          <button type="button" data-i18n="edgeMenu">边缘处理 ▸</button>
+          <div class="dropdown">
+            <div class="submenu" id="subExp">
+              <button type="button" data-i18n="experimentalMenu">实验性功能 ▸</button>
+              <div class="dropdown">
+                <button type="button" id="mFilter" data-i18n="filterPreprocess">滤波预处理…</button>
+                <button type="button" id="mDP" data-i18n="dpSimplify">道格拉斯-普克抽稀…</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="submenu" id="subScale">
+          <button type="button" data-i18n="uiScaleMenu">界面缩放 ▸</button>
+          <div class="dropdown" id="scaleMenu"></div>
+        </div>
+        <div class="submenu" id="subLanguage">
+          <button type="button" data-i18n="languageMenu">语言 ▸</button>
+          <div class="dropdown" id="languageMenu">
+            <button type="button" data-language="zh-CN">简体中文</button>
+            <button type="button" data-language="zh-TW">繁體中文</button>
+            <button type="button" data-language="en">English</button>
+            <button type="button" data-language="ja">日本語</button>
+          </div>
+        </div>
+        <label class="menu-check"><span data-i18n="edaImportProtection">EDA导入保护</span><input type="checkbox" id="chkEdaImportProtection" checked></label>
+        <button type="button" id="mColor" data-i18n="colorSettings">颜色设置…</button>
+        <button type="button" id="mReset" data-i18n="resetAll">重置所有设置…</button>
+      </div>
+    </div>
+    <div class="menu" id="menuView">
+      <button type="button" data-i18n="menuView">视图</button>
+      <div class="dropdown">
+        <button type="button" data-view-mode="overlay" data-i18n="viewOverlay">叠加视图</button>
+        <button type="button" data-view-mode="split" data-i18n="viewSplit">分隔视图</button>
+        <button type="button" data-view-mode="quad" data-i18n="viewQuad">四分视图</button>
+      </div>
+    </div>
+    <div class="menu" id="menuHelp">
+      <button type="button" data-i18n="menuHelp">关于</button>
+      <div class="dropdown">
+        <button type="button" id="mCheckUpdates" data-i18n="checkUpdates">检查更新</button>
+        <button type="button" id="mGitHub" data-i18n="githubLink">跳转至 GitHub</button>
+        <button type="button" id="mIssueFeedback" data-i18n="issueFeedback">问题反馈</button>
+        <button type="button" id="mDisclaimer" data-i18n="disclaimer">免责声明</button>
+      </div>
+    </div>
+  </div>
+  <div class="generator-entry"><button type="button" class="btn generator-link" id="btnTemplateDesign" data-i18n="templateDesign">通过模板设计</button></div>
+  <button type="button" class="star-link" id="btnStarProject" data-i18n="starProject">你觉得好用就给我点一个Star吧(ﾉ&gt;ω&lt;)ﾉ</button>
+</div>
+
+<div class="main">
+  <div class="col-preview">
+    <div class="hint" data-i18n="previewHint">【预览区】滚轮缩放，中键/右键拖动平移</div>
+    <div class="preview-image-meta" id="previewImageMeta" hidden></div>
+    <div class="preview-stage">
+      <div class="preview-wrap" id="compositeWrap">
+        <canvas id="canvasComposite"></canvas>
+        <div class="placeholder" id="compositePlaceholder" data-i18n="importPlaceholder">请导入图片…</div>
+      </div>
+      <div class="quad-grid" id="quadGrid" hidden>
+        <div class="quad-cell"><div class="t" id="quadPrimaryTitle" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadPrimary"></canvas><div class="placeholder" data-quad-placeholder="primary" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" data-i18n="layerSilk">Top Silk（丝印）</div><div class="w"><canvas id="canvasQuadSilk"></canvas><div class="placeholder" data-quad-placeholder="silk" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" data-i18n="layerMask">Top Mask（阻焊）</div><div class="w"><canvas id="canvasQuadMask"></canvas><div class="placeholder" data-quad-placeholder="mask" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" data-i18n="layerCopper">Top Copper（线路）</div><div class="w"><canvas id="canvasQuadCopper"></canvas><div class="placeholder" data-quad-placeholder="copper" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-controls" id="controls">
+    <div class="mode-switch" role="group" aria-label="分层模式" data-i18n-aria="processingMode">
+      <button type="button" class="active" data-processing-mode="gray" data-i18n="grayMode">纯灰度三分分层</button>
+      <button type="button" data-processing-mode="color" data-i18n="colorMode">彩色识别分层</button>
+    </div>
+
+    <div class="group" id="groupRegions">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="regionEditor">区域选择/编辑</span></button>
+      <div class="content"><div class="inner">
+        <div class="region-list" id="regionList"></div>
+        <span class="region-control-label" data-i18n="regionDrawing">区域划取</span>
+        <div class="region-tools" id="regionTools" role="group" data-i18n-aria="regionDrawing" aria-label="区域划取">
+          <button type="button" class="paint-tool" data-region-tool="select" data-i18n="regionSelect">选择</button>
+          <button type="button" class="paint-tool" data-region-tool="rect" data-i18n="regionRect">矩形</button>
+          <button type="button" class="paint-tool" data-region-tool="lasso" data-i18n="regionLasso">套索</button>
+          <button type="button" class="paint-tool" data-region-tool="brush" data-i18n="paintBrush">画笔</button>
+          <button type="button" class="paint-tool" data-region-tool="wand" data-i18n="regionWand">魔棒</button>
+        </div>
+        <div id="regionWandControls" hidden>
+          <label class="ctl"><span id="regionWandToleranceLabel" class="lab" data-i18n-slider="regionWandTolerance">容差: 15</span><input id="regionWandTolerance" type="range" min="0" max="100" value="15" aria-labelledby="regionWandToleranceLabel"></label>
+          <label class="check"><input type="checkbox" id="regionWandGlobal"><span data-i18n="regionWandGlobal">全图同色</span></label>
+          <p class="note" id="regionWandStatus" role="status" hidden data-i18n="regionWandBusy">正在计算选区…</p>
+        </div>
+        <label class="ctl" id="regionBrushControl" hidden><span class="lab" data-i18n="paintSize">粗细</span><input id="regionBrushSize" type="range" min="1" max="160" value="24"></label>
+        <span class="region-control-label" data-i18n="regionOperation">选区操作</span>
+        <div class="region-tools" id="regionOperations" role="group" data-i18n-aria="regionOperation" aria-label="选区操作">
+          <button type="button" class="paint-tool" data-region-operation="new" data-i18n="regionNew">新增区域</button>
+          <button type="button" class="paint-tool" data-region-operation="add" data-i18n="regionAdd">增选</button>
+          <button type="button" class="paint-tool" data-region-operation="subtract" data-i18n="regionSubtract">减选</button>
+        </div>
+        <select id="regionOperation" data-ui="segmented">
+          <option value="new" data-i18n="regionNew">新增区域</option><option value="add" data-i18n="regionAdd">增选</option><option value="subtract" data-i18n="regionSubtract">减选</option>
+        </select>
+        <label class="check"><input type="checkbox" id="regionHighlight" checked><span data-i18n="regionShowHighlight">显示选区高光</span></label>
+        <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionRename" data-i18n="regionRename">重命名此选区</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionDelete" data-i18n="regionDelete">删除区域</button></div>
+        <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionClear" data-i18n="regionClear">重置局部调整</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionCopy" data-i18n="regionCopy">复制局部调整至</button></div>
+        <div class="btn-row"><button type="button" class="btn drawing-action-btn flex-fill" id="regionUndo" data-i18n="paintUndo">撤销</button><button type="button" class="btn drawing-action-btn flex-fill" id="regionRedo" data-i18n="regionRedoLabel">重做</button></div>
+      </div></div>
+    </div>
+    <div class="mode-specific" id="colorControls" hidden>
+    <div class="group open" id="groupBasic">
+      <button type="button" class="group-header"><span class="chev">▶</span><span id="globalColorBasicTitle" data-i18n="basicParameters">基础参数：全局</span></button>
+      <div class="content"><div class="inner">
+        <label class="ctl"><span class="lab" data-i18n="surfaceFinish">表面处理工艺</span>
+          <select id="selectFinish">
+            <option value="enig" data-i18n="finishEnig">沉金 (金黄色)</option>
+            <option value="hasl" data-i18n="finishHasl">喷锡 (银色)</option>
+            <option value="osp" data-i18n="finishOsp">OSP (玫瑰金)</option>
+          </select>
+        </label>
+        <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
+          <select id="selectMask">
+            <option value="blue" data-i18n="maskBlue">蓝色</option>
+            <option value="black" data-i18n="maskBlack">黑色</option>
+            <option value="red" data-i18n="maskRed">红色</option>
+            <option value="green" data-i18n="maskGreen">绿色</option>
+            <option value="white" data-i18n="maskWhite">白色</option>
+            <option value="yellow" data-i18n="maskYellow">黄色</option>
+            <option value="purple" data-i18n="maskPurple">紫色</option>
+          </select>
+        </label>
+        <div id="sliderGold"></div>
+        <div id="sliderSilk"></div>
+        <div id="sliderTrans"></div>
+        <div id="sliderCopper"></div>
+      </div></div>
+    </div>
+
+    <div class="group" id="groupLight" data-master="light">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="lightingSettings">灯光 / 显示 / 布灯</span></button>
+      <div class="content"><div class="inner">
+        <label class="check"><input type="checkbox" id="chkLightOverlay"><span data-i18n="showLightOverlay">在预览中叠加显示灯光与范围</span></label>
+        <div id="sliderLightSense"></div>
+        <button type="button" class="btn drawing-action-btn action-selected flex-fill" id="btnAutoLights" data-i18n="autoSuggestLights">自动重心布灯</button>
+        <div id="sliderLightRadius"></div>
+        <div id="sliderLightIntensity"></div>
+        <p class="note" data-i18n="lightPlacementHint">在合成预览中连续左键两次，可手动放置一条灯光。</p>
+      </div></div>
+    </div>
+
+    <div class="group" id="groupBare" data-master="bare">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="bareBinding">裸露基材绑定</span></button>
+      <div class="content"><div class="inner">
+        <label class="radio"><input type="radio" name="bareMode" id="radioBareGray" checked><span data-i18n="bareGrayMode">1. 绑定层次（用灰度判断）</span></label>
+        <div id="sliderBareA"></div>
+        <div id="sliderBareB"></div>
+        <label class="radio"><input type="radio" name="bareMode" id="radioBareColor"><span data-i18n="bareColorMode">2. 绑定颜色（与基材色相似）</span></label>
+        <div id="sliderBareSim"></div>
+      </div></div>
+    </div>
+
+    <div class="group" id="groupEdge" data-master="edge">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edgeOperations">边缘操作</span></button>
+      <div class="content"><div class="inner">
+        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeStroke" checked><span data-i18n="edgeStroke">描边</span></label>
+        <label class="radio"><input type="radio" name="edgeMode" id="radioEdgeEnhance"><span data-i18n="edgeEnhance">边缘增强</span></label>
+        <div id="sliderEdgeThresh"></div>
+        <div id="sliderEdgeThreshMax"></div>
+        <label class="check"><input type="checkbox" id="chkUseMetal"><span data-i18n="useMetal">使用金属</span></label>
+        <label class="check" id="exposeMetalWrap"><input type="checkbox" id="chkExposeMetal" checked><span data-i18n="exposeMetal">裸露金属勾线</span></label>
+        <div id="sliderAutoInvert"></div>
+      </div></div>
+    </div>
+    </div>
+
+    <div class="mode-specific" id="grayControls">
+      <div class="group open" id="groupGray">
+        <button type="button" class="group-header"><span class="chev">▶</span><span id="globalGrayBasicTitle" data-i18n="basicParameters">基础参数：全局</span></button>
+        <div class="content"><div class="inner">
+          <label class="ctl"><span class="lab" data-i18n="maskColor">阻焊颜色</span>
+            <select id="grayPreviewMask"><option value="blue" data-i18n="maskBlue">蓝色</option><option value="black" data-i18n="maskBlack">黑色</option><option value="red" data-i18n="maskRed">红色</option><option value="green" data-i18n="maskGreen">绿色</option><option value="white" data-i18n="maskWhite">白色</option><option value="yellow" data-i18n="maskYellow">黄色</option><option value="purple" data-i18n="maskPurple">紫色</option></select>
+          </label>
+          <div id="sliderGraySilk"></div>
+          <div id="sliderGrayMask"></div>
+          <div id="sliderGrayThick"></div>
+          <div id="sliderGrayBlur"></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div id="regionalControls" hidden>
+      <div class="group open" id="groupRegional">
+        <button type="button" class="group-header"><span class="chev">▶</span><span id="regionBasicTitle">区域参数</span></button>
+        <div class="content"><div class="inner">
+          <div id="regionBasicSliders"></div>
+          <div class="region-param-section" id="regionBareSliders" hidden><p class="note" data-i18n="bareBinding">裸露基材绑定</p></div>
+          <div class="region-param-section" id="regionEdgeSliders" hidden><p class="note" data-i18n="edgeOperations">边缘操作</p></div>
+        </div></div>
+      </div>
+    </div>
+    <div class="group open" id="groupActions">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="drawingActions">图纸操作</span></button>
+      <div class="content"><div class="inner">
+        <div class="btn-row">
+          <button type="button" class="btn drawing-action-btn flex-fill" id="btnImport"><span class="drawing-action-label" data-i18n="importDrawing">导入图纸</span></button>
+          <button type="button" class="btn drawing-action-btn action-selected flex-fill" id="btnExport" disabled data-i18n="exportDrawing">导出全部图纸</button>
+        </div>
+        <label class="ctl"><span class="lab" data-i18n="exportLayerSelect">选择导出层</span>
+          <select id="selectExportLayer" disabled>
+            <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
+            <option value="Top_Mask" data-i18n="layerMask">Top Mask（阻焊）</option>
+            <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
+            <option value="Bottom_Mask" id="exportBottomOption" data-i18n="layerBottom" hidden>Bottom Mask（透光）</option>
+          </select>
+        </label>
+        <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="col-layers" id="colLayers" style="display:none">
+    <div class="layers-grid">
+      <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
+      <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
+      <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
+      <div class="lp" id="bottomPreviewItem"><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* @PCB_EDITOR_SCRIPT@ */
+</script>
+</body>
+</html>

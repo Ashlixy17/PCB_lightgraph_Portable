@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "none",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": [],
+    "strict": true,
+    "strictNullChecks": true,
+    "noEmitOnError": true,
+    "useDefineForClassFields": false,
+    "outFile": "dist/pcb-editor.js"
+  },
+  "files": ["src/types.d.ts", "src/elements.d.ts", "src/app.ts"]
+}
